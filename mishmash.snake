@@ -1,0 +1,42 @@
+import time
+import re
+
+include: "snakemake-lib/include_all.snake.py"
+
+def single_fq_fn(name,batch_id,simulator):
+	return "{}.part_{}.{}.fq".format(name,batch_id,simulator)
+
+def joined_fq_fn(name):
+	return "{}.joined.fq".format(name)
+
+def prog_from_progname(wildcards):
+	print(wildcards)
+	if samples[int(wildcards.batch_id)]["simulator"]=="DWGSIM":
+		return PROG_DWGSIM
+
+def fasta_from_id(wildcards):
+	return samples[int(wildcards.batch_id)]["fasta"]
+
+def fasta_faidx_from_id(wildcards):
+	return fasta_from_id(wildcards)+".fai"
+
+
+include: "simulators/all_simulators.snake"
+
+rule joined_fq:
+	input:
+		[single_fq_fn("{name}",i,samples[i]["simulator"]) for i in range(len(samples))]
+	output:
+		joined_fq_fn("{name}")
+	run:
+		shell("cat /dev/null > {output[0]}")
+		for i in range(len(input)):
+			shell("cat " + input[0] + " >> {output[0]}")
+
+
+#rule:
+#    input: 
+#        ART_ILLUMINA,
+#        EXAMPLE_FASTA
+#    shell:
+#        "art_illumina -sam -i {input[1]} -p -l 50 -f 20 -m 200 -s 10 -o paired_dat"
