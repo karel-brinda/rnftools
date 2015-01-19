@@ -13,7 +13,8 @@ dwgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_
 
 class DwgSim(Source):
 	def __init__(self,
-			name, fasta,
+			name,
+			fasta,
 			coverage=1,
 			read_count=0,
 			read_length_1=100,
@@ -82,35 +83,12 @@ class DwgSim(Source):
 
 
 	def recode_dwgsim_reads(self,fastq1,fastq2,faidx,source=0,number_of_reads=10**9):
-		dict_chr = {}
 		max_seq_len=0
 
-		# parsing FAI file
-		with open(faidx) as f:
-			"""
-			   FAI format
-
-			1) the name of the sequence
-			2) the length of the sequence
-			3) the offset of the first base in the file
-			4) the number of bases in each fasta line
-			5) the number of bytes in each fasta line
-			"""
-
-			i=1
-			for line in f:
-				if line.strip()!="":
-					parts=line.split("\t")
-					chr=parts[0]
-					seq_len=parts[1]
-					max_seq_len=max(max_seq_len,int(seq_len))
-					dict_chr[chr]=i
-					i+=1
-
-		#print(dict_chr)
+		dict_chr=self.load_fai(faidx)
 		number_of_chromosomes=len(dict_chr)
 		chr_str_size=len(str(number_of_chromosomes))
-		pos_str_size=len(str(max_seq_len))
+		pos_str_size=max( [ len(str(x)) for x in  dict_chr] )
 		id_str_size=len(format(number_of_reads,'x'))
 
 		# parsing FQ file
