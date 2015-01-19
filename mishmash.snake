@@ -1,37 +1,81 @@
 import time
 import re
 
+##################################
+#    TODO
+# - randomization
+#
+#
+
+
+
 include: "snakemake-lib/include_all.snake.py"
 
-def single_fq_fn(name,batch_id,simulator):
-	return "{}.part_{}.{}.fq".format(name,batch_id,simulator)
+def single_fq_fn(name,source_id):
+	return "{name}/{name}.source_{source_id}.fq".format(
+			name=name,
+			source_id=source_id
+		)
 
 def joined_fq_fn(name):
 	return "{}.joined.fq".format(name)
 
-def prog_from_progname(wildcards):
-	print(wildcards)
-	if samples[int(wildcards.batch_id)]["simulator"]=="DWGSIM":
-		return PROG_DWGSIM
-
-def fasta_from_id(wildcards):
-	return samples[int(wildcards.batch_id)]["fasta"]
-
-def fasta_faidx_from_id(wildcards):
-	return fasta_from_id(wildcards)+".fai"
+def _source_from_fastq_part(wildcards):
+	return \
+		[_MISHMASH_SOURCES_[int(wildcards.source_id)].get_input_fa()] + \
+		[_MISHMASH_SOURCES_[int(wildcards.source_id)].get_input_fa()+".fai"] + \
+		_MISHMASH_SOURCES_[int(wildcards.source_id)].get_input_progs()
 
 
-include: "simulators/all_simulators.snake"
+def input_from_fastq_part(wildcards):
+	# todo: faidx
+	return \
+			_source_from_fastq_part(wildcards).get_input_progs() + \
+			[_source_from_fastq_part(wildcards).get_input_fa()]
+
+def output_from_fastq_part(name,source_id):
+	return [
+			_source_from_fastq_part(wildcards).get_input_progs(),
+			_source_from_fastq_part(wildcards).get_input_fa()
+		]
+
+#def prog_from_progname(wildcards):
+#	print(wildcards)
+#	if samples[int(wildcards.batch_id)]["simulator"]=="DWGSIM":
+#		return PROG_DWGSIM
+
+
+#include: "simulators/all_simulators.snake"
+
 
 rule joined_fq:
 	input:
-		[single_fq_fn("{name}",i,samples[i]["simulator"]) for i in range(len(samples))]
+		[_MISHMASH_SOURCES_[key].get_output_fq() for key in _MISHMASH_SOURCES_.keys()]
 	output:
 		joined_fq_fn("{name}")
 	run:
 		shell("cat /dev/null > {output[0]}")
 		for i in range(len(input)):
-			shell("cat " + input[0] + " >> {output[0]}")
+			print(input[i])
+			shell("cat " + input[i] + " >> {output[0]}")
+
+
+rule one_source:
+	output:		
+		single_fq_fn("{name}","{source_id}")
+		#dynamic("{anyfile}.cluster.csv")
+	input:
+		_source_from_fastq_part
+	run:
+		_MISHMASH_SOURCES_[int(wildcards.source_id)].run()
+#		shell(
+#			"""
+#				{input[0]} -1 30 -2 0 -y 0 -C 1 {input[1]} tmp/{output[0]}
+#			"""
+#		)
+#		recode_dwgsim_reads(output[1],output[0],
+#			source=int(wildcards.batch_id),
+#			faidx=input[2])
 
 
 #rule:
