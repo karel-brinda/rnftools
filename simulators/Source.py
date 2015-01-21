@@ -11,7 +11,8 @@ class Source(object):
 		self.source_id=len(_MISHMASH_SOURCES_)+1
 		_MISHMASH_SOURCES_[self.source_id] = self
 		self.fasta=fasta
-		pass
+		self.dict_chr_ids = {}
+		self.dict_chr_lengths = {}
 
 	############################################################################
 	############################################################################
@@ -68,30 +69,25 @@ class Source(object):
 		return
 
 	def recode_sam_reads(self,sam,faidx,source=0,number_of_reads=10**9):
-		dict_chr=self.load_fai(faidx)
+		self.load_fai(faidx)
 		last_read_name=[]
 		read_id=1
 
-
-		number_of_chromosomes=len(dict_chr)
-		chr_str_size=len(str(number_of_chromosomes))
-		pos_str_size=max( [ len(str(x)) for x in  dict_chr] )
 		id_str_size=len(format(number_of_reads,'x'))
 
 		rn_formatter = RnFormatter(
 				id_str_size=id_str_size,
 				source_str_size=2,
-				chr_str_size=chr_str_size,
-				pos_str_size=pos_str_size
+				chr_str_size=self.chr_str_size,
+				pos_str_size=self.pos_str_size
 			)
 
 		blocks_buffer=[]
 		sequences_buffer=[]
 		old_read_name=""
 
-		cigar_reg=re.compile(r"(\d+[MIDNSHP=X])+")
-		cigar_reg_sh=re.compile(r"(\d+)([MDNP=X])")
 
+		cigar_reg_sh=re.compile("([0-9]+)([MDNP=X])")
 		with open(sam, "r") as f:
 			with open(self.get_output_fq(), "w") as ff:
 				for line in f:
@@ -107,37 +103,41 @@ class Source(object):
 
 							for i in range(1,len(sequences_buffer)+1):
 								# fixme: when only one block
-								ff.write("".join(["@",new_read_name,"/",i,os.linesep]))
-								ff.write(sequences_buffer[i-1][0],os.linesep)
-								ff.write("+",os.linesep)
-								ff.write(sequences_buffer[i-1][1],os.linesep)
+								ff.write("".
+									join([
+										"@",new_read_name,"/",str(i) if len(sequences_buffer)>1 else "",os.linesep,
+										sequences_buffer[i-1][0],os.linesep,
+										"+",os.linesep,
+										sequences_buffer[i-1][1],os.linesep
+									]))
 							last_read_name = read_name
 							blocks_buffer = []
 							sequences_buffer = []
 
 
 						flags=int(parts[1])
+						direction="F"
 
 						#unmapped? ...skip
 						if flags & 4:
 							continue
 
-						chr_number=int( dict_chr[ parts[2] ] )
-						cigar=parts[5]
+						if flags & 16:
+							direction="R"
+
+						chr_id=self.dict_chr_ids[ parts[2] ] if self.dict_chr_ids!={} else "0"
+						cigar=parts[5].strip()
 						bases=parts[9]
 						qualities=parts[10]
 
 						left=int(parts[3])
 						right=left-1
-						m=cigar_reg.search(cigar)
-						for g in res.groups():
-							gg=cigar_reg_sh.match(str(g))
-							if gg:
-								right+=int(gg.group(1))
+						for (steps,operation) in cigar_reg_sh.findall(cigar):
+							right+=int(steps)
 
 						block=Block(
 								source=source,
-								chr=chr_number,
+								chr=chr_id,
 								direction=direction,
 								left=left,
 								right=right
@@ -148,9 +148,13 @@ class Source(object):
 						sequences_buffer.append( (bases,qualities) )
 
 
+	"""
+		name2number
 
+	"""
 	def load_fai(self,faidx):
-		dict_chr = {}
+		self.dict_chr_ids = {}
+		self.dict_chr_lengths = {}
 
 		# parsing FAI file
 		with open(faidx) as f:
@@ -169,7 +173,14 @@ class Source(object):
 				if line.strip()!="":
 					parts=line.split("\t")
 					chr=parts[0]
-					seq_len=parts[1]
-					dict_chr[chr]=i
+					chr_len=int(parts[1])
+					self.dict_chr_ids[chr]=i
+					self.dict_chr_lengths[chr]=chr_len
 					i+=1
-		return dict_chr
+
+		self.number_of_chromosomes=len(self.dict_chr_ids)
+		self.chr_str_size=len(str(self.number_of_chromosomes))
+		self.pos_str_size=len(str(max(self.dict_chr_lengths.values())))
+		
+
+

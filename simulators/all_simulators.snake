@@ -11,18 +11,17 @@ class RnFormatter:
 	def __init__(
 				self,
 				source=0,
-				id_str_size=10*6,
+				id_str_size=16,
 				source_str_size=2,
 				chr_str_size=2,
-				pos_str_size=10**8,
+				pos_str_size=8,
 			):
-		self.source=source,
-		self.id_str_size=id_str_size,
-		self.source_str_size=source_str_size,
-		self.chr_str_size=chr_str_size,
+		self.source=source
+		self.id_str_size=id_str_size
+		self.source_str_size=source_str_size
+		self.chr_str_size=chr_str_size
 		self.pos_str_size=pos_str_size
 	
-
 	def process_read(self,read_id,read,prefix="",suffix=""):
 		return read.stringize(
 					id_str_size=self.id_str_size,
@@ -41,10 +40,10 @@ class Read:
 		self.blocks=blocks
 
 	def stringize(self,
-					id_str_size=10**6,
-					source_str_size=2,
-					chr_str_size=2,
-					pos_str_size=10**8
+					id_str_size,
+					source_str_size,
+					chr_str_size,
+					pos_str_size
 				):
 		prefix = ""
 		suffix = ""
@@ -57,12 +56,11 @@ class Read:
 				) for x in self.blocks
 			]
 
-		print(id_str_size)
 		read_name="___".join(
 			[
 				prefix,
 				format(self.read_id,'x').zfill(id_str_size),
-				",".join(blocks),
+				",".join(blocks_strings),
 				suffix
 			]
 		)
@@ -85,9 +83,9 @@ class Block:
 		self.right=int(right)
 
 	def stringize(self,
-				source_str_size=2,
-				chr_str_size=2,
-				pos_str_size=10**8
+				source_str_size,
+				chr_str_size,
+				pos_str_size
 			):
 		return "({},{},{},{},{})".format(
 				str(self.source).zfill(source_str_size),
