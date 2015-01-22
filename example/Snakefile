@@ -1,0 +1,19 @@
+USE_HOME = True
+
+name="my_experiment"
+
+
+include: "../simulators/all_simulators.snake"
+
+fe="example_fa.fa"
+
+ArtIllumina(name=name, fasta=fe,coverage=1)
+DwgSim(name=name, fasta=fe,coverage=1)
+DwgSim(name=name, fasta=fe,read_length_1=100,read_length_2=100,coverage=1)
+
+include: "../mishmash.snake"
+
+rule basic:
+	input:
+		joined_fq_fn(name)
+
