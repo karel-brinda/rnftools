@@ -5,11 +5,10 @@ import re
 #    TODO
 # - randomization
 # - color space
-# -
+# - downloading FASTA files
+# - random generators seeds
 #
 #
-#
-
 
 
 include: "snakemake-lib/include_all.snake.py"
@@ -42,14 +41,6 @@ def output_from_fastq_part(name,source_id):
 			_source_from_fastq_part(wildcards).get_input_fa()
 		]
 
-#def prog_from_progname(wildcards):
-#	print(wildcards)
-#	if samples[int(wildcards.batch_id)]["simulator"]=="DWGSIM":
-#		return PROG_DWGSIM
-
-
-#include: "simulators/all_simulators.snake"
-
 
 rule joined_fq:
 	input:
@@ -71,19 +62,3 @@ rule one_source:
 		_source_from_fastq_part
 	run:
 		_MISHMASH_SOURCES_[int(wildcards.source_id)].run()
-#		shell(
-#			"""
-#				{input[0]} -1 30 -2 0 -y 0 -C 1 {input[1]} tmp/{output[0]}
-#			"""
-#		)
-#		recode_dwgsim_reads(output[1],output[0],
-#			source=int(wildcards.batch_id),
-#			faidx=input[2])
-
-
-#rule:
-#    input: 
-#        ART_ILLUMINA,
-#        EXAMPLE_FASTA
-#    shell:
-#        "art_illumina -sam -i {input[1]} -p -l 50 -f 20 -m 200 -s 10 -o paired_dat"

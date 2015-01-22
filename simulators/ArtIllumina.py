@@ -43,15 +43,18 @@ class ArtIllumina(Source):
 			self.name+"tmp.{}".format(self.source_id)
 		)
 
-		"art_illumina -sam -i reference.fa -l 50 -f 10 -o single_dat"
-		"art_illumina -i example_fasta.fa -l 100  -sam -na -f 10 -o testtt"
-
 	def get_input_progs(self):
 		return [PROG_ART_ILLUMINA]
 
 	def get_output_tmp(self):
-		return 	[					
+		return 	[
+					self.art_prefix+".bwa.read1.fastq",
+					self.art_prefix+".bwa.read2.fastq",
+					self.art_prefix+".bfast.fastq",
+					self.art_prefix+".mutations.vcf",
+					self.art_prefix+".mutations.txt"
 			]
+
 
 	def run(self):
 		shell("""
