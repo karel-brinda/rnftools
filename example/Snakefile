@@ -3,15 +3,15 @@ USE_HOME = True
 name="my_experiment"
 
 
-include: "../simulators/all_simulators.snake"
+include: "../mishmash_1.snake"
 
 fe="example_fa.fa"
 
-ArtIllumina(name=name, fasta=fe,coverage=1)
-DwgSim(name=name, fasta=fe,coverage=1)
-DwgSim(name=name, fasta=fe,read_length_1=100,read_length_2=100,coverage=1)
+ArtIllumina(name=name, fasta=fe,coverage=10)
+DwgSim(name=name, fasta=fe,coverage=10)
+DwgSim(name=name, fasta=fe,read_length_1=100,read_length_2=100,coverage=10)
 
-include: "../mishmash.snake"
+include: "../mishmash_2.snake"
 
 rule basic:
 	input:

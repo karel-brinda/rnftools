@@ -10,7 +10,6 @@ import re
 #
 #
 
-
 include: "snakemake-lib/include_all.snake.py"
 
 def single_fq_fn(name,source_id):
@@ -62,3 +61,11 @@ rule one_source:
 		_source_from_fastq_part
 	run:
 		_MISHMASH_SOURCES_[int(wildcards.source_id)].run()
+
+onsuccess:
+    print("MIShmash finished, thank you for using this software.")
+
+
+onerror:
+    print("An error appeared (for details see the messages above). If you cannot solve the problem, contact me on karel.brinda@gmail.com.")
+
