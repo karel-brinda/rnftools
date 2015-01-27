@@ -1,8 +1,0 @@
-# here are registered all sources == simulators
-_MISHMASH_SOURCES_ = {}
-
-include: "../snakemake-lib/constants.py"
-
-include: "Source.py"
-include: "DwgSim.py"
-include: "ArtIllumina.py"

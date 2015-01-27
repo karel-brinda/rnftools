@@ -1,19 +1,20 @@
-USE_HOME = True
+import smbl
+#include: smbl.include
 
-name="my_experiment"
+import mishmash
+include: mishmash.include1
 
+fe=smbl.fasta.EXAMPLE
 
-include: "../mishmash_1.snake"
+name="test"
 
-fe="example_fa.fa"
+mishmash.ArtIllumina(name=name, fasta=fe,coverage=1)
+mishmash.DwgSim(name=name, fasta=fe,coverage=1)
+mishmash.DwgSim(name=name, fasta=fe,read_length_1=100,read_length_2=100,coverage=1)
 
-ArtIllumina(name=name, fasta=fe,coverage=10)
-DwgSim(name=name, fasta=fe,coverage=10)
-DwgSim(name=name, fasta=fe,read_length_1=100,read_length_2=100,coverage=10)
-
-include: "../mishmash_2.snake"
+include: mishmash.include2
 
 rule basic:
 	input:
-		joined_fq_fn(name)
-
+		#fe,
+		mishmash.joined_fq_fn(name)

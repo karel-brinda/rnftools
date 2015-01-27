@@ -1,2 +1,0 @@
-include: "snakemake-lib/rnf.py"
-include: "simulators/all_simulators.snake"
