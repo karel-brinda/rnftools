@@ -1,0 +1,26 @@
+import smbl
+import mishmash
+include: mishmash.include1
+
+reference_rem=smbl.fasta.EXAMPLE
+reference="reference.fa"
+
+name="reads"
+
+mishmash.DwgSim(name=name, fasta=reference,read_length_1=100,read_length_2=0,number_of_reads=1000)
+
+include: mishmash.include2
+
+rule basic:
+	input:
+		reference,
+		mishmash.joined_fq_fn(name)
+	
+
+rule reference:
+	output:
+		reference
+	input:
+		reference_rem
+	shell:
+		"cp {input[0]} {output[0]}"

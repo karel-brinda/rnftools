@@ -1,0 +1,8 @@
+import lavender
+
+lavender.Report(bam_dirs=["_aux_alignments_"],name="test_report")
+
+rule all:
+	input: lavender.input
+
+include: lavender.include
