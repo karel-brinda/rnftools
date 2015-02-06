@@ -16,5 +16,4 @@ include: mishmash.include2
 
 rule basic:
 	input:
-		#fe,
 		mishmash.joined_fq_fn(name)
