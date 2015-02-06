@@ -1,3 +1,0 @@
-[submodule "snakemake-lib"]
-	path = snakemake-lib
-	url = http://github.com/karel-brinda/snakemake-lib
