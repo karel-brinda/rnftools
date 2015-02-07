@@ -1,19 +1,15 @@
 import smbl
-#include: smbl.include
-
 import mishmash
-include: mishmash.include1
 
 fe=smbl.fasta.EXAMPLE
 
-name="test"
+# problem -- lomitko na konci
+mishmash.ArtIllumina(fa=fe,coverage=1,read_length_1=100,read_length_2=0)
+mishmash.DwgSim(fa=fe,coverage=1)
+mishmash.DwgSim(fa=fe,read_length_1=100,read_length_2=100,coverage=1)
 
-mishmash.ArtIllumina(name=name, fasta=fe,coverage=1)
-mishmash.DwgSim(name=name, fasta=fe,coverage=1)
-mishmash.DwgSim(name=name, fasta=fe,read_length_1=100,read_length_2=100,coverage=1)
-
-include: mishmash.include2
+include: mishmash.include
 
 rule basic:
 	input:
-		mishmash.joined_fq_fn(name)
+		mishmash.output
