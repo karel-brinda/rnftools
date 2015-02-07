@@ -7,7 +7,7 @@ reference="reference.fa"
 
 name="reads"
 
-mishmash.DwgSim(name=name, fasta=reference,read_length_1=100,read_length_2=0,number_of_reads=1000)
+mishmash.DwgSim(name=name, fasta=reference,read_length_1=100,read_length_2=0,number_of_reads=10000)
 
 include: mishmash.include2
 
