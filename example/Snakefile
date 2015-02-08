@@ -1,8 +1,10 @@
 import lavender
 
-lavender.Report(bam_dirs=["_aux_alignments_","_aux_alignments_"],name="test_report")
+
+lavender.Report(bam_dirs=["_aux_alignments_","_aux_alignments_"],name="testovací report")
 
 rule all:
 	input: lavender.input
 
 include: lavender.include
+

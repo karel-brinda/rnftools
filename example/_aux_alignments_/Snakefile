@@ -1,7 +1,7 @@
 import smbl
 include: smbl.include
 
-reads = "reads.joined.fq",
+reads = "se_reads.fq",
 reference = "reference.fa"
 ref=smbl.fasta.EXAMPLE
 
