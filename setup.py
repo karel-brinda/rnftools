@@ -10,19 +10,19 @@ setup(
 	packages = ['mishmash'],
 	package_dir = {"mishmash" : "mishmash"},
 	package_data = {"mishmash" : ["*.snake"] },
-	version = '0.0.3',
+	version = '0.0.4',
 	description = 'Program for simulating NGS read respecting the RNF read-name format',
 	#long_description = """ \  """,
 	install_requires=[
-		'snakemake','smbl'
+		'snakemake',
+		'smbl',
 	],
 	zip_safe=False,
 	author = 'Karel Břinda',
 	author_email = 'karel.brinda@gmail.com',
 	url = 'https://github.com/karel-brinda/mishmash',
 	license = "MIT",
-	#download_url = 'https://github.com/karel-brinda/mishmash/tarball/0.0.1',
-	keywords = ['Snakemake', 'bioinformatics', 'reads', 'simulator'],
+	keywords = ['Snakemake', 'bioinformatics', 'read simulator', 'NGS'],
 	classifiers = [
 		"Development Status :: 3 - Alpha",
 		"Environment :: Console",
