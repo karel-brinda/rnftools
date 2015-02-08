@@ -16,6 +16,7 @@ setup(
 	install_requires=[
 		'snakemake',
 		'smbl',
+		'pysam',
 	],
 	zip_safe=False,
 	author = 'Karel Břinda',
