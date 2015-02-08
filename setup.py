@@ -10,11 +10,13 @@ setup(
 	packages = ['lavender'],
 	package_dir = {"lavender" : "lavender"},
 	package_data = {"lavender" : ["*.snake"] },
-	version = '0.0.1',
+	version = '0.0.2',
 	description = 'Program for evaluating mappers of NGS reads keeping the RNF naming convention.',
 	#long_description = """ \  """,
 	install_requires=[
-		'snakemake','smbl'
+		'snakemake',
+		'smbl',
+		'pysam',
 	],
 	zip_safe=False,
 	author = 'Karel Břinda',
