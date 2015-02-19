@@ -20,10 +20,15 @@ Prerequisities
 
 * **Unix-like operating system** (Linux, MacOS, etc.)
 * **Python 3.2 or higher**
-	* if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended distribution
+
+	* if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended Python distribution
+
 * **PIP**
+
 	* for installation, see https://pip.pypa.io/en/latest/installing.html
+
 * **SnakeMake** - see http://bitbucket.org/johanneskoester/snakemake/)
+
 	* it can be usually installed using
 
 		.. code-block:: bash
