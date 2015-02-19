@@ -57,8 +57,33 @@ Installation / upgrade to the latest version
 Usage
 =====
 
-Create a directory where you want to simulate reads.
+MIShmash works as a SnakeMake pipeline. To use it, create an empty directory where the reads will be simulated.
+Created an empty file named ``Snakefile`` which will serve as a configuration script.
+Then save the following content into it:
 
+.. code-block:: python
+	
+	# required line, it should be the first line of all your configuration scripts
+	import mishmash
+
+	# this line tells MIShmash that there will be a new sample
+	mishmash.sample("new_sample")
+	
+	# then you can add arbitrary number of sources
+	mishmash.ArtIllumina(
+		fa="my_fast.fa",
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+	
+	# if you want to create more simulated samples, call again the mishmash.sample
+	# function but with another sample name
+
+
+	# these lines are mandatory as the last lines of the file
+	include: mishmash.include
+	rule: input: mishmash.output
 
 Supported read simulators
 =========================
