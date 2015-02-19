@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+====================================
 Welcome to MIShmash's documentation!
 ====================================
 
@@ -10,20 +11,28 @@ MIShmash is a pipeline for simulation of Next-Generation Sequencing reads. It si
 existing read simulators and combines the obtained reads into a single set. The pipeline is based
 on SnakeMake. All required software is installed when requested.
 
+.. contents:: Table of Contents
+   :depth: 2
+
+
 Prerequisities
---------------
+==============
 
-- Unix-like operating system (Linux, MacOS, etc.)
-- Python 3.2 -- if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended distribution
-- PIP -- for installation, see https://pip.pypa.io/en/latest/installing.html
-- SnakeMake (see http://bitbucket.org/johanneskoester/snakemake/), it can be usually installed or upgraded using
+- **Unix-like operating system** (Linux, MacOS, etc.)
+- **Python 3.2 or higher**
+	- if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended distribution
+- **PIP**
+	- for installation, see https://pip.pypa.io/en/latest/installing.html
+- **SnakeMake** - see http://bitbucket.org/johanneskoester/snakemake/)
+	- it can be usually installed using
 
-	.. code-block:: bash
-		pip install snakemake
+		.. code-block:: bash
+		
+			pip install snakemake
 
 
 Installation / upgrade to the latest version
---------------------------------------------
+============================================
 
 - using PIP (recommended):
 
@@ -41,13 +50,13 @@ Installation / upgrade to the latest version
 
 
 Usage
------
+=====
 
 Create a directory where you want to simulate reads.
 
 
 Supported read simulators
--------------------------
+=========================
 
 Explanation of shared parameters:
 
@@ -67,9 +76,23 @@ Remarks:
 
 
 ART Illumina
-~~~~~~~~~~~~
+------------
+
+Example:
+~~~~~~~~
+
+.. code-block:: python
+
+	mishmash.ArtIllumina(
+		fa="my_reference.fa",
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
 
 Syntax: 
+~~~~~~~
 
 .. code-block:: python
 
@@ -87,9 +110,22 @@ Syntax:
 
 
 DwgSim
-~~~~~~
+------
+
+Example:
+~~~~~~~~
+
+.. code-block:: python
+
+	mishmash.DwgSim(
+		fa="my_referenc.fa",
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
 
 Syntax:
+~~~~~~~
 
 .. code-block:: python
 
@@ -105,14 +141,22 @@ Syntax:
 		rng_seed=1,
 	)
 
+Remarks:
+~~~~~~~~
 
-Contents:
+- for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
+
+
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
 .. automodule:: mishmash
    :members:
+
 
 Indices and tables
 ==================
