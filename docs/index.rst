@@ -18,13 +18,13 @@ on SnakeMake. All required software is installed when requested.
 Prerequisities
 ==============
 
-- **Unix-like operating system** (Linux, MacOS, etc.)
-- **Python 3.2 or higher**
-	- if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended distribution
-- **PIP**
-	- for installation, see https://pip.pypa.io/en/latest/installing.html
-- **SnakeMake** - see http://bitbucket.org/johanneskoester/snakemake/)
-	- it can be usually installed using
+* **Unix-like operating system** (Linux, MacOS, etc.)
+* **Python 3.2 or higher**
+	* if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended distribution
+* **PIP**
+	* for installation, see https://pip.pypa.io/en/latest/installing.html
+* **SnakeMake** - see http://bitbucket.org/johanneskoester/snakemake/)
+	* it can be usually installed using
 
 		.. code-block:: bash
 		
@@ -34,13 +34,13 @@ Prerequisities
 Installation / upgrade to the latest version
 ============================================
 
-- using PIP (recommended):
+* using PIP (recommended):
 
 	.. code-block:: bash
 	
 		pip install --upgrade mishmash
 
-- from GIT (the last development version):
+* from GIT (the last development version):
 
 	.. code-block:: bash
 	
@@ -60,19 +60,19 @@ Supported read simulators
 
 Explanation of shared parameters:
 
-- ``fa`` -- reference (FASTA file)
-- ``coverage`` -- average coverage (0 = non-specified)
-- ``number_of_reads`` -- number of reads (0 = non-specified)
-- ``read_length_1`` -- length of the first end of a read
-- ``read_length_2`` -- lenghh of the second end of a read (0 => single-end simulation)
-- ``other_params`` -- other parameters for the given simulator (shell string)
-- ``distance`` -- mean inner distance between ends of a read
-- ``distance_deviation`` -- its deviation
-- ``rng_seed`` -- seed for random number generator
+* ``fa`` -- reference (FASTA file)
+* ``coverage`` -- average coverage (0 = non-specified)
+* ``number_of_reads`` -- number of reads (0 = non-specified)
+* ``read_length_1`` -- length of the first end of a read
+* ``read_length_2`` -- lenghh of the second end of a read (0 => single-end simulation)
+* ``other_params`` -- other parameters for the given simulator (shell string)
+* ``distance`` -- mean inner distance between ends of a read
+* ``distance_deviation`` -- its deviation
+* ``rng_seed`` -- seed for random number generator
 
 Remarks:
 
-- ``coverage`` or ``number_of_reads`` must be equal to zero
+* ``coverage`` or ``number_of_reads`` must be equal to zero
 
 
 ART Illumina
@@ -144,7 +144,7 @@ Syntax:
 Remarks:
 ~~~~~~~~
 
-- for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
+* for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
 
 
 
