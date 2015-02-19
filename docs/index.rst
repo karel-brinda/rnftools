@@ -9,7 +9,7 @@ Welcome to MIShmash's documentation!
 
 MIShmash is a pipeline for simulation of Next-Generation Sequencing reads. It simulates reads using
 existing read simulators and combines the obtained reads into a single set. The pipeline is based
-on SnakeMake. All required software is installed when requested.
+on SnakeMake. All required software is installed automatically when requested.
 
 .. contents:: Table of Contents
    :depth: 2
@@ -57,8 +57,8 @@ Installation / upgrade to the latest version
 Usage
 =====
 
-MIShmash works as a SnakeMake pipeline. To use it, create an empty directory where the reads will be simulated.
-Created an empty file named ``Snakefile`` which will serve as a configuration script.
+Technically, MIShmash works as a SnakeMake pipeline. To use it, create an empty directory where the reads will be simulated.
+Create there an empty file named ``Snakefile``, which will serve as a configuration script.
 Then save the following content into it:
 
 .. code-block:: python
@@ -88,7 +88,7 @@ Then save the following content into it:
 Supported read simulators
 =========================
 
-Explanation of shared parameters:
+Explanation of the shared parameters:
 
 * ``fa`` -- reference (FASTA file)
 * ``coverage`` -- average coverage (0 = non-specified)
