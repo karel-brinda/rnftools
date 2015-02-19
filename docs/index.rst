@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+====================================
 Welcome to MIShmash's documentation!
 ====================================
 
@@ -10,45 +11,124 @@ MIShmash is a pipeline for simulation of Next-Generation Sequencing reads. It si
 existing read simulators and combines the obtained reads into a single set. The pipeline is based
 on SnakeMake. All required software is installed when requested.
 
-Prerequisities
---------------
+.. contents:: Table of Contents
+   :depth: 2
 
-- Unix-like operating system (Linux, MacOS, etc.)
-- SnakeMake (see http://bitbucket.org/johanneskoester/snakemake/)
+
+Prerequisities
+==============
+
+* **Unix-like operating system** (Linux, MacOS, etc.)
+* **Python 3.2 or higher**
+
+	* if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended Python distribution
+
+* **PIP**
+
+	* for installation, see https://pip.pypa.io/en/latest/installing.html
+
+* **SnakeMake** - see http://bitbucket.org/johanneskoester/snakemake/)
+
+	* it can be usually installed using
+
+		.. code-block:: bash
+		
+			pip install snakemake
 
 
 Installation / upgrade to the latest version
---------------------------------------------
+============================================
 
-- using PIP: ::
+* using PIP (recommended):
 
-   pip install --upgrade mishmash
+	.. code-block:: bash
+	
+		pip install --upgrade mishmash
 
-- from GIT (the last development version): ::
+* from GIT (the last development version):
 
-   git clone http://github.com/karel-brinda/mishmash
-   cd mishmash
-   python3 setup.py install
+	.. code-block:: bash
+	
+		git clone http://github.com/karel-brinda/mishmash
+		cd mishmash
+		python3 setup.py install
 
 
 Usage
------
+=====
 
-Create a dir where you want to simulate reads.
-
-
-Supported read simulators
--------------------------
-
-ART Illumina
-~~~~~~~~~~~~
-
-Syntax: 
+MIShmash works as a SnakeMake pipeline. To use it, create an empty directory where the reads will be simulated.
+Created an empty file named ``Snakefile`` which will serve as a configuration script.
+Then save the following content into it:
 
 .. code-block:: python
+	
+	# required line, it should be the first line of all your configuration scripts
+	import mishmash
+
+	# this line tells MIShmash that there will be a new sample
+	mishmash.sample("new_sample")
+	
+	# then you can add arbitrary number of sources
+	mishmash.ArtIllumina(
+		fa="my_fast.fa",
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+	
+	# if you want to create more simulated samples, call again the mishmash.sample
+	# function but with another sample name
+
+
+	# these lines are mandatory as the last lines of the file
+	include: mishmash.include
+	rule: input: mishmash.output
+
+Supported read simulators
+=========================
+
+Explanation of shared parameters:
+
+* ``fa`` -- reference (FASTA file)
+* ``coverage`` -- average coverage (0 = non-specified)
+* ``number_of_reads`` -- number of reads (0 = non-specified)
+* ``read_length_1`` -- length of the first end of a read
+* ``read_length_2`` -- lenghh of the second end of a read (0 => single-end simulation)
+* ``other_params`` -- other parameters for the given simulator (shell string)
+* ``distance`` -- mean inner distance between ends of a read
+* ``distance_deviation`` -- its deviation
+* ``rng_seed`` -- seed for random number generator
+
+Remarks:
+
+* ``coverage`` or ``number_of_reads`` must be equal to zero
+
+
+ART Illumina
+------------
+
+Example:
+~~~~~~~~
+
+.. code-block:: python
+
+	mishmash.ArtIllumina(
+		fa="my_reference.fa",
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+
+Syntax: 
+~~~~~~~
+
+.. code-block:: python
+
 	mishmash.ArtIllumina(
 		fa
-		coverate=0,
+		coverage=0,
 		number_of_reads=0,
 		read_length_1=100,
 		read_length_2=0,
@@ -60,11 +140,25 @@ Syntax:
 
 
 DwgSim
-~~~~~~
+------
 
-Syntax:
+Example:
+~~~~~~~~
 
 .. code-block:: python
+
+	mishmash.DwgSim(
+		fa="my_referenc.fa",
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
+
+Syntax:
+~~~~~~~
+
+.. code-block:: python
+
 	mishmash.DwgSim(
 		fa,
 		coverage=0,
@@ -77,14 +171,22 @@ Syntax:
 		rng_seed=1,
 	)
 
+Remarks:
+~~~~~~~~
 
-Contents:
+* for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
+
+
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
 .. automodule:: mishmash
    :members:
+
 
 Indices and tables
 ==================
