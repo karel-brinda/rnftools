@@ -14,27 +14,34 @@ Prerequisities
 --------------
 
 - Unix-like operating system (Linux, MacOS, etc.)
-- SnakeMake (see http://bitbucket.org/johanneskoester/snakemake/)
+- Python 3.2 -- if not installed yet, Anaconda (http://continuum.io/downloads) is a recommended distribution
+- SnakeMake (see http://bitbucket.org/johanneskoester/snakemake/), usually can be installed or upgraded using
+	.. code-block:: bash
+		pip install snakemake
 
 
 Installation / upgrade to the latest version
 --------------------------------------------
 
-- using PIP: ::
+- using PIP:
 
-   pip install --upgrade mishmash
+	.. code-block:: bash
+	
+		pip install --upgrade mishmash
 
-- from GIT (the last development version): ::
+- from GIT (the last development version):
 
-   git clone http://github.com/karel-brinda/mishmash
-   cd mishmash
-   python3 setup.py install
+	.. code-block:: bash
+	
+		git clone http://github.com/karel-brinda/mishmash
+		cd mishmash
+		python3 setup.py install
 
 
 Usage
 -----
 
-Create a dir where you want to simulate reads.
+Create a directory where you want to simulate reads.
 
 
 Supported read simulators
@@ -46,6 +53,7 @@ ART Illumina
 Syntax: 
 
 .. code-block:: python
+
 	mishmash.ArtIllumina(
 		fa
 		coverate=0,
@@ -65,6 +73,7 @@ DwgSim
 Syntax:
 
 .. code-block:: python
+
 	mishmash.DwgSim(
 		fa,
 		coverage=0,
