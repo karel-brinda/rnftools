@@ -1,4 +1,4 @@
-.. MISmash documentation master file, created by
+.. MIShmash documentation master file, created by
    sphinx-quickstart on Mon Feb  9 11:46:57 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -10,7 +10,10 @@ MIShmash is a pipeline for simulation of Next-Generation Sequencing reads. It si
 existing read simulators and combines the obtained reads into a single set. The pipeline is based
 on SnakeMake. All required software is installed automatically when requested.
 
-.. contents:: Table of Contents
+Table of Contents
+-----------------
+
+.. contents::
    :depth: 2
 
 
