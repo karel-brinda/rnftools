@@ -46,5 +46,5 @@ mishmash.DwgSim(
 )
 
 include: mishmash.include
-rule: input: mishmash.output
+rule: input: mishmash.input
 		
