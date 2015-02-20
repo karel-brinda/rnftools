@@ -88,3 +88,20 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. automodule:: lavender
+
+.. autoclass:: lavender.Report
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+.. autoclass:: lavender.Pannel
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+.. autoclass:: lavender.Bam
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
