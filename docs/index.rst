@@ -13,7 +13,7 @@ Requirements
 ------------
 
 * Unix-like operating system (Linux, MacOS, etc.).
-* `Python`_ 3.2+. If not installed yet, Anaconda is a recommended Python distribution.
+* `Python`_ 3.2+. If not installed yet, `Anaconda`_ is a recommended Python distribution.
 * `SnakeMake`_
 * `PIP`_
 
@@ -44,26 +44,27 @@ Installation
 Usage
 -----
 
-Technically, MIShmash works as a SnakeMake pipeline.
+Technically, MIShmash works as a `SnakeMake`_ pipeline.
 
 1. Create simulated reads using a RNF-compatible read simulator, for example `MIShmash`_
-2. Map the simulated reads to reference and obtained BAM file put into a standalone directory.
+2. Map the simulated reads to your reference with your tested mappers and put the obtained BAM files into a standalone directory.
 3. Create an empty directory where a report will be created.
-4. Create there an empty file named ``Snakefile``, which will serve as a configuration script. Then save the following content into it:
+4. Create there a file named ``Snakefile``, which will serve as a configuration script. Save the following content into it and adjust it as you want.
 
 	.. code-block:: python
 
-		# required line, it should be the first line of all you LAVEnder scripts
+		# a mandatory line
 		import lavender
 
-		#
+		# this command says: "create a report called 'my_amazing_report' for BAM files
+		# in directory 'my_bam_directory'"
 		lavender.Report(
 			bam_dirs=["my_bam_directory"],
 			name="My amazing report"
 		)
 
-		# these lines are mandatory last lines of the file
-		include:lavender.include
+		# two mandatory lines
+		include: lavender.include
 		rule: input: lavender.input
 
 5. Run ``snakemake`` in the directory
