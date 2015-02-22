@@ -10,7 +10,7 @@ setup(
 	packages = ['mishmash'],
 	package_dir = {"mishmash" : "mishmash"},
 	package_data = {"mishmash" : ["*.snake"] },
-	version = '0.0.5',
+	version = '0.0.6',
 	description = 'Program for simulating NGS read respecting the RNF read-name format',
 	#long_description = """ \  """,
 	install_requires=[
