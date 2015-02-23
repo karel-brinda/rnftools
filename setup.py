@@ -22,6 +22,7 @@ setup(
 	author = 'Karel Břinda',
 	author_email = 'karel.brinda@gmail.com',
 	url = 'https://github.com/karel-brinda/mishmash',
+	scripts=['bin/rnf-join-fq.py'],
 	license = "MIT",
 	keywords = ['Snakemake', 'bioinformatics', 'read simulator', 'NGS'],
 	classifiers = [

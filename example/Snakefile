@@ -2,7 +2,7 @@ import smbl
 import mishmash
 
 fasta=smbl.fasta.HUMAN_HG38
-#fasta=smbl.fasta.EXAMPLE
+fasta=smbl.fasta.EXAMPLE
 
 test_art_illumina   = True
 test_wgsim          = True
