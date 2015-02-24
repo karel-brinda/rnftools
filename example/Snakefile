@@ -18,7 +18,7 @@ test_curesim        = True
 #
 # SINGLE-END
 #
-mishmash.sample("single_end_example")
+mishmash.sample("single_end_example",ends=1)
 
 if test_art_illumina:
 	mishmash.ArtIllumina(
@@ -57,7 +57,7 @@ if test_curesim:
 # PAIR-END
 #
 
-mishmash.sample("pair_end_example")
+mishmash.sample("pair_end_example",ends=2)
 
 if test_art_illumina:
 	mishmash.ArtIllumina(
