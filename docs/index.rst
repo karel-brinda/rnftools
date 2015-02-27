@@ -7,6 +7,7 @@ Introduction
 RNFtools is a software package for purposes of the `RNF`_, a format for assigning read names for simulated
 Next-Generation Sequencing reads. The format aims to remove independency of evaluation tools of read mappers
 on the used read simulators. RNFtools consist of two principal parts:
+
 * MIShmash - a tool which creates data sets of simulated NGS reads using existing simulators 
 * LAVEnder - a tool to evaluate NGS read mappers using simulated reads in RNF format,
 
@@ -44,8 +45,8 @@ Contents
 --------
 
 .. toctree::
-	:maxdepth: 
-    
+    :maxdepth: 2
+
 	rnftools
 	first_steps
 	faq

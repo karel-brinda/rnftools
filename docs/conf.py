@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'rnftools'
+project = 'RNFtools'
 copyright = '2015, Karel Brinda'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -229,7 +229,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'rnftools', 'rnftools documentation',
+    ('index', 'RNFtools', 'RNFtools documentation',
      ['Karel Brinda'], 1)
 ]
 
@@ -243,8 +243,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'rnftools', 'rnftools Documentation',
-   'Karel Brinda', 'rnftools', 'One line description of project.',
+  ('index', 'RNFtools', 'RNFtools Documentation',
+   'Karel Brinda', 'RNFtools', 'One line description of project.',
    'Miscellaneous'),
 ]
 
