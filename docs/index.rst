@@ -50,7 +50,8 @@ Contents
 .. toctree::
 	:maxdepth: 2
 
-	rnftools
+	index
+	installation
 	first_steps
 	faq
 	mishmash
