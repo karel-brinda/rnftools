@@ -1,4 +1,5 @@
-import lavender
+import rnftools.lavender
+
 import smbl
 import snakemake
 import os
@@ -24,7 +25,7 @@ class Panel:
 
 		"""
 		self.report=report
-		lavender._PANELS_.append(self)
+		lavender.add_panel(self)
 		self.name       = name
 		self.panel_dir = panel_dir
 

@@ -27,6 +27,7 @@ setup(
 		'snakemake',
 		'smbl',
 		'pysam',
+		'termcolor',
 	],
         scripts=['bin/rnf-join-fq.py'],
 	zip_safe=False,

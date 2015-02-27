@@ -1,5 +1,3 @@
-from rnftools import mishmash
-
 import snakemake
 import smbl
 
@@ -8,6 +6,8 @@ import re
 import os
 import pysam
 
+import rnftools.mishmash
+
 """
 	Abstract class for a source of reads
 """
@@ -15,11 +15,11 @@ class Source(object):
 	__metaclass__ = abc.ABCMeta
 
 	def __init__(self, fa, ends, rng_seed, number_of_threads=1):
-		mishmash._SOURCES_.append(self)
+		rnftools.mishmash.add_source(self)
 		self._rng_seed = rng_seed
 		self._ends=ends
 
-		self._sample=mishmash._SAMPLES_[-1]
+		self._sample=rnftools.mishmash.current_sample()
 		self._sample.add_source(self)
 		self.source_id=len(self._sample.get_sources())
 		self._number_of_threads=number_of_threads

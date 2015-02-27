@@ -1,4 +1,4 @@
-from rnftools import mishmash
+from .source import Source
 
 import os
 import smbl
@@ -19,7 +19,7 @@ import re
 #
 #
 
-class DwgSim(mishmash.Source):
+class DwgSim(Source):
 	#TODO:estimate_unknown_values=False,
 	def __init__(self,
 			fa,

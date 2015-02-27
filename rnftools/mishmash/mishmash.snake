@@ -1,12 +1,10 @@
-from rnftools import mishmash
+import rnftools.mishmash
+
 import smbl
 import time
 import re
 
 include: smbl.include
-
-
-
 
 
 ##################################
@@ -19,11 +17,11 @@ include: smbl.include
 
 rule clean:
 	run:
-		for sample in mishmash._SAMPLES_:
+		for sample in mishmash.samples():
 			sample.clean()
 
 
-for i, sample in enumerate(mishmash._SAMPLES_):
+for i, sample in enumerate(mishmash.samples()):
 	rule:
 		"""
 			Rules for samples (final FASTQ files)
@@ -35,9 +33,9 @@ for i, sample in enumerate(mishmash._SAMPLES_):
 		params:
 			i=str(i)
 		run:
-			mishmash._SAMPLES_[int(params.i)].create_fq()
+			mishmash.samples()[int(params.i)].create_fq()
 
-for i, source in enumerate(mishmash._SOURCES_):
+for i, source in enumerate(mishmash.sources()):
 	rule:
 		"""
 			Rules for individual sources (intermediate FASTQ files)
@@ -51,4 +49,4 @@ for i, source in enumerate(mishmash._SOURCES_):
 		threads:
 			source.get_number_of_threads()
 		run:
-			mishmash._SOURCES_[int(params.i)].create_fq()
+			mishmash.sources()[int(params.i)].create_fq()

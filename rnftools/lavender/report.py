@@ -1,4 +1,4 @@
-import lavender
+import rnftools.lavender
 import snakemake
 import os
 
@@ -21,16 +21,16 @@ class Report:
 
 		"""
 
-		lavender._REPORTS_.append(self)
+		lavender.add_report(self)
 
 		self.name = name
 		self.report_dir = self.name
 
 		self._html_fn = name+".html"
-		self.pannels = [
+		self.panels = [
 				lavender.Pannel(
 					bam_dir=bam_dirs[i],
-					pannel_dir=os.path.join(self.report_dir,str(i)),
+					panel_dir=os.path.join(self.report_dir,str(i)),
 					report=self,
 					name=str(i)
 				)
@@ -49,10 +49,10 @@ class Report:
 
 		snakemake.shell('rm -fR "{}" "{}"'.format(self.report_dir,self._html_fn))
 
-	def get_pannels(self):
-		"""Get all contained pannels."""
+	def get_panels(self):
+		"""Get all contained panels."""
 		
-		return self.pannels
+		return self.panels
 
 	######################################
 	######################################
@@ -69,7 +69,7 @@ class Report:
 		"""Create HTML report."""
 
 		html_table = ""
-		columns = [pannel.get_html_column() for pannel in self.pannels]
+		columns = [panel.get_html_column() for panel in self.panels]
 		trs = len(columns[0])
 		html_table+=os.linesep.join([
 				"<tr>{}</tr>".format(

@@ -1,4 +1,4 @@
-from rnftools import mishmash
+from .source import Source
 
 import os
 import smbl
@@ -6,7 +6,7 @@ import snakemake
 import re
 import itertools
 
-class WgSim(mishmash.Source):
+class WgSim(Source):
 	#TODO:estimate_unknown_values=False,
 	def __init__(self,
 			fa,

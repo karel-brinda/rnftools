@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import lavender
+import rnftools.lavender
+
 import smbl
 import snakemake
 import os
@@ -18,27 +19,27 @@ __all__ = ["Bam"]
 class Bam:
 	"""Class for a single BAM file."""
 
-	def __init__(self,pannel,bam_fn,name):
+	def __init__(self,panel,bam_fn,name):
 		"""
 
-		:param pannel: Pannel containing this BAM file.
+		:param panel: Panel containing this BAM file.
 		:param bam_fn: BAM filename.
 		:param name: Name for this report.
 
 		"""
 
-		self.pannel=pannel
+		self.panel=panel
 		self.name=name
 
 		self._bam_fn  = bam_fn
-		self._gp_fn   = os.path.join(self.pannel.get_pannel_dir(),"gp",self.name+".gp")
-		self._html_fn = os.path.join(self.pannel.get_pannel_dir(),"html",self.name+".html")
-		self._aci_fn  = os.path.join(self.pannel.get_pannel_dir(),"aci",self.name+".aci")
-		self._roc_fn  = os.path.join(self.pannel.get_pannel_dir(),"roc",self.name+".roc")
-		self._svg_fn  = os.path.join(self.pannel.get_pannel_dir(),"svg",self.name+".svg")
+		self._gp_fn   = os.path.join(self.panel.get_panel_dir(),"gp",self.name+".gp")
+		self._html_fn = os.path.join(self.panel.get_panel_dir(),"html",self.name+".html")
+		self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci")
+		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
+		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
 
-		self.bam_id=len(lavender._BAMS_)
-		lavender._BAMS_.append(self)
+		self.bam_id=len(lavender.bams())
+		lavender.add_bam(self)
 
 	def get_name(self):
 		"""Get name associated with the BAM."""
@@ -308,7 +309,7 @@ class Bam:
 						os.path.dirname(self._html_fn)
 					),
 					homepage=os.path.relpath(
-						self.pannel.get_report().html_fn(),
+						self.panel.get_report().html_fn(),
 						os.path.dirname(self._html_fn)
 					),
 				)

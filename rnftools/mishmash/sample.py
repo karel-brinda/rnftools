@@ -1,4 +1,4 @@
-from rnftools import mishmash
+import rnftools.mishmash
 
 import smbl
 import snakemake
@@ -24,7 +24,7 @@ class Sample:
 			self._fq_fns=[self._name+".fq"]
 			self._mode="pair-end-bfast"
 
-		mishmash._SAMPLES_.append(self)
+		rnftools.mishmash.add_sample(self)
 
 		if paired_end_mode not in ["bwa","bfast"]:
 			raise ValueError("paired_end_mode must be 'bwa' or 'bfast'")

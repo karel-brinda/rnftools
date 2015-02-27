@@ -1,6 +1,7 @@
 import smbl
 import snakemake
-from rnftools import mishmash
+
+from .source import Source
 
 import os
 
@@ -8,7 +9,7 @@ import os
 # AUXILIARY FUNCTIONS
 #
 
-class ArtIllumina(mishmash.Source):
+class ArtIllumina(Source):
 	def __init__(self,
 			fa,
 			coverage=0,

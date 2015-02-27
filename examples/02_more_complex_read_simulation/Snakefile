@@ -1,0 +1,89 @@
+import smbl
+from rnftools import mishmash
+
+
+fasta=smbl.fasta.HUMAN_HG38
+fasta=smbl.fasta.EXAMPLE
+
+test_art_illumina   = True
+test_wgsim          = True
+test_dwgsim         = True
+test_curesim        = True
+
+#test_art_illumina   = False
+#test_wgsim          = False
+#test_dwgsim         = False
+#test_curesim        = False
+
+
+#
+# SINGLE-END
+#
+mishmash.sample("single_end_example",ends=1)
+
+if test_art_illumina:
+	mishmash.ArtIllumina(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+if test_dwgsim:
+	mishmash.DwgSim(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+if test_wgsim:
+	mishmash.WgSim(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+if test_curesim:
+	mishmash.CuReSim(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+
+#
+# PAIR-END
+#
+
+mishmash.sample("pair_end_example",ends=2)
+
+if test_art_illumina:
+	mishmash.ArtIllumina(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
+
+if test_dwgsim:
+	mishmash.DwgSim(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
+
+if test_wgsim:
+	mishmash.WgSim(
+		fa=fasta,
+		number_of_reads=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
+
+
+include: mishmash.include()
+rule: input: mishmash.input()

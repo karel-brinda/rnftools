@@ -1,9 +1,10 @@
-import lavender
-import mishmash
+from rnftools import lavender
+from rnftools import mishmash
 
-include = [
-		lavender.include,
-		mishmash.include,
+def include():
+	return [
+		lavender.include(),
+		mishmash.include(),
 	]
 
 __all__ = []

@@ -1,4 +1,4 @@
-from rnftools import mishmash
+from .source import Source
 
 import os
 import smbl
@@ -9,7 +9,7 @@ import re
 # AUXILIARY FUNCTIONS
 #
 
-class CuReSim(mishmash.Source):
+class CuReSim(Source):
 	def __init__(self,
 			fa,
 			coverage=0,
