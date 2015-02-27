@@ -1,5 +1,5 @@
-MIShmash
-========
+Read simulation with MIShmash
+==============================
 
 MIShmash is a pipeline for simulation of Next-Generation Sequencing reads. It simulates reads using
 existing read simulators and combines the obtained reads into a single set. The pipeline is based
@@ -150,11 +150,15 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
+	:maxdepth: 
 
-.. automodule:: mishmash
-   :members:
-
+	rnftools
+	first_steps
+	faq
+	mishmash
+	lavender
+	developers
+	
 
 Indices and tables
 ------------------
@@ -162,6 +166,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-
 
