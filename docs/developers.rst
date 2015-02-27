@@ -1,5 +1,5 @@
-Information for developers \...
-===============================
+Information for developers
+==========================
 
 Do you develop bioinformatics software? Here you will find how RNF and RNFtools
 can be useful.
@@ -42,9 +42,8 @@ positions. E.g., many reads are shifted by two positions, there is probably a bu
 inside.
 
 
-
-\... of NGS read evaluators
----------------------------
+\... of evaluators of NGS read mappers
+--------------------------------------
 
 RNF enables you writing a universal evaluation tool, compatible with any RNF-compatible read
-simulator or a simulator supported by MIShmash.
+simulator and any simulator supported by MIShmash.
