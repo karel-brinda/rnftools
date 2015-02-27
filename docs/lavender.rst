@@ -1,5 +1,5 @@
-LAVEnder
-========
+Mapper evaluation with LAVEnder
+================================
 
 LAVEnder is a RNF-compatible evaluation tool for Next-Generation Sequencing mappers.
 
@@ -8,7 +8,6 @@ LAVEnder is a RNF-compatible evaluation tool for Next-Generation Sequencing mapp
 Usage
 -----
 
-Technically, MIShmash works as a `SnakeMake`_ pipeline.
 
 1. Create simulated reads using a RNF-compatible read simulator, for example `MIShmash`_
 2. Map the simulated reads to your reference with your tested mappers and put the obtained BAM files into a standalone directory.
@@ -38,33 +37,41 @@ Technically, MIShmash works as a `SnakeMake`_ pipeline.
 
 
 
-Contents:
+Contents
+--------
 
 .. toctree::
-   :maxdepth: 2
+	:maxdepth: 
 
-
+	rnftools
+	first_steps
+	faq
+	mishmash
+	lavender
+	developers
+	
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
-.. automodule:: lavender
 
-.. autoclass:: lavender.Report
+.. automodule:: rnftools.lavender
+
+.. autoclass:: rnftools.lavender.Report
 	:members:
 	:inherited-members:
 	:show-inheritance:
 
-.. autoclass:: lavender.Pannel
+.. autoclass:: rnftools.lavender.Panel
 	:members:
 	:inherited-members:
 	:show-inheritance:
 
-.. autoclass:: lavender.Bam
+.. autoclass:: rnftools.lavender.Bam
 	:members:
 	:inherited-members:
 	:show-inheritance:

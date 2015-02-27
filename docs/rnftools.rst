@@ -3,15 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-RnfTools
-=========
+Installation
+============
 
 
 Table of Contents
 -----------------
 
 .. contents::
-   :depth: 2
+   :depth: 1
 
 
 Requirements
@@ -20,23 +20,24 @@ Requirements
 * Unix-like operating system (Linux, MacOS, etc.).
 * `Python`_ 3.2+. If not installed yet, Anaconda is a recommended Python distribution.
 * `SnakeMake`_
-* `PIP`_
 
 .. _Python: http://python.org
 .. _Anaconda: http://continuum.io/downloads
 .. _SnakeMake: http://bitbucket.org/johanneskoester/snakemake/
 .. _PIP: http://pip.pypa.io/en/latest/installing.html
+.. _GIT repository: http://github.com/karel-brinda/rnftools
+
 
 Installation
 ------------
 
-* using PIP (recommended):
+* using _PIP (recommended):
 
 	.. code-block:: bash
 	
-		pip install --upgrade rnftools
+		pip install rnftools
 
-* from GIT (the last development version):
+* from the _`GIT repository` (the last development version):
 
 	.. code-block:: bash
 	
@@ -45,16 +46,32 @@ Installation
 		python3 setup.py install
 
 
+Upgrade to the newest version
+-----------------------------
+
+* using _PIP (recommended):
+
+	.. code-block:: bash
+	
+		pip install --upgrade rnftools
+
+* from the _`GIT repository` - the same steps as for the installation
+
+
 
 Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
+	:maxdepth: 
 
-.. automodule:: rnftools
-   :members:
-
+	rnftools
+	first_steps
+	faq
+	mishmash
+	lavender
+	developers
+	
 
 Indices and tables
 ------------------
