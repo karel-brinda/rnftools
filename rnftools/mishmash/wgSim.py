@@ -1,8 +1,9 @@
+from rnftools import mishmash
+
 import os
 import smbl
 import snakemake
 import re
-import mishmash
 import itertools
 
 class WgSim(mishmash.Source):

@@ -1,4 +1,4 @@
-import mishmash
+from rnftools import mishmash
 import smbl
 import time
 import re

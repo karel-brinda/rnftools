@@ -1,6 +1,6 @@
 import smbl
 import snakemake
-import mishmash
+from rnftools import mishmash
 
 import os
 

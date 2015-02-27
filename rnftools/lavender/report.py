@@ -3,6 +3,8 @@ import snakemake
 import os
 
 
+__all__=["Report"]
+
 ##############
 ##############
 ### REPORT ###

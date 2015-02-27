@@ -4,56 +4,58 @@ import snakemake
 import os
 import glob
 
-##############
-##############
-### PANNEL ###
-##############
-##############
-class Pannel:
-	"""Class for a single pannel in a HTML report."""
+__all__=["Panel"]
 
-	def __init__(self,report,bam_dir,pannel_dir,name):
+#############
+#############
+### PANEL ###
+#############
+#############
+class Panel:
+	"""Class for a single panel in a HTML report."""
+
+	def __init__(self,report,bam_dir,panel_dir,name):
 		"""
 
 		:param report: The owner (report).
 		:param bam_dir: Directory to the BAM files.
-		:param pannel_dir: Directory with pannel's auxiliary files.
-		:param name: Name of the pannel.
+		:param panel_dir: Directory with panel's auxiliary files.
+		:param name: Name of the panel.
 
 		"""
 		self.report=report
-		lavender._PANNELS_.append(self)
+		lavender._PANELS_.append(self)
 		self.name       = name
-		self.pannel_dir = pannel_dir
+		self.panel_dir = panel_dir
 
-		self._svg_fn    = os.path.join(self.pannel_dir,"svg","_combined.svg")
-		self._gp_fn     = os.path.join(self.pannel_dir,"gp","_combined.gp")
+		self._svg_fn    = os.path.join(self.panel_dir,"svg","_combined.svg")
+		self._gp_fn     = os.path.join(self.panel_dir,"gp","_combined.gp")
 
 		bams_fns        = glob.glob(os.path.join(bam_dir,"*.bam"))
 		self.bams       = [
 				lavender.Bam(
 					bam_fn=bam_fn,
-					pannel=self,
+					panel=self,
 					name=os.path.basename(bam_fn).replace(".bam","")
 				) 
 				for bam_fn in sorted(bams_fns)
 			]
 
 		for x in ["gp","html","roc","svg"]:
-			snakemake.shell('mkdir -p "{}"'.format(os.path.join(self.pannel_dir,x)))
+			snakemake.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
 		""" Get the report. """
 
 		return self.report
 
-	def get_pannel_dir(self):
-		""" Get the directory with pannel's auxiliary files. """
+	def get_panel_dir(self):
+		""" Get the directory with panel's auxiliary files. """
 
-		return self.pannel_dir
+		return self.panel_dir
 
 	def get_bams(self):
-		""" Get BAMs for this pannel. """
+		""" Get BAMs for this panel. """
 
 		return self.bams
 
@@ -63,29 +65,29 @@ class Pannel:
 		return [bam.get_required_files() for bam in self.bams] + [self._svg_fn]
 
 	def get_html_column(self):
-		""" Get a HTML column for this pannel. """
+		""" Get a HTML column for this panel. """
 
-		pannel_id="pannel_{}".format(self.name)
+		panel_id="panel_{}".format(self.name)
 		return [
 				(" <br>"+os.linesep).join(
 					[
 						"""
 							<a style="font-weight:bold" href="{bam_html}">{bam_name}</a>: 
-							<a onclick="document.getElementById('{pannel_id}').src='{bam_svg}';return false;" href="#">graph</a>
+							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';return false;" href="#">graph</a>
 						""".format(
 							bam_name=bam.get_name(),
 							bam_html=bam.html_fn(),
 							bam_svg=bam.svg_fn(),
-							pannel_id=pannel_id
+							panel_id=panel_id,
 						)
 						for bam in self.bams
 					]
 
 				),
 
-				"""<img src="{svg}" id="{pannel_id}">""".format(
+				"""<img src="{svg}" id="{panel_id}">""".format(
 						svg=self.bams[0]._svg_fn,
-						pannel_id=pannel_id
+						panel_id=panel_id
 					),
 
 				"""<img src="{svg}">""".format(

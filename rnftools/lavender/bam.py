@@ -8,6 +8,8 @@ import sys
 import pysam
 
 
+__all__ = ["Bam"]
+
 ###########
 ###########
 ### BAM ###

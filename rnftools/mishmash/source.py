@@ -1,4 +1,5 @@
-import mishmash
+from rnftools import mishmash
+
 import snakemake
 import smbl
 

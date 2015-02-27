@@ -16,10 +16,10 @@ The LAVEnder Next-Generation Sequencing mappers evaluation tool.
 
 """
 
-import lavender
 import os
 
 __docformat__ = 'reStructuredText'
+__all__=["Bam","Report","Pannel"]
 
 # todo:
 #  - left-right: cigar correction
@@ -29,10 +29,12 @@ include = os.path.join( os.path.dirname(__file__), "lavender.snake")
 input = []
 
 
-lavender._PANNELS_ = []
-lavender._BAMS_    = []
-lavender._REPORTS_ = []
+_PANNELS_ = []
+_BAMS_    = []
+_REPORTS_ = []
 
-from lavender.report import *
-from lavender.pannel import *
-from lavender.bam import *
+from .report import *
+from .pannel import *
+from .bam import *
+
+
