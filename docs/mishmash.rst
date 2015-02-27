@@ -144,26 +144,3 @@ Remarks:
 
 * for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
 
-
-
-Contents
---------
-
-.. toctree::
-	:maxdepth: 
-
-	rnftools
-	first_steps
-	faq
-	mishmash
-	lavender
-	developers
-	
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
