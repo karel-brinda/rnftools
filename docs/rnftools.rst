@@ -56,27 +56,3 @@ Upgrade to the newest version
 		pip install --upgrade rnftools
 
 * from the _`GIT repository` - the same steps as for the installation
-
-
-
-Contents
---------
-
-.. toctree::
-	:maxdepth: 
-
-	rnftools
-	first_steps
-	faq
-	mishmash
-	lavender
-	developers
-	
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
