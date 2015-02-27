@@ -6,14 +6,6 @@
 Installation
 ============
 
-
-Table of Contents
------------------
-
-.. contents::
-   :depth: 1
-
-
 Requirements
 ------------
 

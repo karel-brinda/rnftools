@@ -1,5 +1,27 @@
 First steps with RNFtools
 =========================
 
-LAVEnder is a RNF-compatible evaluation tool for Next-Generation Sequencing mappers.
+Simple simulation
+-----------------
+
+
+
+Simple evalution
+----------------
+
+
+
+Advanced simulation
+-------------------
+
+
+
+Advanced evaluation
+-------------------
+
+
+
+
+Advanced pipelines with simulation and evalution
+------------------------------------------------
 
