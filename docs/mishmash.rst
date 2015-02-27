@@ -144,3 +144,5 @@ Remarks:
 
 * for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
 
+
+.. automodule:: rnftools.mishmash
