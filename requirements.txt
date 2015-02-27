@@ -1,0 +1,4 @@
+snakemake
+smbl
+pysam
+termcolor
