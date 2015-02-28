@@ -35,12 +35,12 @@ def input():
 	return __INPUT__
 
 def add_input(input):
-	__INPUT__.add(input)
+	__INPUT__.append(input)
 
 
 __PANELS__ = []
 
-def pannels():
+def panels():
 	return __PANELS__
 
 def add_panel(panel):

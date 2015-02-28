@@ -1,5 +1,14 @@
 *.fa
+*.fasta
 *.fq
+*.fastq
+*.txt
 *.sam
+*.bam
+*.html
+*.aci
+*.roc
+*.svg
+*.gp
 
 

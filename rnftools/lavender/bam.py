@@ -38,8 +38,8 @@ class Bam:
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
 
-		self.bam_id=len(lavender.bams())
-		lavender.add_bam(self)
+		self.bam_id=len(rnftools.lavender.bams())
+		rnftools.lavender.add_bam(self)
 
 	def get_name(self):
 		"""Get name associated with the BAM."""

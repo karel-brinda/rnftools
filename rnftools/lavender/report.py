@@ -1,4 +1,4 @@
-import rnftools.lavender
+import rnftools
 import snakemake
 import os
 
@@ -21,14 +21,14 @@ class Report:
 
 		"""
 
-		lavender.add_report(self)
+		rnftools.lavender.add_report(self)
 
 		self.name = name
 		self.report_dir = self.name
 
 		self._html_fn = name+".html"
 		self.panels = [
-				lavender.Pannel(
+				rnftools.lavender.Panel(
 					bam_dir=bam_dirs[i],
 					panel_dir=os.path.join(self.report_dir,str(i)),
 					report=self,
@@ -37,7 +37,7 @@ class Report:
 				for i in range(len(bam_dirs))
 			]
 
-		lavender.input.append(self._html_fn)
+		rnftools.lavender.add_input(self._html_fn)
 
 	def get_report_dir(self):
 		"""Get directory report's auxiliary files."""
@@ -110,3 +110,4 @@ class Report:
 					name=self.name
 				)
 			f.write(html_src)
+

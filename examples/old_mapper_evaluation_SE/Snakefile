@@ -1,0 +1,14 @@
+import rnftools
+
+
+rnftools.lavender.Report(
+	bam_dirs=["bams"],
+	name="test report"
+)
+
+rule all:
+	input:
+		rnftools.lavender.input()
+
+include: rnftools.lavender.include()
+

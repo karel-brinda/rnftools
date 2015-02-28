@@ -25,7 +25,7 @@ class Panel:
 
 		"""
 		self.report=report
-		lavender.add_panel(self)
+		rnftools.lavender.add_panel(self)
 		self.name       = name
 		self.panel_dir = panel_dir
 
@@ -34,7 +34,7 @@ class Panel:
 
 		bams_fns        = glob.glob(os.path.join(bam_dir,"*.bam"))
 		self.bams       = [
-				lavender.Bam(
+				rnftools.lavender.Bam(
 					bam_fn=bam_fn,
 					panel=self,
 					name=os.path.basename(bam_fn).replace(".bam","")
