@@ -40,7 +40,7 @@ Then save the following content into it:
 
 	# these lines are mandatory as the last lines of the file
 	include: rnftools.mishmash.include()
-	rule: input: rnftools.mishmash.output()
+	rule: input: rnftools.mishmash.input()
 
 
 Supported simulators
@@ -49,13 +49,14 @@ Supported simulators
 ART
 ^^^
 
-+----------------+----------------------------------------------------------------------------------------------------------+
-| URL:           | http://www.niehs.nih.gov/research/resources/software/biostatistics/art/                                  |
-+----------------+----------------------------------------------------------------------------------------------------------+
-| Publication:   | Huang, W. _et al._                                                                                       |
-|                | ART: a next-generation sequencing read simulator.                                                        |
-|                | _Bioinformatics_ *28*\(4), pp. 593--594, 2011.                                                           |
-+----------------+----------------------------------------------------------------------------------------------------------+
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://www.niehs.nih.gov/research/resources/software/biostatistics/art/ |
++--------------+-------------------------------------------------------------------------+
+| Publication: | Huang, W. *et al.*                                                      |
+|              | ART: a next-generation sequencing read simulator.                       |
+|              | *Bioinformatics* **28**\(4), pp. 593--594, 2011.                        |
++--------------+-------------------------------------------------------------------------+
+
 
 ART Illumina
 ~~~~~~~~~~~~
@@ -65,6 +66,7 @@ ART Illumina
         :inherited-members:
         :show-inheritance:
 
+
 CuReSim
 ^^^^^^^
 
@@ -73,16 +75,26 @@ CuReSim
         :inherited-members:
         :show-inheritance:
 
+
 DwgSim
 ^^^^^^
+
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://github.com/nh13/dwgsim                                           |
++--------------+-------------------------------------------------------------------------+
 
 .. autoclass:: rnftools.mishmash.DwgSim
         :members:
         :inherited-members:
         :show-inheritance:
 
+
 WgSim
 ^^^^^
+
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://github.com/lh3/wgsim                                             |
++--------------+-------------------------------------------------------------------------+
 
 .. autoclass:: rnftools.mishmash.WgSim
         :members:
