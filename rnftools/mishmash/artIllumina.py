@@ -10,9 +10,9 @@ import os
 #
 
 class ArtIllumina(Source):
-	"""Class for ART Illumina simulator of NGS reads.
+	"""Class for the ART Illumina simulator of NGS reads.
 
-	single-end reads and pair-end reads simulations are supported. For pair-end simulations,
+	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	lengths of both ends must be equal.
 	"""
 
@@ -83,9 +83,6 @@ class ArtIllumina(Source):
 		self._sam2_fn = self.art_prefix+".corrected.sam"
 
 	def get_input(self):
-		"""Get list of input files (required to do simulation).
-		:returns: list -- List of input files.
-		"""
 		return [
 				smbl.prog.ART_ILLUMINA,
 				smbl.prog.SAMTOOLS,
@@ -94,9 +91,6 @@ class ArtIllumina(Source):
 			]
 
 	def get_output(self):
-		"""Get list of output files (created during simulation).
-		:returns: list -- List of input files.
-		"""
 		return 	[
 				self._fq_fn,
 				self._sam1_fn,

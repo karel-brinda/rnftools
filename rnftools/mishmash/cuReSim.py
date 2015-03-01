@@ -10,6 +10,11 @@ import re
 #
 
 class CuReSim(Source):
+	"""Class for CuReSim simulator of NGS reads.
+
+	Only single-end reads simulations are supported.
+	"""
+
 	def __init__(self,
 			fa,
 			coverage=0,
@@ -26,7 +31,7 @@ class CuReSim(Source):
 		:type  coverage: float.
 		:param read_length_1: Length of the first end of a read.
 		:type  read_length_1: int.
-		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
+		:param read_length_2: Length of the second end of a read. It must be equal to zero.
 		:type  read_length_2: int.
 		:param other_params: Other parameters which are used on commandline.
 		:type  other_params: str.
@@ -53,9 +58,6 @@ class CuReSim(Source):
 
 
 	def get_input(self):
-		"""Get list of input files (required to do simulation).
-		:returns: list -- List of input files.
-		"""
 		return [
 				smbl.prog.CURESIM,
 				self._fa_fn,
@@ -63,9 +65,6 @@ class CuReSim(Source):
 			]
 
 	def get_output(self):
-		"""Get list of output files (created during simulation).
-		:returns: list -- List of input files.
-		"""
 		return [
 				self._fq_fn,
 #				os.path.join(
@@ -80,8 +79,6 @@ class CuReSim(Source):
 
 	# TODO: find out how it is with RNG seeds
 	def create_fq(self):
-		"""Perform the simulation."""
-
 		if self.number_of_reads == 0:
 			genome_size=os.stat(self._fa_fn).st_size
 			self.number_of_reads=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
@@ -120,7 +117,7 @@ class CuReSim(Source):
 
 		:param old_fq: Od FASTQ file name.
 		:type  old_fq: str.
-		:param number_of_reads: Expected number of reads (to estimate number of digits).
+		:param number_of_reads: Expected number of reads (to estimate number of digits in RNF).
 		:type  number_of_reads: int.
 		:raises: ValueError
 		"""

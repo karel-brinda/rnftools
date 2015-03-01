@@ -8,10 +8,10 @@ import pysam
 
 import rnftools.mishmash
 
-"""
-	Abstract class for a source of reads
-"""
 class Source(object):
+	"""	Abstract class for a source of reads
+	"""
+
 	__metaclass__ = abc.ABCMeta
 
 	def __init__(self, fa, ends, rng_seed, number_of_threads=1):
@@ -42,11 +42,11 @@ class Source(object):
 	def get_dir(self):
 		return self._dir
 
-	"""
-		Get source ID compatible to the specification (without padding),
-		it is assigned automatically
-	"""
 	def get_source_id(self):
+		"""
+			Get source ID compatible to the specification (without padding),
+			it is assigned automatically
+		"""
 		return self.source_id
 
 	def get_number_of_ends(self):
@@ -61,45 +61,43 @@ class Source(object):
 	############################################################################
 	############################################################################
 
-	"""
-		Get input Fasta file (registered when object was created),
-		it can be an empty list
-	"""
 	def fa_fn(self):
+		"""
+			Get input Fasta file (registered when object was created),
+			it can be an empty list
+		"""
 		return self._fa_fn
 
-	"""
-		Get output FQ (filename)
-	"""
 	def fq_fn(self):
+		"""Get file name of the output FASTQ file.
+		:returns: str -- Output FASTQ file.
+		"""
 		return self._fq_fn
 
 
-	"""
-		Get required programs (with respect to snakemake-lib)
-	"""
 	@abc.abstractmethod
 	def get_input(self):
+		"""Get list of input files (required to do simulation).
+		:returns: list -- List of input files.
+		"""
 		return
 
 	############################################################################
 	############################################################################
 
-	"""
-		Get other output files (will be marked as temp)
-	"""
 	@abc.abstractmethod
 	def get_output(self):
+		"""Get list of output files (created during simulation).
+		:returns: list -- List of input files.
+		"""
 		return
 
 	############################################################################
 	############################################################################
 
-	"""
-		Run read simulation
-	"""
 	@abc.abstractmethod
 	def create_fq(self):
+		"""Perform read simulation."""
 		return
 
 	def _fq_buffer(self,read_id,blocks_buffer,sequences_buffer,rn_formatter,simulator_name=""):
