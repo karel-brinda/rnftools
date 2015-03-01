@@ -1,13 +1,22 @@
-Mapper evaluation with LAVEnder
-================================
+Mapper evaluation
+=================
 
-LAVEnder is a RNF-compatible evaluation tool for Next-Generation Sequencing mappers.
+Table of Contents
+-----------------
+
+.. contents::
+   :depth: 2
+
+
+LAVender
+--------
+
+LAVEnder is a RNF-compatible evaluation tool for evaluation of mappers of Next-Generation Sequencing reads.
 
 
 
 Usage
 -----
-
 
 1. Create simulated reads using a RNF-compatible read simulator, for example `MIShmash`_
 2. Map the simulated reads to your reference with your tested mappers and put the obtained BAM files into a standalone directory.
@@ -17,7 +26,7 @@ Usage
 	.. code-block:: python
 
 		# a mandatory line
-		import lavender
+		import rnftools.lavender
 
 		# this command says: "create a report called 'my_amazing_report' for BAM files
 		# in directory 'my_bam_directory'"
@@ -27,18 +36,15 @@ Usage
 		)
 
 		# two mandatory lines
-		include: lavender.include
-		rule: input: lavender.input
+		include: lavender.include()
+		rule: input: rnftools.input()
 
 5. Run ``snakemake`` in the directory
 
 
-.. _MIShmash: http://mishmash.rtfd.org
 
-
-
-
-.. automodule:: rnftools.lavender
+Technical documentation
+-----------------------
 
 .. autoclass:: rnftools.lavender.Report
 	:members:

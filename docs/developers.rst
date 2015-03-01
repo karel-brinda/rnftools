@@ -5,8 +5,8 @@ Do you develop bioinformatics software? Here you will find how RNF and RNFtools
 can be useful.
 
 
-\... of NGS read mappers
-------------------------
+\... of mappers of NGS reads
+----------------------------
 
 RNFtools can help you to debug your tool. You can simulate reads using MIShmash,
 map them using your mapper, and then evaluate it using LAVEnder.
@@ -21,8 +21,8 @@ In similar way, RNFtools can be used for testing of pre-processing and
 post-processing NGS tools (such as read clustering tools or re-alignment tools).
 
 
-\... of NGS read simulators
----------------------------
+\... of simulators of NGS reads
+-------------------------------
 
 Even though MIShmash currently supports several simulators, it is much better when
 a tool supports the RNF naming convention implicitely. Usually, simulators do not
@@ -42,8 +42,8 @@ positions. E.g., many reads are shifted by two positions, there is probably a bu
 inside.
 
 
-\... of evaluators of NGS read mappers
---------------------------------------
+\... of evaluators of read mappers
+----------------------------------
 
 RNF enables you writing a universal evaluation tool, compatible with any RNF-compatible read
 simulator and any simulator supported by MIShmash.

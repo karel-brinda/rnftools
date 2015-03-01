@@ -1,9 +1,5 @@
-Read simulation with MIShmash
-==============================
-
-MIShmash is a pipeline for simulation of Next-Generation Sequencing reads. It simulates reads using
-existing read simulators and combines the obtained reads into a single set. The pipeline is based
-on SnakeMake. All required software is installed automatically when requested.
+Simulation of NGS reads
+======================
 
 Table of Contents
 -----------------
@@ -12,10 +8,16 @@ Table of Contents
    :depth: 2
 
 
+MIShmash
+--------
+
+MIShmash is a part of RNFtools responsible for simulation of Next-Generation Sequencing reads. It employs
+existing read simulators and combines the obtained reads into bigger single set.
+
+
 Usage
 -----
 
-Technically, MIShmash works as a SnakeMake pipeline. To use it, create an empty directory where the reads will be simulated.
 Create there an empty file named ``Snakefile``, which will serve as a configuration script.
 Then save the following content into it:
 
@@ -145,4 +147,40 @@ Remarks:
 * for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
 
 
-.. automodule:: rnftools.mishmash
+Supported simulators
+--------------------
+
+Art Illumina
+~~~~~~~~~~~~
+
+.. autoclass:: rnftools.mishmash.ArtIllumina
+        :members:
+        :inherited-members:
+        :show-inheritance:
+
+CuReSim
+~~~~~~~
+
+.. autoclass:: rnftools.mishmash.CuReSim
+        :members:
+        :inherited-members:
+        :show-inheritance:
+
+DwgSim
+~~~~~~
+
+.. autoclass:: rnftools.mishmash.DwgSim
+        :members:
+        :inherited-members:
+        :show-inheritance:
+
+WgSim
+~~~~~
+
+.. autoclass:: rnftools.mishmash.WgSim
+        :members:
+        :inherited-members:
+        :show-inheritance:
+
+
+
