@@ -48,13 +48,15 @@ Contents
 --------
 
 .. toctree::
-	:maxdepth: 3
+	:maxdepth: 2
+	:numbered:
 
 	installation
 	rnf
 	first_steps
 	mishmash
 	lavender
+	other_tools
 	developers
 	faq
 	

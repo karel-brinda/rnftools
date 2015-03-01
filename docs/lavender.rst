@@ -1,9 +1,6 @@
 Mapper evaluation
 =================
 
-Table of Contents
------------------
-
 .. contents::
    :depth: 2
 
@@ -16,7 +13,7 @@ LAVEnder is a RNF-compatible evaluation tool for evaluation of mappers of Next-G
 
 
 Usage
------
+^^^^^
 
 1. Create simulated reads using a RNF-compatible read simulator, for example `MIShmash`_
 2. Map the simulated reads to your reference with your tested mappers and put the obtained BAM files into a standalone directory.
@@ -44,7 +41,7 @@ Usage
 
 
 Technical documentation
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: rnftools.lavender.Report
 	:members:

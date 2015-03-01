@@ -13,7 +13,7 @@ existing read simulators and combines the obtained reads into bigger single set.
 
 
 Usage
------
+^^^^^
 
 Create there an empty file named ``Snakefile``, which will serve as a configuration script.
 Then save the following content into it:
@@ -44,10 +44,10 @@ Then save the following content into it:
 
 
 Supported simulators
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 ART
-^^^
+~~~
 
 +--------------+-------------------------------------------------------------------------+
 | Author:      | Weichun Huang                                                           |
@@ -61,7 +61,7 @@ ART
 
 
 ART Illumina
-~~~~~~~~~~~~
+""""""""""""
 
 .. autoclass:: rnftools.mishmash.ArtIllumina
         :members:
@@ -70,7 +70,7 @@ ART Illumina
 
 
 CuReSim
-^^^^^^^
+~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
 | Author:      | Ségolène Caboche                                                        |
@@ -90,7 +90,7 @@ CuReSim
 
 
 DwgSim
-^^^^^^
+~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
 | Author:      | Niels Homer                                                             |
@@ -105,7 +105,7 @@ DwgSim
 
 
 WgSim
-^^^^^
+~~~~~
 
 +--------------+-------------------------------------------------------------------------+
 | Author:      | Heng Li                                                                 |

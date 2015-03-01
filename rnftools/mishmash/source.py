@@ -70,6 +70,7 @@ class Source(object):
 
 	def fq_fn(self):
 		"""Get file name of the output FASTQ file.
+
 		:returns: str -- Output FASTQ file
 		"""
 		return self._fq_fn
@@ -78,6 +79,7 @@ class Source(object):
 	@abc.abstractmethod
 	def get_input(self):
 		"""Get list of input files (required to do simulation).
+
 		:returns: list -- List of input files
 		"""
 		return
@@ -88,6 +90,7 @@ class Source(object):
 	@abc.abstractmethod
 	def get_output(self):
 		"""Get list of output files (created during simulation).
+		
 		:returns: list -- List of input files
 		"""
 		return

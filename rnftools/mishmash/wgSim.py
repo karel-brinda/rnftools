@@ -28,25 +28,25 @@ class WgSim(Source):
 		):
 		"""
 		:param fa: File name of the genome from which reads are created (FASTA file).
-		:type  fa: str.
+		:type  fa: str
 		:param coverage: Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
-		:type  coverage: float.
+		:type  coverage: float
 		:param number_of_reads: Number of reads (if coverage specified, then it must be equal to zero).
-		:type  number_of_reads: int.
+		:type  number_of_reads: int
 		:param read_length_1: Length of the first end of a read.
-		:type  read_length_1: int.
+		:type  read_length_1: int
 		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
-		:type  read_length_2: int.
+		:type  read_length_2: int
 		:param other_params: Other parameters which are used on commandline.
-		:type  other_params: str.
+		:type  other_params: str
 		:param distance: Mean inner distance between ends.
-		:type  distance: int.
+		:type  distance: int
 		:param distance_deviation: Devation of inner distances between ends.
-		:type  distance_deviation: int.
+		:type  distance_deviation: int
 		:param rng_seed: Seed for simulator's random number generator.
-		:type  rng_seed: int.
+		:type  rng_seed: int
 		:param haplotype_mode: Simulate reads in haplotype_mode.
-		:type  haplotype_mode: bool.
+		:type  haplotype_mode: bool
 		:raises: ValueError
 		"""
 

@@ -26,15 +26,15 @@ class CuReSim(Source):
 		):
 		"""
 		:param fa: File name of the genome from which reads are created (FASTA file).
-		:type  fa: str.
+		:type  fa: str
 		:param coverage: Average coverage of the genome.
-		:type  coverage: float.
+		:type  coverage: float
 		:param read_length_1: Length of the first end of a read.
-		:type  read_length_1: int.
+		:type  read_length_1: int
 		:param read_length_2: Length of the second end of a read. It must be equal to zero.
-		:type  read_length_2: int.
+		:type  read_length_2: int
 		:param other_params: Other parameters which are used on commandline.
-		:type  other_params: str.
+		:type  other_params: str
 		:raises: ValueError
 		"""
 		
