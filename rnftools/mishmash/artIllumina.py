@@ -10,6 +10,8 @@ import os
 #
 
 class ArtIllumina(Source):
+	"""Class for ART Illumina simulator of NGS reads."""
+
 	def __init__(self,
 			fa,
 			coverage=0,
@@ -21,6 +23,16 @@ class ArtIllumina(Source):
 			distance_deviation=50.0,
 			rng_seed=1
 		):
+		"""
+		:param fa: File name of the genome from which reads are created (FASTA file).
+		:param coverage: Average coverage of the genome.
+		:param read_length_1: Length of the first end of a read.
+		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
+		:param other_params: Other parameters which are used on commandline.
+		:param distance: Mean inner distance between ends.
+		:param distance_deviation: Devation of inner distances between ends.
+		:param rng_seed: Seed for simulator's random number generator.
+		"""
 
 		if read_length_2==0:
 			ends = 1
