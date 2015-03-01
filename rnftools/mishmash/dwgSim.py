@@ -20,6 +20,12 @@ import re
 #
 
 class DwgSim(Source):
+	"""Class for the DwgSim simulator of NGS reads.
+
+	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
+	ends can have different lengths.
+	"""
+
 	#TODO:estimate_unknown_values=False,
 	def __init__(self,
 			fa,
@@ -32,6 +38,27 @@ class DwgSim(Source):
 			distance_deviation=50.0,
 			rng_seed=1
 		):
+		"""
+		:param fa: File name of the genome from which reads are created (FASTA file).
+		:type  fa: str.
+		:param coverage: Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
+		:type  coverage: float.
+		:param number_of_reads: Number of reads (if coverage specified, then it must be equal to zero).
+		:type  number_of_reads: int.
+		:param read_length_1: Length of the first end of a read.
+		:type  read_length_1: int.
+		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
+		:type  read_length_2: int.
+		:param other_params: Other parameters which are used on commandline.
+		:type  other_params: str.
+		:param distance: Mean inner distance between ends.
+		:type  distance: int.
+		:param distance_deviation: Devation of inner distances between ends.
+		:type  distance_deviation: int.
+		:param rng_seed: Seed for simulator's random number generator.
+		:type  rng_seed: int.
+		:raises: ValueError
+		"""
 
 		if read_length_2==0:
 			ends = 1

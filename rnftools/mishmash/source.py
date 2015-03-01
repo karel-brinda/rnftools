@@ -64,13 +64,13 @@ class Source(object):
 	def fa_fn(self):
 		"""
 			Get input Fasta file (registered when object was created),
-			it can be an empty list
+			it can be an empty list.
 		"""
 		return self._fa_fn
 
 	def fq_fn(self):
 		"""Get file name of the output FASTQ file.
-		:returns: str -- Output FASTQ file.
+		:returns: str -- Output FASTQ file
 		"""
 		return self._fq_fn
 
@@ -78,7 +78,7 @@ class Source(object):
 	@abc.abstractmethod
 	def get_input(self):
 		"""Get list of input files (required to do simulation).
-		:returns: list -- List of input files.
+		:returns: list -- List of input files
 		"""
 		return
 
@@ -88,7 +88,7 @@ class Source(object):
 	@abc.abstractmethod
 	def get_output(self):
 		"""Get list of output files (created during simulation).
-		:returns: list -- List of input files.
+		:returns: list -- List of input files
 		"""
 		return
 
