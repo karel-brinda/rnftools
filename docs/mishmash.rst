@@ -1,11 +1,8 @@
 Simulation of NGS reads
 ======================
 
-Table of Contents
------------------
-
 .. contents::
-   :depth: 2
+   :depth: 3
 
 
 MIShmash
@@ -24,13 +21,13 @@ Then save the following content into it:
 .. code-block:: python
 	
 	# required line, it should be the first line of all your configuration scripts
-	import mishmash
+	import rnftools
 
 	# this line tells MIShmash that there will be a new sample
-	mishmash.sample("new_sample")
+	rnftools.mishmash.sample("new_sample")
 	
 	# then you can add arbitrary number of sources
-	mishmash.ArtIllumina(
+	rnftools.mishmash.ArtIllumina(
 		fa="my_fast.fa",
 		number_of_reads=10000,
 		read_length_1=100,
@@ -42,115 +39,25 @@ Then save the following content into it:
 
 
 	# these lines are mandatory as the last lines of the file
-	include: mishmash.include
-	rule: input: mishmash.output
-
-Supported read simulators
--------------------------
-
-Explanation of the shared parameters:
-
-+----------------------------+--------------------------------------------------------------------+
-| ``fa``                     | reference (FASTA file)                                             |
-+----------------------------+--------------------------------------------------------------------+
-| ``coverage``               | average coverage (0 = non-specified)                               |
-+----------------------------+--------------------------------------------------------------------+
-| ``number_of_reads``        | number of reads (0 = non-specified)                                |
-+----------------------------+--------------------------------------------------------------------+
-| ``read_length_1``          | length of the first end of a read                                  |
-+----------------------------+--------------------------------------------------------------------+
-| ``read_length_2``          | length of the second end of a read (0 => single-end simulation)    |
-+----------------------------+--------------------------------------------------------------------+
-| ``other_params``           | other parameters for the given simulator (shell string)            |
-+----------------------------+--------------------------------------------------------------------+
-| ``distance``               | mean inner distance between ends of a read                         |
-+----------------------------+--------------------------------------------------------------------+
-| ``distance_deviation``     | its deviation                                                      |
-+----------------------------+--------------------------------------------------------------------+
-| ``rng_seed``               | seed for random number generator                                   |
-+----------------------------+--------------------------------------------------------------------+
-
-Remarks:
-
-* ``coverage`` or ``number_of_reads`` must be equal to zero
-
-
-ART Illumina
-^^^^^^^^^^^^
-
-Example:
-~~~~~~~~
-
-.. code-block:: python
-
-	mishmash.ArtIllumina(
-		fa="my_reference.fa",
-		number_of_reads=10000,
-		read_length_1=100,
-		read_length_2=0,
-	)
-
-
-Syntax: 
-~~~~~~~
-
-.. code-block:: python
-
-	mishmash.ArtIllumina(
-		fa
-		coverage=0,
-		number_of_reads=0,
-		read_length_1=100,
-		read_length_2=0,
-		other_params="",
-		distance=500,
-		distance_deviation=50.0,
-		rng_seed=1,
-	)
-
-
-DwgSim
-^^^^^^
-
-Example:
-~~~~~~~~
-
-.. code-block:: python
-
-	mishmash.DwgSim(
-		fa="my_referenc.fa",
-		number_of_reads=10000,
-		read_length_1=100,
-		read_length_2=100,
-	)
-
-Syntax:
-~~~~~~~
-
-.. code-block:: python
-
-	mishmash.DwgSim(
-		fa,
-		coverage=0,
-		number_of_reads=0,
-		read_length_1=100,
-		read_length_2=0,
-		other_params="",
-		distance=500,
-		distance_deviation=50.0,
-		rng_seed=1,
-	)
-
-Remarks:
-~~~~~~~~
-
-* for pair-end read simulation, ``read_length_1`` must equal to ``read_length_2``
+	include: rnftools.mishmash.include()
+	rule: input: rnftools.mishmash.output()
 
 
 Supported simulators
 --------------------
 
-Art Illumina
+ART
+^^^
+
++----------------+----------------------------------------------------------------------------------------------------------+
+| URL:           | http://www.niehs.nih.gov/research/resources/software/biostatistics/art/                                  |
++----------------+----------------------------------------------------------------------------------------------------------+
+| Publication:   | Huang, W. _et al._                                                                                       |
+|                | ART: a next-generation sequencing read simulator.                                                        |
+|                | _Bioinformatics_ *28*\(4), pp. 593--594, 2011.                                                           |
++----------------+----------------------------------------------------------------------------------------------------------+
+
+ART Illumina
 ~~~~~~~~~~~~
 
 .. autoclass:: rnftools.mishmash.ArtIllumina
@@ -159,7 +66,7 @@ Art Illumina
         :show-inheritance:
 
 CuReSim
-~~~~~~~
+^^^^^^^
 
 .. autoclass:: rnftools.mishmash.CuReSim
         :members:
@@ -167,7 +74,7 @@ CuReSim
         :show-inheritance:
 
 DwgSim
-~~~~~~
+^^^^^^
 
 .. autoclass:: rnftools.mishmash.DwgSim
         :members:
@@ -175,7 +82,7 @@ DwgSim
         :show-inheritance:
 
 WgSim
-~~~~~
+^^^^^
 
 .. autoclass:: rnftools.mishmash.WgSim
         :members:
