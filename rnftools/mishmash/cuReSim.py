@@ -19,6 +19,19 @@ class CuReSim(Source):
 			other_params="",
 			rng_seed=1
 		):
+		"""
+		:param fa: File name of the genome from which reads are created (FASTA file).
+		:type  fa: str.
+		:param coverage: Average coverage of the genome.
+		:type  coverage: float.
+		:param read_length_1: Length of the first end of a read.
+		:type  read_length_1: int.
+		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
+		:type  read_length_2: int.
+		:param other_params: Other parameters which are used on commandline.
+		:type  other_params: str.
+		:raises: ValueError
+		"""
 		
 		if read_length_2!=0:
 			raise ValueError("CuReSim supports only single-end reads")
@@ -40,6 +53,9 @@ class CuReSim(Source):
 
 
 	def get_input(self):
+		"""Get list of input files (required to do simulation).
+		:returns: list -- List of input files.
+		"""
 		return [
 				smbl.prog.CURESIM,
 				self._fa_fn,
@@ -47,6 +63,9 @@ class CuReSim(Source):
 			]
 
 	def get_output(self):
+		"""Get list of output files (created during simulation).
+		:returns: list -- List of input files.
+		"""
 		return [
 				self._fq_fn,
 #				os.path.join(
@@ -61,6 +80,7 @@ class CuReSim(Source):
 
 	# TODO: find out how it is with RNG seeds
 	def create_fq(self):
+		"""Perform the simulation."""
 
 		if self.number_of_reads == 0:
 			genome_size=os.stat(self._fa_fn).st_size
@@ -96,6 +116,14 @@ class CuReSim(Source):
 		)
 
 	def recode_curesim_reads(self,old_fq,number_of_reads=10**9):
+		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
+
+		:param old_fq: Od FASTQ file name.
+		:type  old_fq: str.
+		:param number_of_reads: Expected number of reads (to estimate number of digits).
+		:type  number_of_reads: int.
+		:raises: ValueError
+		"""
 		curesim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)')
 		"""
 			CuReSim read name format

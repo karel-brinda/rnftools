@@ -44,7 +44,7 @@ class ArtIllumina(Source):
 		:type  distance_deviation: int.
 		:param rng_seed: Seed for simulator's random number generator.
 		:type  rng_seed: int.
-		:raises ValueError
+		:raises: ValueError
 		"""
 
 		if read_length_2==0:
@@ -84,7 +84,7 @@ class ArtIllumina(Source):
 
 	def get_input(self):
 		"""Get list of input files (required to do simulation).
-		:returns list -- List of input files.
+		:returns: list -- List of input files.
 		"""
 		return [
 				smbl.prog.ART_ILLUMINA,
@@ -95,7 +95,7 @@ class ArtIllumina(Source):
 
 	def get_output(self):
 		"""Get list of output files (created during simulation).
-		:returns list -- List of input files.
+		:returns: list -- List of input files.
 		"""
 		return 	[
 				self._fq_fn,
