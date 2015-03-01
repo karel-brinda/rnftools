@@ -132,7 +132,7 @@ rule basic:
 	input:
 		mishmash.input(),
 		bwa1.bam_fn(),
-		bwa2.bam_fn()
+		bwa2.bam_fn(),
 
 include: mishmash.include()
 
@@ -145,7 +145,7 @@ rule bwa_index_1:
 	input:
 		smbl.prog.BWA,
 		smbl.prog.SAMTOOLS,
-		bwa1.fa_fn()
+		bwa1.fa_fn(),
 	output:
 		bwa1.index_fn()
 	shell:
@@ -175,7 +175,7 @@ rule aln_bwa_2:
 	input:
 		smbl.prog.BWA,
 		bwa2.fa_fn(),
-		bwa2.fq_fn()
+		bwa2.fq_fn(),
 	output:
 		bwa2.bam_fn()
 	run:
