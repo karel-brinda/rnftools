@@ -3,26 +3,80 @@
 set -e -o pipefail; 
 
 (
-	echo "Example 1"
+	echo
+	echo
+	echo
+	echo
+	echo
+	echo
+	echo "===================================================================="
+	echo
+	echo
+	echo
+	echo "                 TEST: example 1"
+	echo
+	echo
+	echo
+	echo "===================================================================="
+	echo
+	echo
+	echo
+
 	cd examples/01_simple_read_simulation
-	snakemake
+	snakemake -p
 )
 
 (
-	echo "Example 2"
+	echo
+	echo
+	echo
+	echo
+	echo
+	echo
+	echo "===================================================================="
+	echo
+	echo
+	echo
+	echo "                 TEST: example 2" 
+	echo
+	echo
+	echo
+	echo "===================================================================="
+	echo
+	echo
+	echo
+	
 	cd examples/02_more_complex_read_simulation
-	snakemake
+	snakemake -p
 )
 
 (
-	echo "Example 3"
+	echo
+	echo
+	echo
+	echo
+	echo
+	echo
+	echo "===================================================================="
+	echo
+	echo
+	echo
+	echo "                 TEST: example 3" 
+	echo
+	echo
+	echo
+	echo "===================================================================="
+	echo
+	echo
+	echo
+	
 	cd examples/03_mapper_evaluation_SE
 	
 	cd bams
-	snakemake
+	snakemake -p
 	cd ..
 
-	snakemake
+	snakemake -p
 )
 
 
