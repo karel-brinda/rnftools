@@ -1,5 +1,5 @@
 import smbl
-import rnftools.mishmash as mishmash
+import rnftools
 
 
 ##
@@ -68,9 +68,9 @@ class BwaMapping:
 
 # sample 1
 
-mishmash.sample(reads_1[:-3],ends=1)
+rnftools.mishmash.sample(reads_1[:-3],ends=1)
 
-mishmash.DwgSim(
+rnftools.mishmash.DwgSim(
 	fa=reference_basic_1,
 	read_length_1=100,
 	read_length_2=0,
@@ -78,7 +78,7 @@ mishmash.DwgSim(
 )
 
 
-mishmash.DwgSim(
+rnftools.mishmash.DwgSim(
 	fa=reference_contam_1,
 	read_length_1=100,
 	read_length_2=0,
@@ -88,9 +88,9 @@ mishmash.DwgSim(
 
 # sample 2
 
-mishmash.sample(reads_2[:-3],ends=1)
+rnftools.mishmash.sample(reads_2[:-3],ends=1)
 
-mishmash.DwgSim(
+rnftools.mishmash.DwgSim(
 	fa=reference_basic_1,
 	read_length_1=100,
 	read_length_2=0,
@@ -98,7 +98,7 @@ mishmash.DwgSim(
 )
 
 
-mishmash.DwgSim(
+rnftools.mishmash.DwgSim(
 	fa=reference_contam_2,
 	read_length_1=100,
 	read_length_2=0,
@@ -130,11 +130,11 @@ bwa2 = BwaMapping(
 
 rule basic:
 	input:
-		mishmash.input(),
+		#rnftools.input(),
 		bwa1.bam_fn(),
 		bwa2.bam_fn(),
 
-include: mishmash.include()
+include: rnftools.include()
 
 
 #

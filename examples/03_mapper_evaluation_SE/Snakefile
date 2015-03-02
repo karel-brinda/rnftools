@@ -6,9 +6,6 @@ rnftools.lavender.Report(
 	name="test report"
 )
 
-rule all:
-	input:
-		rnftools.lavender.input()
+rule all: input: rnftools.input()
 
-include: rnftools.lavender.include()
-
+include: rnftools.include()

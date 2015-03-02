@@ -1,16 +1,16 @@
 import smbl
-from rnftools import mishmash
+import rnftools
 
 fasta=smbl.fasta.EXAMPLE
 
-mishmash.sample("simple_example",ends=1)
+rnftools.mishmash.sample("simple_example",ends=1)
 
-mishmash.ArtIllumina(
+rnftools.mishmash.ArtIllumina(
 	fa=fasta,
 	number_of_reads=10000,
 	read_length_1=100,
 	read_length_2=0,
 )
 
-include: mishmash.include()
-rule: input: mishmash.input()
+include: rnftools.include()
+rule: input: rnftools.input()

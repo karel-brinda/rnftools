@@ -83,6 +83,7 @@ echo
 	snakemake -p
 	cd ..
 
+	rm -fR ~/.smbl
 	snakemake -p
 )
 

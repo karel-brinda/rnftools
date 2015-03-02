@@ -1,8 +1,8 @@
 import smbl
-include: smbl.include
+include: smbl.include()
 import rnftools
 
-rule clean:
+rule lavender_clean:
 	run:
 		for report in rnftools.lavender._REPORTS_:
 			report.clean()

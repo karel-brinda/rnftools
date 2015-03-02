@@ -17,6 +17,7 @@ setup(
 		"rnftools.lavender":"rnftools/lavender",
 	},
 	package_data = {
+		"rnftools" : ["*.snake"],
 		"rnftools.mishmash" : ["*.snake"],
 		"rnftools.lavender" : ["*.snake"],
 	},

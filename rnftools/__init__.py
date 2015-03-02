@@ -1,11 +1,16 @@
-from rnftools import lavender
-from rnftools import mishmash
+import rnftools.mishmash
+import rnftools.lavender
+
+import os
 
 def include():
-	return [
-		lavender.include(),
-		mishmash.include(),
-	]
+	return os.path.join(
+				os.path.dirname(__file__),
+				"include_all.snake",
+			)
+
+def input():
+	return [rnftools.lavender.input(),rnftools.mishmash.input()]
 
 __all__ = []
 
