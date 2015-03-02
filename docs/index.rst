@@ -7,7 +7,8 @@ Contents
 .. toctree::
 	:maxdepth: 2
 	:numbered:
-
+	
+	introduction
 	installation
 	rnf
 	first_steps
