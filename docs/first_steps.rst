@@ -1,5 +1,5 @@
-First steps
-===========
+First steps with RNFtools
+=========================
 
 Simple simulation
 -----------------
