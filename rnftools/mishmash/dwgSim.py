@@ -25,11 +25,13 @@ class DwgSim(Source):
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	ends can have different lengths.
 
-	Format of the original read names
-	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	Format of read names produced by DwgSim
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 	.. code-block::
 
 		(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)
+
 
 	1)  contig name (chromsome name)
 	2)  start end 1 (one-based)
@@ -45,6 +47,7 @@ class DwgSim(Source):
 	12) number of SNPs end 2
 	13) number of indels end 2
 	14) read number (unique within a given contig/chromsome)
+
 	"""
 
 	#TODO:estimate_unknown_values=False,
