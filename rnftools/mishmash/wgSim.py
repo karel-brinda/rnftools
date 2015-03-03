@@ -41,11 +41,11 @@ class WgSim(Source):
 		:type  other_params: str
 		:param distance: Mean inner distance between ends.
 		:type  distance: int
-		:param distance_deviation: Devation of inner distances between ends.
+		:param distance_deviation: Deviation of inner distances between ends.
 		:type  distance_deviation: int
 		:param rng_seed: Seed for simulator's random number generator.
 		:type  rng_seed: int
-		:param haplotype_mode: Simulate reads in haplotype_mode.
+		:param haplotype_mode: Simulate reads in haplotype mode.
 		:type  haplotype_mode: bool
 		:raises: ValueError
 		"""

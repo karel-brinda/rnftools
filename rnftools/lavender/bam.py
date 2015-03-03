@@ -638,9 +638,12 @@ Please contact the author on karel.brinda@gmail.com.
 
 
 			with open(self._roc_fn, "w+") as f:
+				f.write("# Numbers of reads in several categories in dependence"+os.linesep)
+				f.write("# on the applied threshold on mapping quality q"+os.linesep)
+				f.write("# "+os.linesep)
 				f.write("# Categories:"+os.linesep)
 				f.write("#        M: Mapped correctly."+os.linesep)
-				f.write("#        w: Mapped to wrong position."+os.linesep)
+				f.write("#        w: Mapped to a wrong position."+os.linesep)
 				f.write("#        m: Mapped but should be unmapped."+os.linesep)
 				f.write("#        U: Unmapped and should be unmapped."+os.linesep)
 				f.write("#        u: Unmapped but should be mapped."+os.linesep)
@@ -648,7 +651,7 @@ Please contact the author on karel.brinda@gmail.com.
 				f.write("#        +: Multimapped."+os.linesep)
 				f.write("#        x: Unknown."+os.linesep)
 				f.write("#"+os.linesep)
-				f.write("# q	M	w	m	U	u	t	+	x	all"+os.linesep)
+				f.write("# q\tM\tw\tm\tU\tu\tt\t+\tx\tall"+os.linesep)
 
 				l_numbers = []
 				for line in stats_dicts:
@@ -661,6 +664,6 @@ Please contact the author on karel.brinda@gmail.com.
 
 
 	def create_graphics(self):
-		"""Create images related to this BAM file."""
+		"""Create images related to this BAM file using GnuPlot."""
 
-		snakemake.shell('{} "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+		snakemake.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

@@ -63,6 +63,7 @@ class Sample:
 	######################################
 
 	def create_fq(self):
+		# fixme: use absolute path to this file
 		snakemake.shell("""
 				rnf-join-fq.py \
 					-i {input_fqs} \

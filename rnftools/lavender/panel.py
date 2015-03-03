@@ -193,4 +193,4 @@ class Panel:
 	def create_graphics(self):
 		"""Create images related to this panel."""
 
-		snakemake.shell('{} "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+		snakemake.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

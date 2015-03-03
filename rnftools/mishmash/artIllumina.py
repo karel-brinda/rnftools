@@ -139,7 +139,7 @@ class ArtIllumina(Source):
 		command_2 ="""
 			cat "{sam_1}" | \
 			grep -v ^@ | \
-			{samtools} view -h -T "{fa}" - \
+			"{samtools}" view -h -T "{fa}" - \
 			> "{sam_2}"
 		""".format(
 				samtools=smbl.prog.SAMTOOLS,

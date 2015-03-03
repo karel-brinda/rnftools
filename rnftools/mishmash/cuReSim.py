@@ -84,7 +84,7 @@ class CuReSim(Source):
 			self.number_of_reads=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
 
 		snakemake.shell("""
-				cd {dir}
+				cd "{dir}"
 				java -Xmx8g -jar \
 				{curesim} \
 				-f "{fa}" \
