@@ -13,13 +13,32 @@ __all__=["Report"]
 class Report:
 	"""Class for an entire report."""
 
-	def __init__(self,name,bam_dirs=[]):
+	def __init__(
+		self,
+		name,
+		bam_dirs=[],
+		allowed_delta=5,
+		plot_x_run=(0.00001,1.0),
+		plot_y_run=(60,100),
+		plot_pdf_size_cm=(10,10),
+		plot_svg_size=(640,640),
+		):
 		"""
 
 		:param name: Name of the report.
 		:type  name: str
 		:param bam_dirs: Directories with BAM files.
 		:type  bam_dirs: list of str
+		:param allowed_delta: Tolerance of difference between positions in assessing correct alignments.
+		:type  allowed_delta: int
+		:param plot_x_run: Range for x-axes in GnuPlot plots.
+		:type  plot_x_run: (float,float)
+		:param plot_y_run: Range for y-axes in GnuPlot plots.
+		:type  plot_y_run: (float,float)
+		:param plot_pdf_size_cm: Size of PDF page.
+		:type  plot_pdf_size_cm: (float,float)
+		:param plot_svg_size: Size of SVG picture.
+		:type  plot_svg_size: (int,int)
 
 		"""
 
@@ -27,6 +46,24 @@ class Report:
 
 		self.name = name
 		self.report_dir = self.name
+
+		self.plot_x_run=[float(x) for x in plot_x_run]
+		self.plot_y_run=[float(x) for x in plot_y_run]
+		self.plot_pdf_size_cm=[float(x) for x in plot_pdf_size_cm]
+		self.plot_svg_size=[int(x) for x in plot_svg_size]
+
+		assert 0< self.plot_x_run[0] and self.plot_x_run[0]<=1.0
+		assert 0< self.plot_x_run[1] and self.plot_x_run[1]<=1.0
+		assert 0<=self.plot_y_run[0] and self.plot_y_run[0]<=100
+		assert 0<=self.plot_y_run[1] and self.plot_y_run[1]<=100
+		assert 0<=self.plot_pdf_size_cm[0] 
+		assert 0<=self.plot_pdf_size_cm[1]  
+		assert 0<=self.plot_svg_size[0]
+		assert 0<=self.plot_svg_size[1]
+
+		self.allowed_delta=int(allowed_delta)
+		assert 0 <= allowed_delta
+
 
 		self._html_fn = name+".html"
 		self.panels = [

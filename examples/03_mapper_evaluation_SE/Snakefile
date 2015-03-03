@@ -3,7 +3,7 @@ import rnftools
 
 rnftools.lavender.Report(
 	bam_dirs=["bams"],
-	name="test report"
+	name="test_report"
 )
 
 rule all: input: rnftools.input()

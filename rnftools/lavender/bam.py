@@ -23,7 +23,7 @@ class Bam:
 		"""
 
 		:param panel: Panel containing this BAM file.
-		:type  rnftools.lavender.Panel: str
+		:type  panel: rnftools.lavender.Panel
 		:param bam_fn: BAM filename.
 		:type  bam_fn: str
 		:param name: Name for this report.
@@ -32,6 +32,7 @@ class Bam:
 		"""
 
 		self.panel=panel
+		self.report=panel.get_report()
 		self.name=name
 
 		self._bam_fn  = bam_fn
@@ -90,7 +91,6 @@ class Bam:
 	def create_gp(self):
 		"""Create a GnuPlot file for this BAM file."""
 
-		print("going to create", self._gp_fn, file=sys.stderr)
 		with open(self._gp_fn,"w+") as f:
 			gp_content="""
 
@@ -130,10 +130,10 @@ class Bam:
 			""".format(
 				svg_fn=self._svg_fn,
 				pdf_fn=self._pdf_fn,
-				xran="{:.10f}:{:.10f}".format(self.panel.plot_x_run[0],self.panel.plot_x_run[1]),
-				yran="{:.10f}:{:.10f}".format(self.panel.plot_y_run[0],self.panel.plot_y_run[1]),
-				svg_size="{},{}".format(self.panel.plot_svg_size[0],self.panel.plot_svg_size[1]),
-				pdf_size="{:.10f}cm,{:.10f}cm".format(self.panel.plot_pdf_size_cm[0],self.panel.plot_pdf_size_cm[1]),
+				xran="{:.10f}:{:.10f}".format(self.report.plot_x_run[0],self.report.plot_x_run[1]),
+				yran="{:.10f}:{:.10f}".format(self.report.plot_y_run[0],self.report.plot_y_run[1]),
+				svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1]),
+				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1]),
 				plot="""
 					plot\\
 						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6+$5)*100/$10) lt rgb "violet" with filledcurve x1 title 'Unmapped correctly',\\
@@ -150,8 +150,6 @@ class Bam:
 
 	def create_html(self):
 		"""Create a HTML page for this BAM file."""
-
-		print("going to create", self._html_fn, file=sys.stderr)
 
 		roc_dicts = []
 		with open(self._roc_fn,"r") as f:
@@ -177,27 +175,27 @@ class Bam:
 					<tr>
 						<td>        {quality}                   </td>
 						<td>        {mapped}                    </td>
-						<td><small> {mapped_proc:.1f}   </small></td>
+						<td><small> {mapped_proc:.2f}   </small></td>
 						<td>        {M}                         </td>
-						<td><small> {M_proc:.1f}        </small></td>
+						<td><small> {M_proc:.2f}        </small></td>
 						<td>        {w}                         </td>
-						<td><small> {w_proc:.1f}        </small></td>
+						<td><small> {w_proc:.2f}        </small></td>
 						<td>        {m}                         </td>
-						<td><small> {m_proc:.1f}        </small></td>
+						<td><small> {m_proc:.2f}        </small></td>
 						<td>        {unmapped}                  </td>
-						<td><small> {unmapped_proc:.1f} </small></td>
+						<td><small> {unmapped_proc:.2f} </small></td>
 						<td>        {U}                         </td>
-						<td><small> {U_proc:.1f}        </small></td>
+						<td><small> {U_proc:.2f}        </small></td>
 						<td>        {u}                         </td>
-						<td><small> {u_proc:.1f}        </small></td>
+						<td><small> {u_proc:.2f}        </small></td>
 						<td>        {unused}                    </td>
-						<td><small> {unused_proc:.1f}   </small></td>
+						<td><small> {unused_proc:.2f}   </small></td>
 						<td>        {t}                         </td>
-						<td><small> {t_proc:.1f}        </small></td>
+						<td><small> {t_proc:.2f}        </small></td>
 						<td>        {p}                         </td>
-						<td><small> {p_proc:.1f}        </small></td>
+						<td><small> {p_proc:.2f}        </small></td>
 						<td>        {x}                         </td>
-						<td><small> {x_proc:.1f}        </small></td>
+						<td><small> {x_proc:.2f}        </small></td>
 						<td>        {sum}                       </td>
 						<td>        {prec_proc:.3f}              </td>
 						<td>        {sens_proc:.3f}             </td>
@@ -322,8 +320,8 @@ class Bam:
 				<h2 id="graphs">
 					Graphs
 					<span class="link_to_top">
-						[<a href="#top">Top of the page</a>]
-						[<a href="{homepage}">Main report</a>]
+						[<a href="#top">Top of this page</a>]
+						[<a href="{homepage}">Back to Main report</a>]
 					</span>
 				</h2>
 				<img src="{svg_fn}" />
@@ -337,7 +335,7 @@ class Bam:
 						os.path.dirname(self._html_fn)
 					),
 					homepage=os.path.relpath(
-						self.panel.get_report().html_fn(),
+						self.report.html_fn(),
 						os.path.dirname(self._html_fn)
 					),
 				)
@@ -345,11 +343,12 @@ class Bam:
 			f.write(html_src)
 
 	def create_aci(self):
-		"""Create an ACI (intermediate) file for this BAM file."""
+		"""Create an ACI (intermediate) file for this BAM file.
+		This is the function which asses if an alignment is correct
+		"""
 
-		diff_thr=5
+		diff_thr=self.report.allowed_delta
 
-		print("going to create", self._aci_fn, file=sys.stderr)
 		with open(self._aci_fn,"w+") as f:
 			with pysam.AlignmentFile(self._bam_fn, "rb") as samfile:
 				references_dict = {}

@@ -19,11 +19,7 @@ class Panel:
 		report,
 		bam_dir,
 		panel_dir,
-		name,
-		plot_x_run=(0.00001,1.0),
-		plot_y_run=(60,100),
-		plot_pdf_size_cm=(10,10),
-		plot_svg_size=(640,640)
+		name
 		):
 		"""
 
@@ -35,14 +31,6 @@ class Panel:
 		:type  panel_dir: str
 		:param name: Name of the panel.
 		:type  name: str
-		:param plot_x_run: Range for x-axes in GnuPlot plots.
-		:type  plot_x_run: (float,float)
-		:param plot_y_run: Range for x-axes in GnuPlot plots.
-		:type  plot_y_run: (float,float)
-		:param plot_pdf_size_cm: Size of PDF page.
-		:type  plot_pdf_size_cm: (float,float)
-		:param plot_svg_size: Size of SVG picture.
-		:type  plot_svg_size: (int,int)
 		:raises: ValueError
 
 		"""
@@ -50,21 +38,6 @@ class Panel:
 		rnftools.lavender.add_panel(self)
 		self.name=name
 		self.panel_dir=panel_dir
-
-		self.plot_x_run=[float(x) for x in plot_x_run]
-		self.plot_y_run=[float(x) for x in plot_y_run]
-		self.plot_pdf_size_cm=[float(x) for x in plot_pdf_size_cm]
-		self.plot_svg_size=[int(x) for x in plot_svg_size]
-
-
-		assert 0< self.plot_x_run[0] and self.plot_x_run[0]<=1.0
-		assert 0< self.plot_x_run[1] and self.plot_x_run[1]<=1.0
-		assert 0<=self.plot_y_run[0] and self.plot_y_run[0]<=100
-		assert 0<=self.plot_y_run[1] and self.plot_y_run[1]<=100
-		assert 0<=self.plot_pdf_size_cm[0] 
-		assert 0<=self.plot_pdf_size_cm[1]  
-		assert 0<=self.plot_svg_size[0]
-		assert 0<=self.plot_svg_size[1]
 
 		self._svg_fn=os.path.join(self.panel_dir,"svg","_combined.svg")
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
@@ -209,10 +182,10 @@ class Panel:
 				""".format(
 					svg_fn=self._svg_fn,
 					pdf_fn=self._pdf_fn,
-					xran="{:.10f}:{:.10f}".format(self.plot_x_run[0],self.plot_x_run[1]),
-					yran="{:.10f}:{:.10f}".format(self.plot_y_run[0],self.plot_y_run[1]),
-					svg_size="{},{}".format(self.plot_svg_size[0],self.plot_svg_size[1]),
-					pdf_size="{:.10f}cm,{:.10f}cm".format(self.plot_pdf_size_cm[0],self.plot_pdf_size_cm[1]),
+					xran="{:.10f}:{:.10f}".format(self.report.plot_x_run[0],self.report.plot_x_run[1]),
+					yran="{:.10f}:{:.10f}".format(self.report.plot_y_run[0],self.report.plot_y_run[1]),
+					svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1]),
+					pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1]),
 					plots="plot "+os.linesep.join(plots),
 				)
 			)
