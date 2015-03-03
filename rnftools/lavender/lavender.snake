@@ -4,7 +4,7 @@ import rnftools
 
 rule lavender_clean:
 	run:
-		for report in rnftools.lavender._REPORTS_:
+		for report in rnftools.lavender.reports():
 			report.clean()
 		
 
@@ -43,13 +43,14 @@ for i, panel in enumerate(rnftools.lavender.panels()):
 		input:
 			panel.gp_fn(),
 			[bam.roc_fn() for bam in panel.get_bams()],
-			smbl.prog.GNUPLOT5
+			smbl.prog.GNUPLOT5,
 		output:
 			panel.svg_fn(),
+			panel.pdf_fn(),
 		params:
 			i=str(i)
 		run:
-			rnftools.lavender.panels()[int(params.i)].create_svg()
+			rnftools.lavender.panels()[int(params.i)].create_graphics()
 
 ####################
 # gp
@@ -117,7 +118,7 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 			rnftools.lavender.bams()[int(params.i)].create_aci()
 
 ####################
-# svg
+# graphics
 ####################
 for i, bam in enumerate(rnftools.lavender.bams()):
 	rule:
@@ -126,11 +127,12 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 			bam.gp_fn(),
 			smbl.prog.GNUPLOT5
 		output:
-			bam.svg_fn()
+			bam.svg_fn(),
+			bam.pdf_fn(),
 		params:
 			i=str(i)
 		run:
-			rnftools.lavender.bams()[int(params.i)].create_svg()
+			rnftools.lavender.bams()[int(params.i)].create_graphics()
 
 ####################
 # gp

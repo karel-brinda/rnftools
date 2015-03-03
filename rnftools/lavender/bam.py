@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import rnftools.lavender
+import rnftools
 
 import smbl
 import snakemake
@@ -23,8 +23,11 @@ class Bam:
 		"""
 
 		:param panel: Panel containing this BAM file.
+		:type  rnftools.lavender.Panel: str
 		:param bam_fn: BAM filename.
+		:type  bam_fn: str
 		:param name: Name for this report.
+		:type  name: str
 
 		"""
 
@@ -37,6 +40,7 @@ class Bam:
 		self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
+		self._pdf_fn  = os.path.join(self.panel.get_panel_dir(),"pdf",self.name+".pdf")
 
 		self.bam_id=len(rnftools.lavender.bams())
 		rnftools.lavender.add_bam(self)
@@ -76,6 +80,10 @@ class Bam:
 		"""Get name of the SVG file."""
 		return self._svg_fn
 
+	def pdf_fn(self):
+		"""Get name of the PDF file."""
+		return self._pdf_fn
+
 	######################################
 	######################################
 
@@ -85,39 +93,59 @@ class Bam:
 		print("going to create", self._gp_fn, file=sys.stderr)
 		with open(self._gp_fn,"w+") as f:
 			gp_content="""
-                set ylab "part of all reads (%)"
 
-                set x2lab "1 - precision\\n(#wrong mappings / #mapped)"
-                set log x
-                set log x2
-                set xran [0.00001:1]
-                set x2ran [0.00001:1]
-                set x2tics
+				set x2lab "1 - precision\\n(#wrong mappings / #mapped)"
+				set log x
+				set log x2
 
-                set yran [60:100]
-                set format y "%g %%"
+				set format x "10^{{%L}}"
+				set format x2 "10^{{%L}}"
+				set xran  [{xran}]
+				set x2ran [{xran}]
+				set x2tics
 
-                set pointsize 1.5
 
-                set termin svg size 640,640
-                set out "{svg_fn}"
+				set ylab "part of all reads (%)"
 
-                set grid ytics lc rgb "#777777" lw 1 lt 0 front
-                set grid xtics lc rgb "#777777" lw 1 lt 0 front
+				set format y "%g %%"
+				set yran [{yran}]
 
-                set datafile separator "\t"
-                set palette negative
+				set pointsize 1.5
 
-                plot\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6+$5)*100/$10) lt rgb "violet" with filledcurve x1 title 'Unmapped correctly',\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6)*100/$10) lt rgb "red" with filledcurve x1 title 'Unmapped incorrectly',\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7)*100/$10) lt rgb "green" with filledcurve x1 title 'Thresholded',\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8)*100/$10) lt rgb "yellow" with filledcurve x1 title 'Multimapped',\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4)*100/$10) lt rgb "gray" with filledcurve x1 title 'Mapped, should be unmapped',\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3)*100/$10) lt rgb "black" with filledcurve x1 title 'Mapped to wrong position',\\
-                    "{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2)*100/$10) lt rgb "blue" with filledcurve x1 title 'Mapped correctly',\\
+				set grid ytics lc rgb "#777777" lw 1 lt 0 front
+				set grid xtics lc rgb "#777777" lw 1 lt 0 front
 
-			""".format(roc_fn=self._roc_fn,svg_fn=self._svg_fn)
+				set datafile separator "\t"
+				set palette negative
+
+				set termin svg size {svg_size} enhanced
+				set out "{svg_fn}"
+				{plot}
+
+
+				set termin pdf enhanced size {pdf_size}
+				set out "{pdf_fn}"
+				{plot}
+
+			""".format(
+				svg_fn=self._svg_fn,
+				pdf_fn=self._pdf_fn,
+				xran="{:.10f}:{:.10f}".format(self.panel.plot_x_run[0],self.panel.plot_x_run[1]),
+				yran="{:.10f}:{:.10f}".format(self.panel.plot_y_run[0],self.panel.plot_y_run[1]),
+				svg_size="{},{}".format(self.panel.plot_svg_size[0],self.panel.plot_svg_size[1]),
+				pdf_size="{:.10f}cm,{:.10f}cm".format(self.panel.plot_pdf_size_cm[0],self.panel.plot_pdf_size_cm[1]),
+				plot="""
+					plot\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6+$5)*100/$10) lt rgb "violet" with filledcurve x1 title 'Unmapped correctly',\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6)*100/$10) lt rgb "red" with filledcurve x1 title 'Unmapped incorrectly',\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7)*100/$10) lt rgb "green" with filledcurve x1 title 'Thresholded',\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8)*100/$10) lt rgb "yellow" with filledcurve x1 title 'Multimapped',\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4)*100/$10) lt rgb "gray" with filledcurve x1 title 'Mapped, should be unmapped',\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3)*100/$10) lt rgb "black" with filledcurve x1 title 'Mapped to wrong position',\\
+						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2)*100/$10) lt rgb "blue" with filledcurve x1 title 'Mapped correctly',\\
+
+				""".format(roc_fn=self._roc_fn)
+			)
 			f.write(gp_content)
 
 	def create_html(self):
@@ -531,7 +559,11 @@ Please contact the author on karel.brinda@gmail.com.
 
 
 	def create_roc(self):
-		"""Create a ROC file for this BAM file."""
+		"""Create a ROC file for this BAM file.
+
+		:raises: ValueError
+
+		"""
 
 		stats_dicts = [
 			{
@@ -629,7 +661,7 @@ Please contact the author on karel.brinda@gmail.com.
 					l_numbers=numbers
 
 
-	def create_svg(self):
-		"""Plot graph for this BAM file."""
+	def create_graphics(self):
+		"""Create images related to this BAM file."""
 
 		snakemake.shell('{} "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

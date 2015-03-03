@@ -4,6 +4,7 @@ import rnftools
 
 ##
 
+#reference_basic_1   = smbl.fasta.HUMAN_HG38
 reference_basic_1   = smbl.fasta.EXAMPLE_1
 reference_contam_1  = smbl.fasta.EXAMPLE_2
 
@@ -54,7 +55,7 @@ class BwaMapping:
 			))
 
 	def map_reads(self):
-		shell("{bwa} mem {idx} {reads} | {samtools} view -bS - > {bam}".format(
+		shell("{bwa} mem -t 8 {idx} {reads} | {samtools} view -bS - > {bam}".format(
 				bwa=smbl.prog.BWA,
 				samtools=smbl.prog.SAMTOOLS,
 				idx=self._fa_fn,
@@ -91,7 +92,7 @@ rnftools.mishmash.DwgSim(
 rnftools.mishmash.sample(reads_2[:-3],ends=1)
 
 rnftools.mishmash.DwgSim(
-	fa=reference_basic_1,
+	fa=reference_basic_2,
 	read_length_1=100,
 	read_length_2=0,
 	number_of_reads=10000

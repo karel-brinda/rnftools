@@ -15,25 +15,63 @@ __all__=["Panel"]
 class Panel:
 	"""Class for a single panel in a HTML report."""
 
-	def __init__(self,report,bam_dir,panel_dir,name):
+	def __init__(self,
+		report,
+		bam_dir,
+		panel_dir,
+		name,
+		plot_x_run=(0.00001,1.0),
+		plot_y_run=(60,100),
+		plot_pdf_size_cm=(10,10),
+		plot_svg_size=(640,640)
+		):
 		"""
 
 		:param report: The owner (report).
+		:type  report: str
 		:param bam_dir: Directory to the BAM files.
+		:type  bam_dir: str
 		:param panel_dir: Directory with panel's auxiliary files.
+		:type  panel_dir: str
 		:param name: Name of the panel.
+		:type  name: str
+		:param plot_x_run: Range for x-axes in GnuPlot plots.
+		:type  plot_x_run: (float,float)
+		:param plot_y_run: Range for x-axes in GnuPlot plots.
+		:type  plot_y_run: (float,float)
+		:param plot_pdf_size_cm: Size of PDF page.
+		:type  plot_pdf_size_cm: (float,float)
+		:param plot_svg_size: Size of SVG picture.
+		:type  plot_svg_size: (int,int)
+		:raises: ValueError
 
 		"""
 		self.report=report
 		rnftools.lavender.add_panel(self)
-		self.name       = name
-		self.panel_dir = panel_dir
+		self.name=name
+		self.panel_dir=panel_dir
 
-		self._svg_fn    = os.path.join(self.panel_dir,"svg","_combined.svg")
-		self._gp_fn     = os.path.join(self.panel_dir,"gp","_combined.gp")
+		self.plot_x_run=[float(x) for x in plot_x_run]
+		self.plot_y_run=[float(x) for x in plot_y_run]
+		self.plot_pdf_size_cm=[float(x) for x in plot_pdf_size_cm]
+		self.plot_svg_size=[int(x) for x in plot_svg_size]
 
-		bams_fns        = glob.glob(os.path.join(bam_dir,"*.bam"))
-		self.bams       = [
+
+		assert 0< self.plot_x_run[0] and self.plot_x_run[0]<=1.0
+		assert 0< self.plot_x_run[1] and self.plot_x_run[1]<=1.0
+		assert 0<=self.plot_y_run[0] and self.plot_y_run[0]<=100
+		assert 0<=self.plot_y_run[1] and self.plot_y_run[1]<=100
+		assert 0<=self.plot_pdf_size_cm[0] 
+		assert 0<=self.plot_pdf_size_cm[1]  
+		assert 0<=self.plot_svg_size[0]
+		assert 0<=self.plot_svg_size[1]
+
+		self._svg_fn=os.path.join(self.panel_dir,"svg","_combined.svg")
+		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
+		self._pdf_fn=os.path.join(self.panel_dir,"pdf","_combined.pdf")
+
+		bams_fns=glob.glob(os.path.join(bam_dir,"*.bam"))
+		self.bams=[
 				rnftools.lavender.Bam(
 					bam_fn=bam_fn,
 					panel=self,
@@ -41,6 +79,9 @@ class Panel:
 				) 
 				for bam_fn in sorted(bams_fns)
 			]
+
+		if len(self.bams)==0:
+			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
 		for x in ["gp","html","roc","svg"]:
 			snakemake.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
@@ -109,6 +150,11 @@ class Panel:
 
 		return self._svg_fn
 
+	def pdf_fn(self):
+		""" Get the PDF file name for the overall graph. """
+
+		return self._pdf_fn
+
 	######################################
 	######################################
 
@@ -126,37 +172,52 @@ class Panel:
 			]
 
 			f.write("""
-				set ylab "part of all reads (%)"
 
 				set x2lab "1 - precision\\n(#wrong mappings / #mapped)"
 				set log x
 				set log x2
-				set xran [0.00001:1]
-				set x2ran [0.00001:1]
+
+				set format x "10^{{%L}}"
+				set format x2 "10^{{%L}}"
+				set xran  [{xran}]
+				set x2ran [{xran}]
 				set x2tics
 
-				set yran [60:100]
+
+				set ylab "part of all reads (%)"
+
 				set format y "%g %%"
+				set yran [60:100]
 
 				set pointsize 1.5
-
-				set termin svg size 640,640
-				set out "{svg}"
 
 				set grid ytics lc rgb "#777777" lw 1 lt 0 front
 				set grid xtics lc rgb "#777777" lw 1 lt 0 front
 
 				set datafile separator "\t"
+				set palette negative
 
-				plot \\
-            	{plots}
+				set termin svg size {svg_size} enhanced
+				set out "{svg_fn}"
+				{plots}
+
+
+				set termin pdf enhanced size {pdf_size}
+				set out "{pdf_fn}"
+				{plots}
+
 				""".format(
-					plots=os.linesep.join(plots),
-					svg=self._svg_fn
+					svg_fn=self._svg_fn,
+					pdf_fn=self._pdf_fn,
+					xran="{:.10f}:{:.10f}".format(self.plot_x_run[0],self.plot_x_run[1]),
+					yran="{:.10f}:{:.10f}".format(self.plot_y_run[0],self.plot_y_run[1]),
+					svg_size="{},{}".format(self.plot_svg_size[0],self.plot_svg_size[1]),
+					pdf_size="{:.10f}cm,{:.10f}cm".format(self.plot_pdf_size_cm[0],self.plot_pdf_size_cm[1]),
+					plots="plot "+os.linesep.join(plots),
 				)
 			)
 
-	def create_svg(self):
-		""" Create SVG file. """
+	def create_graphics(self):
+		"""Create images related to this panel."""
 
 		snakemake.shell('{} "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

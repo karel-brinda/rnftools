@@ -17,7 +17,9 @@ class Report:
 		"""
 
 		:param name: Name of the report.
+		:type  name: str
 		:param bam_dirs: Directories with BAM files.
+		:type  bam_dirs: list of str
 
 		"""
 
