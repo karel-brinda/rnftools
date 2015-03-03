@@ -40,11 +40,11 @@ class BwaMapping:
 
 	def index_fn(self):
 		return [
-			self._prefix+".amb",
-			self._prefix+".ann",
-			self._prefix+".bwt",
-			self._prefix+".pac",
-			self._prefix+".sa"
+			self._fa_fn+".amb",
+			self._fa_fn+".ann",
+			self._fa_fn+".bwt",
+			self._fa_fn+".pac",
+			self._fa_fn+".sa"
 		]
 
 	def make_index(self):
@@ -134,7 +134,6 @@ rule basic:
 		bwa1.bam_fn(),
 		bwa2.bam_fn(),
 
-include: rnftools.include()
 
 
 #
@@ -148,7 +147,7 @@ rule bwa_index_1:
 		bwa1.fa_fn(),
 	output:
 		bwa1.index_fn()
-	shell:
+	run:
 		bwa1.make_index()
 
 rule bwa_index_2:
@@ -158,13 +157,14 @@ rule bwa_index_2:
 		bwa2.fa_fn()
 	output:
 		bwa2.index_fn()
-	shell:
+	run:
 		bwa2.make_index()
 
 rule aln_bwa_1:
 	input:
 		smbl.prog.BWA,
 		bwa1.fa_fn(),
+		bwa1.index_fn(),
 		bwa1.fq_fn()
 	output:
 		bwa1.bam_fn()
@@ -175,6 +175,7 @@ rule aln_bwa_2:
 	input:
 		smbl.prog.BWA,
 		bwa2.fa_fn(),
+		bwa2.index_fn(),
 		bwa2.fq_fn(),
 	output:
 		bwa2.bam_fn()
@@ -193,3 +194,5 @@ rule aln_bwa_2:
 #	output:
 #		bam(bowtie_aln)
 #	run
+
+include: rnftools.include()
