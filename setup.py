@@ -10,16 +10,23 @@ exec(open("rnftools/version.py").read())
 
 setup(
 	name = 'rnftools',
-	packages = ['rnftools','rnftools.mishmash','rnftools.lavender'],
+	packages = [
+		'rnftools',
+		'rnftools.mishmash',
+		'rnftools.lavender',
+		'rnftools.rnfformat',
+	],
 	package_dir = {
 		"rnftools":"rnftools",
 		"rnftools.mishmash":"rnftools/mishmash",
 		"rnftools.lavender":"rnftools/lavender",
+		"rnftools.rnfformat":"rnftools/rnfformat",
 	},
 	package_data = {
 		"rnftools" : ["*.snake"],
 		"rnftools.mishmash" : ["*.snake"],
 		"rnftools.lavender" : ["*.snake"],
+		"rnftools.rnfformat" : ["*.snake"],
 	},
 	version = __version__,
 	description = 'RNF-compatible software for simulating NGS reads and evaluating mappers of NGS reads.',

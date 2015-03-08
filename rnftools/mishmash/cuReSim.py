@@ -10,7 +10,7 @@ import re
 #
 
 class CuReSim(Source):
-	"""Class for CuReSim simulator of NGS reads.
+	"""Class for CuReSim.
 
 	Only single-end reads simulations are supported.
 	"""
@@ -142,7 +142,7 @@ class CuReSim(Source):
 		self.load_fai()
 		id_str_size=len(format(number_of_reads,'x'))
 
-		rn_formatter = smbl.RnFormatter(
+		rn_formatter = rnftools.rnfformat.RnFormatter(
 				id_str_size=id_str_size,
 				source_str_size=2,
 				chr_str_size=self.chr_str_size,
@@ -183,7 +183,7 @@ class CuReSim(Source):
 						read_length=len(line2.strip())
 						end_pos += read_length
 
-						block=smbl.Block(
+						segment=rnftools.rnfformat.Segment(
 								source=self.source_id,
 								chr=chr_id,
 								direction=direction,
@@ -191,7 +191,7 @@ class CuReSim(Source):
 								right=end_pos,
 							)
 
-						read = smbl.Read(blocks=[block],read_id=read_id+1,suffix="[single-end,curesim]")
+						read = rnftools.rnfformat.Read(segments=[segment],read_id=read_id+1,suffix="[single-end,curesim]")
 						new_read_name = rn_formatter.process_read(read)
 
 						read_id+=1

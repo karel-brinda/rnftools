@@ -10,7 +10,7 @@ import os
 #
 
 class ArtIllumina(Source):
-	"""Class for the ART Illumina simulator of NGS reads.
+	"""Class for the ART Illumina.
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	lengths of both ends must be equal.

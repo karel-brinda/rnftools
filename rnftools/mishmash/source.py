@@ -9,7 +9,7 @@ import pysam
 import rnftools.mishmash
 
 class Source(object):
-	"""	Abstract class for a source of reads
+	"""	Abstract class for a genome from which reads are simulated.
 	"""
 
 	__metaclass__ = abc.ABCMeta
@@ -103,11 +103,11 @@ class Source(object):
 		"""Perform read simulation."""
 		return
 
-	def _fq_buffer(self,read_id,blocks_buffer,sequences_buffer,rn_formatter,simulator_name=""):
+	def _fq_buffer(self,read_id,segments_buffer,sequences_buffer,rn_formatter,simulator_name=""):
 		read_suffix_comment_buffer=[]
-		if len(blocks_buffer)==1:
+		if len(segments_buffer)==1:
 			read_suffix_comment_buffer.append("single-end")
-		elif len(blocks_buffer)==2 and set([blocks_buffer[i].direction for i in [0,1]])==set(["R","F"]):
+		elif len(segments_buffer)==2 and set([segments_buffer[i].direction for i in [0,1]])==set(["R","F"]):
 			read_suffix_comment_buffer.append("pair-end")
 
 		if simulator_name!="":
@@ -118,7 +118,7 @@ class Source(object):
 		else:
 			read_suffix=""
 
-		rnf_read = smbl.Read(blocks=blocks_buffer,read_id=read_id,suffix=read_suffix)
+		rnf_read = rnftools.rnfformat.Read(segments=segments_buffer,read_id=read_id,suffix=read_suffix)
 		rnf_read_name = rn_formatter.process_read(read=rnf_read)
 		to_return = [
 			"".
@@ -143,14 +143,14 @@ class Source(object):
 
 		id_str_size=len(format(number_of_reads,'x'))
 
-		rn_formatter = smbl.RnFormatter(
+		rn_formatter = rnftools.rnfformat.RnFormatter(
 				id_str_size=id_str_size,
 				source_str_size=2,
 				chr_str_size=self.chr_str_size,
 				pos_str_size=self.pos_str_size
 			)
 
-		blocks_buffer=[]
+		segments_buffer=[]
 		sequences_buffer=[]
 		last_read_name=""
 
@@ -171,13 +171,13 @@ class Source(object):
 						fqfile.write(
 							self._fq_buffer(
 									read_id=read_id,
-									blocks_buffer=blocks_buffer,
+									segments_buffer=segments_buffer,
 									sequences_buffer=sequences_buffer,
 									rn_formatter=rn_formatter,
 									simulator_name=simulator_name,
 								)
 						)
-						blocks_buffer = []
+						segments_buffer = []
 						sequences_buffer = []
 					last_read_name = alignment.query_name
 
@@ -208,7 +208,7 @@ class Source(object):
 					for (steps,operation) in cigar_reg_shift.findall(alignment.cigarstring):
 						right+=int(steps)
 
-					block=smbl.Block(
+					segment=rnftools.rnfformat.Segment(
 							source=self.source_id,
 							chr=chr_id,
 							direction=direction,
@@ -216,13 +216,13 @@ class Source(object):
 							right=right
 						)
 
-					blocks_buffer.append(block)
+					segments_buffer.append(segment)
 					sequences_buffer.append( (bases,qualities) )
 
 				fqfile.write(
 					self._fq_buffer(
 							read_id=read_id,
-							blocks_buffer=blocks_buffer,
+							segments_buffer=segments_buffer,
 							sequences_buffer=sequences_buffer,
 							rn_formatter=rn_formatter,
 							simulator_name=simulator_name,

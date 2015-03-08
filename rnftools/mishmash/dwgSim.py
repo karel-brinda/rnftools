@@ -20,7 +20,7 @@ import re
 #
 
 class DwgSim(Source):
-	"""Class for the DwgSim simulator of NGS reads.
+	"""Class for DwgSim.
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	ends can have different lengths.
@@ -198,7 +198,7 @@ class DwgSim(Source):
 		self.load_fai()
 		id_str_size=len(format(number_of_reads,'x'))
 
-		rn_formatter = smbl.RnFormatter(
+		rn_formatter = rnftools.rnfformat.RnFormatter(
 				id_str_size=id_str_size,
 				source_str_size=2,
 				chr_str_size=self.chr_str_size,
@@ -243,7 +243,7 @@ class DwgSim(Source):
 						line2=line
 						read_length=len(line2.strip())
 
-						block1=smbl.Block(
+						segment1=rnftools.rnfformat.Segment(
 								source=self.source_id,
 								chr=chr_id,
 								direction=direction_1,
@@ -251,7 +251,7 @@ class DwgSim(Source):
 								right=0
 							)
 
-						block2=smbl.Block(
+						segment2=rnftools.rnfformat.Segment(
 								source=self.source_id,
 								chr=chr_id,
 								direction=direction_2,
@@ -260,9 +260,9 @@ class DwgSim(Source):
 							)
 						
 						if single_end:
-							read = smbl.Read(blocks=[block1],read_id=read_id+1,suffix="[single-end,dwgsim]")
+							read = rnftools.rnfformat.Read(segments=[segment1],read_id=read_id+1,suffix="[single-end,dwgsim]")
 						else:
-							read = smbl.Read(blocks=[block1,block2],read_id=read_id+1,suffix="[pair-end,dwgsim]")
+							read = rnftools.rnfformat.Read(segments=[segment1,segment2],read_id=read_id+1,suffix="[pair-end,dwgsim]")
 						new_read_name = rn_formatter.process_read(read)
 
 						if single_end:

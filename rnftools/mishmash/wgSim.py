@@ -7,7 +7,7 @@ import re
 import itertools
 
 class WgSim(Source):
-	"""Class for the WgSim simulator of NGS reads.
+	"""Class for the WgSim.
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	ends can have different lengths.
@@ -178,7 +178,7 @@ class WgSim(Source):
 		self.load_fai()
 		id_str_size=len(format(number_of_reads,'x'))
 
-		rn_formatter = smbl.RnFormatter(
+		rn_formatter = rnftools.rnfformat.RnFormatter(
 				id_str_size=id_str_size,
 				source_str_size=2,
 				chr_str_size=self.chr_str_size,
@@ -236,23 +236,23 @@ class WgSim(Source):
 									direction_1="R"
 									direction_2="F"
 
-								blocks=[
-									smbl.Block(
+								segments=[
+									rnftools.rnfformat.Segment(
 										source=self.source_id,
 										chr=chr_id,
 										direction=direction_1,
 										left=start_1,
 										right=0),
 
-									smbl.Block(
-											source=self.source_id,
-											chr=chr_id,
-											direction=direction_2,
-											left=0,
-											right=end_2)
+									rnftools.rnfformat.Segment(
+										source=self.source_id,
+										chr=chr_id,
+										direction=direction_2,
+										left=0,
+										right=end_2)
 								]
 
-								read = smbl.Read(blocks=blocks,read_id=read_id+1,suffix=read_suffix)
+								read = rnftools.rnfformat.Read(segments=segments,read_id=read_id+1,suffix=read_suffix)
 								new_read_name = rn_formatter.process_read(read)
 
 								if self._ends==1:

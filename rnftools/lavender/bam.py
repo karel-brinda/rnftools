@@ -363,12 +363,12 @@ class Bam:
 				f.write("# the most left nucleotide"+os.linesep)
 				f.write("# the most right nucleotide"+os.linesep)
 				f.write("# category of alignment assigned by LAVEnder"+os.linesep)
-				f.write("#      M_i    i-th block is correctly mapped"+os.linesep)
-				f.write("#      m      block should be unmapped but it is mapped"+os.linesep)
-				f.write("#      w      block is mapped to a wrong location"+os.linesep)
-				f.write("#      U      block is unmapped and should be unmapped"+os.linesep)
-				f.write("#      u      block is unmapped and should be mapped"+os.linesep)
-				f.write("# number of blocks"+os.linesep)
+				f.write("#      M_i    i-th bsegment is correctly mapped"+os.linesep)
+				f.write("#      m      segment should be unmapped but it is mapped"+os.linesep)
+				f.write("#      w      segment is mapped to a wrong location"+os.linesep)
+				f.write("#      U      segment is unmapped and should be unmapped"+os.linesep)
+				f.write("#      u      segment is unmapped and should be mapped"+os.linesep)
+				f.write("# number of segments"+os.linesep)
 
 				for read in samfile:
 					rnf_read = smbl.Read()
@@ -378,9 +378,9 @@ class Bam:
 					right = read.reference_end
 					chrom_id=references_dict[ samfile.references[read.reference_id] ]
 
-					nb_of_blocks=len(rnf_read.blocks)
+					nb_of_segments=len(rnf_read.segments)
 
-					if rnf_read.blocks[0].source==1:
+					if rnf_read.segments[0].source==1:
 						should_be_mapped=True
 					else:
 						should_be_mapped=False
@@ -397,22 +397,22 @@ class Bam:
 					else:
 						# read should be mapped
 						if should_be_mapped:
-							exists_corresponding_block=False
+							exists_corresponding_segment=False
 
-							for j in range(len(rnf_read.blocks)):
-								block=rnf_read.blocks[j]
+							for j in range(len(rnf_read.segments)):
+								segment=rnf_read.segments[j]
 								if (
-									(block.left==0 or abs(block.left - left) < diff_thr) and
-									(block.right==0 or abs(block.right - right) < diff_thr) and
-									(block.left!=0 or block.right==0) and
-									(chrom_id==0 or chrom_id==block.chr)
+									(segment.left==0 or abs(segment.left - left) < diff_thr) and
+									(segment.right==0 or abs(segment.right - right) < diff_thr) and
+									(segment.left!=0 or segment.right==0) and
+									(chrom_id==0 or chrom_id==segment.chr)
 								):
-									exists_corresponding_block=True
+									exists_corresponding_segment=True
 									segment=str(j+1)
 									break
 
 							# read was mapped to correct location
-							if exists_corresponding_block: # exists ok location?
+							if exists_corresponding_segment: # exists ok location?
 								category="M_"+segment
 							# read was mapped to incorrect location
 							else:
@@ -439,8 +439,8 @@ class Bam:
 								right,
 								# assigned category
 								category,
-								# number of blocks
-								nb_of_blocks
+								# count of segments
+								nb_of_segments
 							])
 						) + os.linesep
 					)
@@ -478,7 +478,7 @@ Please contact the author on karel.brinda@gmail.com.
 					vec[q]="M"
 
 			#####
-			# w # - at least one block is incorrectly aligned
+			# w # - at least one segment is incorrectly aligned
 			#####
 			if (
 				srs[q]["w"]>0
@@ -489,7 +489,7 @@ Please contact the author on karel.brinda@gmail.com.
 					vec[q]="w"
 
 			#####
-			# m # - at least one block was aligned but should be unaligned
+			# m # - at least one segment was aligned but should not be aligned
 			#####
 			if(
 				srs[q]["w"]==0 and
@@ -501,7 +501,7 @@ Please contact the author on karel.brinda@gmail.com.
 					vec[q]="m"
 
 			#####
-			# U # - all blocks should be unaligned but are unaligned
+			# U # - all segments should be unaligned but are unaligned
 			#####
 			if (
 				srs[q]["U"]>0 and
@@ -516,7 +516,7 @@ Please contact the author on karel.brinda@gmail.com.
 					vec[q]="U"
 
 			#####
-			# u # - at least one block was unaligned but should be aligned
+			# u # - at least one segment was unaligned but should be aligned
 			#####
 			if (
 				srs[q]["w"]==0 and
@@ -528,7 +528,7 @@ Please contact the author on karel.brinda@gmail.com.
 					vec[q]="u"
 
 			#####
-			# t # - at least one block was thresholded
+			# t # - at least one segment was thresholded
 			#####
 			if (
 				len(srs[q]["M"])!=parts and
@@ -587,15 +587,15 @@ Please contact the author on karel.brinda@gmail.com.
 				if line=="" or line[0]=="#":
 					continue
 				else:
-					(rname,mapped,ref,direction,left,right,category,nb_of_blocks)=line.split("\t")
-					nb_of_blocks=int(nb_of_blocks)
+					(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
+					nb_of_segments=int(nb_of_segments)
 
 
 					# new read
 					if rname!=last_rname:
 						# update
 						if last_rname!="":
-							voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_blocks)
+							voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
 							for q in range(len(voc)):
 								stats_dicts[q][voc[q]]+=1
 						# nulling
@@ -611,7 +611,7 @@ Please contact the author on karel.brinda@gmail.com.
 								]
 						last_rname=rname
 
-					# block processing
+					# processing of a segment
 					if category=="U":
 						for q in range(len(single_reads_statistics)):
 							single_reads_statistics[q]["U"]+=1
@@ -627,12 +627,12 @@ Please contact the author on karel.brinda@gmail.com.
 							for q in range(mapping_quality+1):
 								single_reads_statistics[q]["w"]+=1
 						else:#  category[0]=M
-							block_id=int(category.replace("M_",""))
+							segment_id=int(category.replace("M_",""))
 							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["M"].add(block_id)
+								single_reads_statistics[q]["M"].add(segment_id)
 
 			# last read
-			voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_blocks)
+			voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
 			for q in range(len(voc)):
 				stats_dicts[q][voc[q]]+=1
 
