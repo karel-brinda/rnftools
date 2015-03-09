@@ -13,8 +13,8 @@ reference_contam_2  = smbl.fasta.EXAMPLE_2
 
 ##
 
-reads_1 = "reads_1.fq"
-reads_2 = "reads_2.fq"
+reads_1 = "reads_a"
+reads_2 = "reads_b"
 
 ##
 
@@ -30,12 +30,12 @@ bwa_aln_2 = "bwa_mem_2.bam"
 
 # sample 1
 
-rnftools.mishmash.sample(reads_1[:-3],ends=1)
+rnftools.mishmash.sample(reads_1,ends=2)
 
 rnftools.mishmash.DwgSim(
 	fa=reference_basic_1,
 	read_length_1=100,
-	read_length_2=0,
+	read_length_2=100,
 	number_of_reads=10000
 )
 
@@ -43,19 +43,19 @@ rnftools.mishmash.DwgSim(
 rnftools.mishmash.DwgSim(
 	fa=reference_contam_1,
 	read_length_1=100,
-	read_length_2=0,
+	read_length_2=100,
 	number_of_reads=2000
 )
 
 
 # sample 2
 
-rnftools.mishmash.sample(reads_2[:-3],ends=1)
+rnftools.mishmash.sample(reads_2,ends=2)
 
 rnftools.mishmash.DwgSim(
 	fa=reference_basic_2,
 	read_length_1=100,
-	read_length_2=0,
+	read_length_2=100,
 	number_of_reads=10000
 )
 
@@ -63,7 +63,7 @@ rnftools.mishmash.DwgSim(
 rnftools.mishmash.DwgSim(
 	fa=reference_contam_2,
 	read_length_1=100,
-	read_length_2=0,
+	read_length_2=100,
 	number_of_reads=2000
 )
 
@@ -74,13 +74,15 @@ rnftools.mishmash.DwgSim(
 
 bwa1 = smbl.prog.BwaMem(
 	fasta=reference_basic_1,
-	fastq_1=reads_1,
+	fastq_1=reads_1+".1.fq",
+	fastq_2=reads_1+".2.fq",
 	bam=bwa_aln_1,
 )
 
 bwa2 = smbl.prog.BwaMem(
 	fasta=reference_basic_2,
-	fastq_1=reads_2,
+	fastq_1=reads_2+".1.fq",
+	fastq_2=reads_2+".2.fq",
 	bam=bwa_aln_2,
 )
 
