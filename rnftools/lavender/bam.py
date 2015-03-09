@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import rnftools
+import rnftools.lavender
 
-import smbl
+import smbl.prog
 import snakemake
 import os
 import sys
@@ -371,7 +371,7 @@ class Bam:
 				f.write("# number of segments"+os.linesep)
 
 				for read in samfile:
-					rnf_read = smbl.Read()
+					rnf_read = rnftools.rnfformat.Read()
 					rnf_read.destringize(read.query_name)
 
 					left = read.reference_start+1

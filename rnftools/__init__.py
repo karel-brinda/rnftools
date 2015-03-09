@@ -1,5 +1,6 @@
 import rnftools.mishmash
 import rnftools.lavender
+import rnftools.rnfformat
 
 import os
 
@@ -10,7 +11,10 @@ def include():
 			)
 
 def input():
-	return [rnftools.lavender.input(),rnftools.mishmash.input()]
+	return [
+			rnftools.lavender.input(),
+			rnftools.mishmash.input(),
+		]
 
 __all__ = []
 

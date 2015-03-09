@@ -6,7 +6,7 @@ import re
 import os
 import pysam
 
-import rnftools.mishmash
+import rnftools
 
 class Source(object):
 	"""	Abstract class for a genome from which reads are simulated.

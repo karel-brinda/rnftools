@@ -1,3 +1,5 @@
+import re
+
 segment_destr_pattern = re.compile(r'^\(([0-9]+),([0-9]+),([FRN]),([0-9]+),([0-9]+)\)$')
 
 class Segment:

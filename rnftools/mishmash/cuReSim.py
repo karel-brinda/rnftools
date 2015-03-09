@@ -1,3 +1,4 @@
+import rnftools
 from .source import Source
 
 import os

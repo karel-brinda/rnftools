@@ -4,9 +4,9 @@ import rnftools
 
 ##
 
-reference_basic_1   = smbl.fasta.HUMAN_HG38
-#reference_basic_1   = smbl.fasta.EXAMPLE_1
-reference_contam_1  = smbl.fasta.EXAMPLE_2
+#reference_basic_1   = smbl.fasta.HUMAN_HG38
+reference_basic_1   = smbl.fasta.EXAMPLE_2
+reference_contam_1  = smbl.fasta.EXAMPLE_1
 
 reference_basic_2   = smbl.fasta.EXAMPLE_1
 reference_contam_2  = smbl.fasta.EXAMPLE_2

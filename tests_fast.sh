@@ -23,10 +23,10 @@ echo
 
 (
 	set -ex -o pipefail; 
-	rm -fR ~/.smbl
+	#rm -fR ~/.smbl
 
 	cd examples/01_simple_read_simulation
-	snakemake -p
+	snakemake -p --cores
 )
 
 echo
@@ -50,10 +50,10 @@ echo
 
 (
 	set -ex -o pipefail; 
-	rm -fR ~/.smbl
+	#rm -fR ~/.smbl
 
 	cd examples/02_more_complex_read_simulation
-	snakemake -p
+	snakemake -p --cores
 )
 
 echo
@@ -77,16 +77,16 @@ echo
 
 (
 	set -ex -o pipefail; 
-	rm -fR ~/.smbl
+	#rm -fR ~/.smbl
 
 	cd examples/03_mapper_evaluation_SE
 	
 	cd bams
-	snakemake -p
+	snakemake -p --cores
 	cd ..
 
-	rm -fR ~/.smbl
-	snakemake -p
+	#rm -fR ~/.smbl
+	snakemake -p --cores
 )
 
 
