@@ -20,6 +20,8 @@ reads_2 = "reads_2.fq"
 
 bwa_aln_1 = "bwa_mem_1.bam"
 bwa_aln_2 = "bwa_mem_2.bam"
+bwa_aln_3 = "bwa_mem_3.bam"
+bwa_aln_4 = "bwa_mem_4.bam"
 
 ##
 
@@ -84,6 +86,18 @@ bwa2 = smbl.prog.BwaMem(
 	bam=bwa_aln_2,
 )
 
+bwa3 = smbl.prog.BwaSw(
+	fasta=reference_basic_1,
+	fastq_1=reads_1,
+	bam=bwa_aln_3,
+)
+
+bwa4 = smbl.prog.BwaSw(
+	fasta=reference_basic_2,
+	fastq_1=reads_2,
+	bam=bwa_aln_4,
+)
+
 #
 # RULES
 #
@@ -95,6 +109,8 @@ rule basic:
 		#rnftools.input(),
 		bwa1.bam_fn(),
 		bwa2.bam_fn(),
+		bwa3.bam_fn(),
+		bwa4.bam_fn(),
 
 
 
@@ -118,6 +134,22 @@ rule bwa_index_2:
 	run:
 		bwa2.make_index()
 
+#rule bwa_index_3:
+#	input:
+#		bwa3.make_index_input()
+#	output:
+#		bwa3.make_index_output()
+#	run:
+#		bwa3.make_index()
+#
+#rule bwa_index_4:
+#	input:
+#		bwa4.make_index_input()
+#	output:
+#		bwa4.make_index_output()
+#	run:
+#		bwa4.make_index()
+
 rule aln_bwa_1:
 	input:
 		bwa1.map_reads_input()
@@ -134,5 +166,20 @@ rule aln_bwa_2:
 	run:
 		bwa2.map_reads()
 
+rule aln_bwa_3:
+	input:
+		bwa3.map_reads_input()
+	output:
+		bwa3.map_reads_output()
+	run:
+		bwa3.map_reads()
+
+rule aln_bwa_4:
+	input:
+		bwa4.map_reads_input()
+	output:
+		bwa4.map_reads_output()
+	run:
+		bwa4.map_reads()
 
 include: rnftools.include()
