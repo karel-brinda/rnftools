@@ -82,11 +82,11 @@ echo
 	cd examples/03_mapper_evaluation_SE
 	
 	cd bams
-	snakemake -p
+	snakemake -p --allow-ambiguity
 	cd ..
 
 	rm -fR ~/.smbl
-	snakemake -p
+	snakemake -p --allow-ambiguity
 )
 
 
