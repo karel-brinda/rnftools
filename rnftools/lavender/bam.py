@@ -11,6 +11,8 @@ import pysam
 
 __all__ = ["Bam"]
 
+MAXIMAL_MAPPING_QUALITY=255
+
 ###########
 ###########
 ### BAM ###
@@ -448,7 +450,7 @@ class Bam:
 	@staticmethod
 	def _vector_of_categories(srs,read_name,parts):
 		# default value
-		vec = ["x" for i in range(255)]
+		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
 		val_err = lambda q : """\
 Invalid alignment for read '{}'. Debug info:
 	{dbg}
@@ -460,6 +462,7 @@ Please contact the author on karel.brinda@gmail.com.
 		srs[q]["U"],
 		srs[q]["u"]
 	]))
+		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1
 
 		for q in range(len(srs)):
 			#####
@@ -576,7 +579,7 @@ Please contact the author on karel.brinda@gmail.com.
 				"+":0,
 				"x":0
 			}
-			for i in range(255)
+			for i in range(MAXIMAL_MAPPING_QUALITY+1)
 		]
 
 		with open(self._aci_fn, "r") as g:
@@ -607,7 +610,7 @@ Please contact the author on karel.brinda@gmail.com.
 										"m":0,
 										"w":0,
 									}
-									for i in range(255)
+									for i in range(MAXIMAL_MAPPING_QUALITY+1)
 								]
 						last_rname=rname
 
@@ -620,6 +623,7 @@ Please contact the author on karel.brinda@gmail.com.
 							single_reads_statistics[q]["u"]+=1
 					else:
 						mapping_quality=int(mapped.replace("mapped_",""))
+						assert mapping_quality<=MAXIMAL_MAPPING_QUALITY
 						if category=="m":
 							for q in range(mapping_quality+1):
 								single_reads_statistics[q]["m"]+=1

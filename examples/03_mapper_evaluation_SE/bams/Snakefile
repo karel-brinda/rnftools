@@ -22,6 +22,7 @@ bwa_aln_1 = "bwa_mem_1.bam"
 bwa_aln_2 = "bwa_mem_2.bam"
 bwa_aln_3 = "bwa_mem_3.bam"
 bwa_aln_4 = "bwa_mem_4.bam"
+bt_aln = "bt.bam"
 
 ##
 
@@ -74,29 +75,79 @@ rnftools.mishmash.DwgSim(
 # ALIGNMENT
 #
 
-bwa1 = smbl.prog.BwaMem(
-	fasta=reference_basic_1,
-	fastq_1=reads_1,
-	bam=bwa_aln_1,
-)
+alignments = [
+		smbl.prog.BwaMem(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="BWA-MEM (1).bam",
+		),
 
-bwa2 = smbl.prog.BwaMem(
-	fasta=reference_basic_2,
-	fastq_1=reads_2,
-	bam=bwa_aln_2,
-)
+		smbl.prog.BwaMem(
+			fasta=reference_basic_2,
+			fastq_1=reads_2,
+			bam="BWA-MEM (2).bam",
+		),
 
-bwa3 = smbl.prog.BwaSw(
-	fasta=reference_basic_1,
-	fastq_1=reads_1,
-	bam=bwa_aln_3,
-)
+		smbl.prog.BwaSw(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="BWA-SW (1).bam",
+		),
 
-bwa4 = smbl.prog.BwaSw(
-	fasta=reference_basic_2,
-	fastq_1=reads_2,
-	bam=bwa_aln_4,
-)
+		smbl.prog.BwaSw(
+			fasta=reference_basic_2,
+			fastq_1=reads_2,
+			bam="BWA-SW (2).bam",
+		),
+
+		smbl.prog.Bowtie2(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="Bowtie2 (1).bam",
+		),
+
+		smbl.prog.Bowtie2(
+			fasta=reference_basic_2,
+			fastq_1=reads_2,
+			bam="Bowtie2 (2).bam",
+		),
+
+		smbl.prog.Storm(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="SToRM (1).bam",
+		),
+
+		smbl.prog.Storm(
+			fasta=reference_basic_2,
+			fastq_1=reads_2,
+			bam="SToRM (2).bam",
+		),
+
+		smbl.prog.RazerS3(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="RazerS3 (1).bam",
+		),
+
+		smbl.prog.RazerS3(
+			fasta=reference_basic_2,
+			fastq_1=reads_2,
+			bam="RazerS3 (2).bam",
+		),
+
+		smbl.prog.Yara(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="Yara (1).bam",
+		),
+
+		smbl.prog.Yara(
+			fasta=reference_basic_2,
+			fastq_1=reads_2,
+			bam="Yara (2).bam",
+		),
+	]
 
 #
 # RULES
@@ -106,80 +157,12 @@ bwa4 = smbl.prog.BwaSw(
 
 rule basic:
 	input:
+		[aln.bam_fn() for aln in alignments]
 		#rnftools.input(),
-		bwa1.bam_fn(),
-		bwa2.bam_fn(),
-		bwa3.bam_fn(),
-		bwa4.bam_fn(),
-
-
-
-#
-# BAM FILES
-#
-
-rule bwa_index_1:
-	input:
-		bwa1.make_index_input()
-	output:
-		bwa1.make_index_output()
-	run:
-		bwa1.make_index()
-
-rule bwa_index_2:
-	input:
-		bwa2.make_index_input()
-	output:
-		bwa2.make_index_output()
-	run:
-		bwa2.make_index()
-
-#rule bwa_index_3:
-#	input:
-#		bwa3.make_index_input()
-#	output:
-#		bwa3.make_index_output()
-#	run:
-#		bwa3.make_index()
-#
-#rule bwa_index_4:
-#	input:
-#		bwa4.make_index_input()
-#	output:
-#		bwa4.make_index_output()
-#	run:
-#		bwa4.make_index()
-
-rule aln_bwa_1:
-	input:
-		bwa1.map_reads_input()
-	output:
-		bwa1.map_reads_output()
-	run:
-		bwa1.map_reads()
-
-rule aln_bwa_2:
-	input:
-		bwa2.map_reads_input()
-	output:
-		bwa2.map_reads_output()
-	run:
-		bwa2.map_reads()
-
-rule aln_bwa_3:
-	input:
-		bwa3.map_reads_input()
-	output:
-		bwa3.map_reads_output()
-	run:
-		bwa3.map_reads()
-
-rule aln_bwa_4:
-	input:
-		bwa4.map_reads_input()
-	output:
-		bwa4.map_reads_output()
-	run:
-		bwa4.map_reads()
+		#bwa1.bam_fn(),
+		#bwa2.bam_fn(),
+		#bwa3.bam_fn(),
+		#bwa4.bam_fn(),
+		#bt.bam_fn(),
 
 include: rnftools.include()

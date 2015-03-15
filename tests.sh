@@ -26,7 +26,7 @@ echo
 	rm -fR ~/.smbl
 
 	cd examples/01_simple_read_simulation
-	snakemake -p
+	snakemake -p --allow-ambiguity
 )
 
 echo
@@ -53,7 +53,7 @@ echo
 	rm -fR ~/.smbl
 
 	cd examples/02_more_complex_read_simulation
-	snakemake -p
+	snakemake -p --allow-ambiguity
 )
 
 echo
