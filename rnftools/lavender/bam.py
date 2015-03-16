@@ -449,6 +449,13 @@ class Bam:
 
 	@staticmethod
 	def _vector_of_categories(srs,read_name,parts):
+		"""Create vector of categories (voc[q] ... assigned category for given quality level)
+
+		srs ... single read statistics ... for every q ... dictionary
+		read_name ... read name
+		parts ... number of segments
+		"""
+
 		# default value
 		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
 		val_err = lambda q : """\
@@ -465,6 +472,15 @@ Please contact the author on karel.brinda@gmail.com.
 		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1
 
 		for q in range(len(srs)):
+
+			#assert (
+			#		len(set(srs[q]["M"]))+
+			#		srs[q]["m"]+
+			#		srs[q]["w"]+
+			#		srs[q]["U"]+
+			#		srs[q]["u"]) <= parts+1, "wrong single read statistics parts={}, q={}, '{}'".format(parts,q,str(srs[q]))
+
+
 			#####
 			# M # - all parts correctly aligned
 			#####
@@ -475,10 +491,8 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["U"]==0 and
 				srs[q]["u"]==0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="M"
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="M"
 
 			#####
 			# w # - at least one segment is incorrectly aligned
@@ -486,10 +500,8 @@ Please contact the author on karel.brinda@gmail.com.
 			if (
 				srs[q]["w"]>0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="w"
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="w"
 
 			#####
 			# m # - at least one segment was aligned but should not be aligned
@@ -498,10 +510,8 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["w"]==0 and
 				srs[q]["m"]>0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="m"
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="m"
 
 			#####
 			# U # - all segments should be unaligned but are unaligned
@@ -513,10 +523,8 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["w"]==0 and
 				len(srs[q]["M"])==0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="U"
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="U"
 
 			#####
 			# u # - at least one segment was unaligned but should be aligned
@@ -525,10 +533,8 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["w"]==0 and
 				srs[q]["u"]>0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="u"
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="u"
 
 			#####
 			# t # - at least one segment was thresholded
@@ -540,23 +546,24 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["U"]==0 and
 				srs[q]["u"]==0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="t"
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="t"
 
 			#####
 			# + # - multimapped, M + w + m > parts
 			#####
+
+			# this only can remove some older
 			if (
-				len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts+srs[q]["m"]==0 and
+				#len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts+srs[q]["m"]==0 and
+				len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts and
 				srs[q]["U"]==0 and
 				srs[q]["u"]==0
 			):
-				if vec[q]!="x":
-					raise ValueError(val_err(q))
-				else:
-					vec[q]="+"
+				#assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="+"
+				#print("multi")
+
 		return vec
 
 
@@ -593,7 +600,7 @@ Please contact the author on karel.brinda@gmail.com.
 					(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
 					nb_of_segments=int(nb_of_segments)
 
-
+					#print(rname,last_rname,mapped)
 					# new read
 					if rname!=last_rname:
 						# update
@@ -602,15 +609,14 @@ Please contact the author on karel.brinda@gmail.com.
 							for q in range(len(voc)):
 								stats_dicts[q][voc[q]]+=1
 						# nulling
-						single_reads_statistics=[
+						single_reads_statistics= [
 									{
 										"U":0,
 										"u":0,
-										"M":set(),
+										"M":[],
 										"m":0,
 										"w":0,
-									}
-									for i in range(MAXIMAL_MAPPING_QUALITY+1)
+									} for i in range(MAXIMAL_MAPPING_QUALITY+1)
 								]
 						last_rname=rname
 
@@ -630,10 +636,11 @@ Please contact the author on karel.brinda@gmail.com.
 						elif category=="w":
 							for q in range(mapping_quality+1):
 								single_reads_statistics[q]["w"]+=1
-						else:#  category[0]=M
+						else:
+							assert category[0]=="M", category
 							segment_id=int(category.replace("M_",""))
 							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["M"].add(segment_id)
+								single_reads_statistics[q]["M"].append(segment_id)
 
 			# last read
 			voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
