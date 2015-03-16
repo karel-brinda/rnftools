@@ -95,8 +95,9 @@ class Bam:
 
 		with open(self._gp_fn,"w+") as f:
 			gp_content="""
+				set key spacing 0.8 opaque width -3
 
-				set x2lab "1 - precision\\n(#wrong mappings / #mapped)"
+				set x2lab "false positive rate\\n(#wrong mappings / #mapped)"
 				set log x
 				set log x2
 
@@ -125,7 +126,7 @@ class Bam:
 				{plot}
 
 
-				set termin pdf enhanced size {pdf_size}
+				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
 				set out "{pdf_fn}"
 				{plot}
 

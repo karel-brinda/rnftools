@@ -87,8 +87,9 @@ class Panel:
 				(" <br>"+os.linesep).join(
 					[
 						"""
-							<a style="font-weight:bold" href="{bam_html}">{bam_name}</a>: 
-							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';return false;" href="#">graph</a>
+							<strong>{bam_name}:</strong>
+							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';return false;" href="#">graph</a>,
+							<a href="{bam_html}">report</a>:
 						""".format(
 							bam_name=bam.get_name(),
 							bam_html=bam.html_fn(),
@@ -134,19 +135,27 @@ class Panel:
 	def create_gp(self):
 		""" Create GnuPlot file. """
 
+		# todo: parameter
+		def gp_style(i):
+			colors=["red","green","blue","goldenrod","black"]
+			color=colors[i % len(colors)]
+			return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
+
 		with open(self._gp_fn,"w+") as f:
 			plots =[
-				""""{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2)*100/$10) \
-					with line dt 1 lc rgb "#0000ff" title "{basename}" noenhanced,\\""".format(
-							roc_fn=bam.roc_fn(),
-							basename=os.path.basename(bam.roc_fn())
+				""""{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4)*100/($2+$3+$4+$7+$8)) \
+					with lp ls {i} ps 0.8 title "{basename}" noenhanced,\\""".format(
+							roc_fn=self.bams[i].roc_fn(),
+							basename=os.path.basename(self.bams[i].roc_fn()),
+							i=i+1,
 						)
-					for bam in self.bams
+					for i in range(len(self.bams))
 			]
 
 			f.write("""
+				set key spacing 0.8 opaque width -3
 
-				set x2lab "1 - precision\\n(#wrong mappings / #mapped)"
+				set x2lab "false positive rate\\n(#wrong mappings / #mapped)"
 				set log x
 				set log x2
 
@@ -156,8 +165,9 @@ class Panel:
 				set x2ran [{xran}]
 				set x2tics
 
+				{styles}
 
-				set ylab "part of all reads (%)"
+				set ylab "sensitivity on reads to map (%)"
 
 				set format y "%g %%"
 				set yran [60:100]
@@ -175,7 +185,7 @@ class Panel:
 				{plots}
 
 
-				set termin pdf enhanced size {pdf_size}
+				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
 				set out "{pdf_fn}"
 				{plots}
 
@@ -187,6 +197,7 @@ class Panel:
 					svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1]),
 					pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1]),
 					plots="plot "+os.linesep.join(plots),
+					styles=os.linesep.join([gp_style(i) for i in range(40)]),
 				)
 			)
 
