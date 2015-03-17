@@ -5,4 +5,3 @@ RNFtools
     :target: https://travis-ci.org/karel-brinda/rnftools
 
 All documentation is available on http://rnftools.rtfd.org.
-
