@@ -19,7 +19,6 @@ install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
   - sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
   - sudo apt-get install git-svn
-  - sudo apt-get install python-pysam
   - pip install .
   - pip install -r requirements.txt
 script: "./tests.sh"
