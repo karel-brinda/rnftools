@@ -21,7 +21,7 @@ install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
   - sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
   - sudo apt-get install git-svn
-  - pip install .
   - pip install --use-wheel --find-links=wheelhouse/ -r requirements.txt
+  - pip install .
 script: "./tests.sh"
 
