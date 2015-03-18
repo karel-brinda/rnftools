@@ -1,27 +1,35 @@
 language: python
 os:
-  - linux
-  - osx
+- linux
+- osx
 python:
-  - "3.2"
-  - "3.3"
-  - "3.4"
+- '3.2'
+- '3.3'
+- '3.4'
 cache:
   apt: true
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq 
-  - wget 'http://www.well.ox.ac.uk/~jk/wheelhouse.tar'
-  - tar -xvf wheelhouse.tar
+- sudo apt-get update -qq
+- sudo apt-get install -qq
+- wget 'http://www.well.ox.ac.uk/~jk/wheelhouse.tar'
+- tar -xvf wheelhouse.tar
 install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update
-  - sudo apt-get install g++-4.8
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
-  - sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
-  - sudo apt-get install git-svn
-  - pip install --use-wheel --find-links=wheelhouse/ -r requirements.txt
-  - pip install .
-script: "./tests.sh"
-
+- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+- sudo apt-get update
+- sudo apt-get install g++-4.8
+- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
+- sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
+- sudo apt-get install git-svn
+- pip install --use-wheel --find-links=wheelhouse/ -r requirements.txt
+- pip install .
+script: ./tests.sh
+deploy:
+  provider: pypi
+  user: karel.brinda
+  distributions: "sdist"
+  password:
+    secure: 5nL+obm5eVrVHifDpSOgWMIVZXVWNt3DUsCGpxlfH/K5Owt4l4r5p7YRlE6IALIv3RtjZ7VB9KTLttUKmNNkyRAJ3WpAim0ln6T36cEIirO3VRG0YP1Nm3k5lyg6UNhz9xbKgEiUizKMDkVPptnnvxGNQomtUHMz+KYfLnPJ9Yo=
+  on:
+    repo: karel-brinda/rnftools
+    branch: master
