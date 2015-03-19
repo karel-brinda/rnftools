@@ -1,11 +1,11 @@
 language: python
 os:
 - linux
-- osx
 python:
 - '3.2'
 - '3.3'
 - '3.4'
+- 'nightly'
 cache:
   apt: true
 before_install:
@@ -23,7 +23,8 @@ install:
 - sudo apt-get install git-svn
 - pip install --use-wheel --find-links=wheelhouse/ -r requirements.txt
 - pip install .
-script: ./tests.sh
+script:
+- ./tests.sh
 deploy:
   provider: pypi
   user: karel.brinda
@@ -33,3 +34,4 @@ deploy:
   on:
     repo: karel-brinda/rnftools
     branch: master
+    tags: true
