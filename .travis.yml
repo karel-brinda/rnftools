@@ -13,6 +13,8 @@ before_install:
 - sudo apt-get install -qq
 - wget 'http://www.well.ox.ac.uk/~jk/wheelhouse.tar'
 - tar -xvf wheelhouse.tar
+- pip install --upgrade setuptools
+- pip install --upgrade pip
 install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 - sudo apt-get update
