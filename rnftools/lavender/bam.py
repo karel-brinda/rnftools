@@ -95,6 +95,7 @@ class Bam:
 
 		with open(self._gp_fn,"w+") as f:
 			gp_content="""
+				set title "{plot_title}"
 				set key spacing 0.8 opaque width -3
 
 				set x2lab "false positive rate\\n(#wrong mappings / #mapped)"
@@ -137,6 +138,7 @@ class Bam:
 				yran="{:.10f}:{:.10f}".format(self.report.plot_y_run[0],self.report.plot_y_run[1]),
 				svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1]),
 				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1]),
+				plot_title=os.path.basename(self._bam_fn),
 				plot="""
 					plot\\
 						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6+$5)*100/$10) lt rgb "violet" with filledcurve x1 title 'Unmapped correctly',\\
@@ -237,6 +239,17 @@ class Bam:
 
 
 		with open(self._html_fn,"w+") as f:
+			program_info=""
+			for x in snakemake.shell('"{samtools}" view -H "{bam}"'.format(
+							samtools=smbl.prog.SAMTOOLS,
+							bam=self._bam_fn,
+						),iterable=True):
+				x=x.strip()
+				if x[:3]=="@PG":
+					pg_header=x[4:]
+					program_info="<p><strong>Program header:</strong> {}</p>".format(pg_header)
+
+
 			html_src="""<!DOCTYPE html>
 			<html>
 			<head>
@@ -252,6 +265,8 @@ class Bam:
 			<body>
 				<h1 id="top">{name}</h1>
 
+				{program_info}
+				
 				<p>
 					<a href="#roctable">ROC table</a> -
 					<a href="#graphs">Graphs</a>
@@ -341,6 +356,7 @@ class Bam:
 						self.report.html_fn(),
 						os.path.dirname(self._html_fn)
 					),
+					program_info=program_info,
 				)
 
 			f.write(html_src)

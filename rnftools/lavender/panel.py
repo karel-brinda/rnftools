@@ -190,14 +190,6 @@ class Panel:
 	def create_gp(self):
 		""" Create GnuPlot file. """
 
-		# todo: parameter
-
-		#
-		#
-		#
-		#
-		#
-
 		def gp_style(i):
 			colors=["red","green","blue","goldenrod","black"]
 			color=colors[i % len(colors)]
