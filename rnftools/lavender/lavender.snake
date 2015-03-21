@@ -45,8 +45,8 @@ for i, panel in enumerate(rnftools.lavender.panels()):
 			[bam.roc_fn() for bam in panel.get_bams()],
 			smbl.prog.GNUPLOT5,
 		output:
-			panel.svg_fn(),
-			panel.pdf_fn(),
+			panel.svg_fns(),
+			panel.pdf_fns(),
 		params:
 			i=str(i)
 		run:
