@@ -8,9 +8,6 @@ import os
 import sys
 import pysam
 
-
-__all__ = ["Bam"]
-
 MAXIMAL_MAPPING_QUALITY=255
 
 ###########
@@ -134,10 +131,10 @@ class Bam:
 			""".format(
 				svg_fn=self._svg_fn,
 				pdf_fn=self._pdf_fn,
-				xran="{:.10f}:{:.10f}".format(self.report.plot_x_run[0],self.report.plot_x_run[1]),
-				yran="{:.10f}:{:.10f}".format(self.report.plot_y_run[0],self.report.plot_y_run[1]),
-				svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1]),
-				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1]),
+				xran="{:.10f}:{:.10f}".format(self.report.default_plot_x_run[0],self.report.default_plot_x_run[1]),
+				yran="{:.10f}:{:.10f}".format(self.report.default_plot_y_run[0],self.report.default_plot_y_run[1]),
+				svg_size="{},{}".format(self.report.default_plot_svg_size_px[0],self.report.default_plot_svg_size_px[1]),
+				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.default_plot_pdf_size_cm[0],self.report.default_plot_pdf_size_cm[1]),
 				plot_title=os.path.basename(self._bam_fn),
 				plot="""
 					plot\\

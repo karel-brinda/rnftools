@@ -5,8 +5,6 @@ import snakemake
 import os
 import glob
 
-__all__=["Panel"]
-
 #############
 #############
 ### PANEL ###
@@ -16,10 +14,10 @@ class Panel:
 	"""Class for a single panel in a HTML report."""
 
 	def __init__(self,
-		report,
-		bam_dir,
-		panel_dir,
-		name
+			report,
+			bam_dir,
+			panel_dir,
+			name,
 		):
 		"""
 
@@ -50,12 +48,10 @@ class Panel:
 				rnftools.lavender.Bam(
 					bam_fn=bam_fn,
 					panel=self,
-					name=os.path.basename(bam_fn).replace(".bam","")
-				) 
+					name=os.path.basename(bam_fn).replace(".bam","")		
+		) 
 				for bam_fn in sorted(bams_fns)
 			]
-
-		self.add_graph("({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})")
 
 		if len(self.bams)==0:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
@@ -141,10 +137,17 @@ class Panel:
 	######################################
 	######################################
 
-	def add_graph(self,y):
+	def add_graph(self,
+				y,
+				plot_x_run,
+				plot_y_run,
+				plot_pdf_size_cm,
+				plot_svg_size_px,
+			):
 		# default x .... ($3+$4)/($2+$3+$4)
 		# default y .... "($2+$3+$4)*100/($2+$3+$4+$7+$8)" ... ({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})
-		x_gp=rnftools.lavender._format_xxx("({m}+{w})/({M}+{m}+{w})")
+		x="({m}+{w})/({M}+{m}+{w})"
+		x_gp=rnftools.lavender._format_xxx(x)
 		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))	
 
 		i=len(self.gp_plots)
@@ -169,9 +172,19 @@ class Panel:
 		self.gp_plots.append( os.linesep.join(
 				[
 					"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
-							pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1])
+							pdf_size="{:.10f}cm,{:.10f}cm".format(plot_pdf_size_cm[0],plot_pdf_size_cm[1])
 						),
 					'set out "{}'.format(pdf_file),
+
+					"""
+						set xran  [{xran}]
+						set x2ran [{xran}]
+						set yran  [{yran}]
+					""".format(
+						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1]),
+						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
+					),
+
 					"plot \\"
 				] + plot + ["",""]
 			))
@@ -179,9 +192,20 @@ class Panel:
 		self.gp_plots.append( os.linesep.join(
 				[
 					"set termin svg size {svg_size} enhanced".format(
-							svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1])
+							svg_size="{},{}".format(plot_svg_size_px[0],plot_svg_size_px[1])
 						),
 					'set out "{}"'.format(svg_file),
+
+					"""
+						set xran  [{xran}]
+						set x2ran [{xran}]
+						set yran  [{yran}]
+					""".format(
+						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1]),
+						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
+					),
+
+
 					"plot \\"
 				] + plot + ["",""]
 			))
@@ -206,8 +230,6 @@ class Panel:
 
 				set format x "10^{{%L}}"
 				set format x2 "10^{{%L}}"
-				set xran  [{xran}]
-				set x2ran [{xran}]
 				set x2tics
 
 				{styles}
@@ -215,7 +237,6 @@ class Panel:
 				set ylab "sensitivity on reads to map (%)"
 
 				set format y "%g %%"
-				set yran [60:100]
 
 				set pointsize 1.5
 
@@ -228,8 +249,6 @@ class Panel:
 				{all_plots}
 
 				""".format(
-					xran="{:.10f}:{:.10f}".format(self.report.plot_x_run[0],self.report.plot_x_run[1]),
-					yran="{:.10f}:{:.10f}".format(self.report.plot_y_run[0],self.report.plot_y_run[1]),
 					all_plots=os.linesep.join(self.gp_plots),
 					styles=os.linesep.join([gp_style(i) for i in range(40)]),
 				)
