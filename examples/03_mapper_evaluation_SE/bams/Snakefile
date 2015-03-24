@@ -76,11 +76,11 @@ rnftools.mishmash.DwgSim(
 #
 
 alignments = [
-		smbl.prog.BwaMem(
-			fasta=reference_basic_1,
-			fastq_1=reads_1,
-			bam="BWA-MEM (1).bam",
-		),
+#		smbl.prog.BwaMem(
+#			fasta=reference_basic_1,
+#			fastq_1=reads_1,
+#			bam="BWA-MEM (1).bam",
+#		),
 
 		smbl.prog.BwaMem(
 			fasta=reference_basic_2,
@@ -88,11 +88,11 @@ alignments = [
 			bam="BWA-MEM (2).bam",
 		),
 
-		smbl.prog.BwaSw(
-			fasta=reference_basic_1,
-			fastq_1=reads_1,
-			bam="BWA-SW (1).bam",
-		),
+#		smbl.prog.BwaSw(
+#			fasta=reference_basic_1,
+#			fastq_1=reads_1,
+#			bam="BWA-SW (1).bam",
+#		),
 
 		smbl.prog.BwaSw(
 			fasta=reference_basic_2,
@@ -100,11 +100,11 @@ alignments = [
 			bam="BWA-SW (2).bam",
 		),
 
-		smbl.prog.Bowtie2(
-			fasta=reference_basic_1,
-			fastq_1=reads_1,
-			bam="Bowtie2 (1).bam",
-		),
+#		smbl.prog.Bowtie2(
+#			fasta=reference_basic_1,
+#			fastq_1=reads_1,
+#			bam="Bowtie2 (1).bam",
+#		),
 
 		smbl.prog.Bowtie2(
 			fasta=reference_basic_2,
@@ -112,11 +112,11 @@ alignments = [
 			bam="Bowtie2 (2).bam",
 		),
 
-		smbl.prog.Storm(
-			fasta=reference_basic_1,
-			fastq_1=reads_1,
-			bam="SToRM (1).bam",
-		),
+#		smbl.prog.Storm(
+#			fasta=reference_basic_1,
+#			fastq_1=reads_1,
+#			bam="SToRM (1).bam",
+#		),
 
 		smbl.prog.Storm(
 			fasta=reference_basic_2,
@@ -124,11 +124,11 @@ alignments = [
 			bam="SToRM (2).bam",
 		),
 
-		smbl.prog.RazerS3(
-			fasta=reference_basic_1,
-			fastq_1=reads_1,
-			bam="RazerS3 (1).bam",
-		),
+#		smbl.prog.RazerS3(
+#			fasta=reference_basic_1,
+#			fastq_1=reads_1,
+#			bam="RazerS3 (1).bam",
+#		),
 
 		smbl.prog.RazerS3(
 			fasta=reference_basic_2,
@@ -136,11 +136,11 @@ alignments = [
 			bam="RazerS3 (2).bam",
 		),
 
-		smbl.prog.Yara(
-			fasta=reference_basic_1,
-			fastq_1=reads_1,
-			bam="Yara (1).bam",
-		),
+#		smbl.prog.Yara(
+#			fasta=reference_basic_1,
+#			fastq_1=reads_1,
+#			bam="Yara (1).bam",
+#		),
 
 		smbl.prog.Yara(
 			fasta=reference_basic_2,

@@ -5,8 +5,6 @@ import snakemake
 import os
 import glob
 
-__all__=["Panel"]
-
 #############
 #############
 ### PANEL ###
@@ -16,10 +14,10 @@ class Panel:
 	"""Class for a single panel in a HTML report."""
 
 	def __init__(self,
-		report,
-		bam_dir,
-		panel_dir,
-		name
+			report,
+			bam_dir,
+			panel_dir,
+			name,
 		):
 		"""
 
@@ -39,24 +37,26 @@ class Panel:
 		self.name=name
 		self.panel_dir=panel_dir
 
-		self._svg_fn=os.path.join(self.panel_dir,"svg","_combined.svg")
+		self.gp_plots = []
+
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
-		self._pdf_fn=os.path.join(self.panel_dir,"pdf","_combined.pdf")
+		self._svg_fns=[] #os.path.join(self.panel_dir,"svg","_combined.svg")
+		self._pdf_fns=[] #os.path.join(self.panel_dir,"pdf","_combined.pdf")
 
 		bams_fns=glob.glob(os.path.join(bam_dir,"*.bam"))
 		self.bams=[
 				rnftools.lavender.Bam(
 					bam_fn=bam_fn,
 					panel=self,
-					name=os.path.basename(bam_fn).replace(".bam","")
-				) 
+					name=os.path.basename(bam_fn).replace(".bam","")		
+		) 
 				for bam_fn in sorted(bams_fns)
 			]
 
 		if len(self.bams)==0:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
-		for x in ["gp","html","roc","svg"]:
+		for x in ["gp","html","roc","svg","pdf"]:
 			snakemake.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
@@ -77,7 +77,7 @@ class Panel:
 	def get_required_files(self):
 		""" Get all required files. """
 
-		return [bam.get_required_files() for bam in self.bams] + [self._svg_fn]
+		return [bam.get_required_files() for bam in self.bams] + [self._svg_fns]
 
 	def get_html_column(self):
 		""" Get a HTML column for this panel. """
@@ -106,51 +106,120 @@ class Panel:
 						panel_id=panel_id
 					),
 
-				"""<img src="{svg}">""".format(
-						svg=self._svg_fn
-					)
+				os.linesep.join(
+					[
+						"""<img src="{svg}">""".format(
+								svg=svg
+							)
+
+						for svg in self._svg_fns
+					]
+				)
 			]
 
 	######################################
 	######################################
 
 	def gp_fn(self):
-		""" Get the GnuPlot file name for the overall graph. """
+		""" Get the GnuPlot file name for the overall graphs. """
 
 		return self._gp_fn
 
-	def svg_fn(self):
-		""" Get the SVG file name for the overall graph. """
+	def svg_fns(self):
+		""" Get the SVG file names for the overall graphs. """
 
-		return self._svg_fn
+		return self._svg_fns
 
-	def pdf_fn(self):
-		""" Get the PDF file name for the overall graph. """
-
-		return self._pdf_fn
+	def pdf_fns(self):
+		""" Get the PDF file names for the overall graphs. """
+		return self._pdf_fns
 
 	######################################
 	######################################
+
+	def add_graph(self,
+				y,
+				plot_x_run,
+				plot_y_run,
+				plot_pdf_size_cm,
+				plot_svg_size_px,
+			):
+		# default x .... ($3+$4)/($2+$3+$4)
+		# default y .... "($2+$3+$4)*100/($2+$3+$4+$7+$8)" ... ({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})
+		x="({m}+{w})/({M}+{m}+{w})"
+		x_gp=rnftools.lavender._format_xxx(x)
+		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))	
+
+		i=len(self.gp_plots)
+		svg_file = os.path.join(self.panel_dir,"svg","_combined_{}.svg".format(i))
+		pdf_file = os.path.join(self.panel_dir,"pdf","_combined_{}.pdf".format(i))
+
+		self._svg_fns.append(svg_file)
+		self._pdf_fns.append(pdf_file)
+
+		plot =	[
+					""""{roc_fn}" using ({x}):({y}) \
+						with lp ls {i} ps 0.8 title "{basename}" noenhanced,\\""".format(
+								x=x_gp,
+								y=y_gp,
+								roc_fn=self.bams[i].roc_fn(),
+								basename=os.path.basename(self.bams[i].roc_fn())[:-4],
+								i=i+1,
+							)
+						for i in range(len(self.bams))
+			]
+
+		self.gp_plots.append( os.linesep.join(
+				[
+					"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
+							pdf_size="{:.10f}cm,{:.10f}cm".format(plot_pdf_size_cm[0],plot_pdf_size_cm[1])
+						),
+					'set out "{}'.format(pdf_file),
+
+					"""
+						set xran  [{xran}]
+						set x2ran [{xran}]
+						set yran  [{yran}]
+					""".format(
+						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1]),
+						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
+					),
+
+					"plot \\"
+				] + plot + ["",""]
+			))
+
+		self.gp_plots.append( os.linesep.join(
+				[
+					"set termin svg size {svg_size} enhanced".format(
+							svg_size="{},{}".format(plot_svg_size_px[0],plot_svg_size_px[1])
+						),
+					'set out "{}"'.format(svg_file),
+
+					"""
+						set xran  [{xran}]
+						set x2ran [{xran}]
+						set yran  [{yran}]
+					""".format(
+						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1]),
+						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
+					),
+
+
+					"plot \\"
+				] + plot + ["",""]
+			))
+
 
 	def create_gp(self):
 		""" Create GnuPlot file. """
 
-		# todo: parameter
 		def gp_style(i):
 			colors=["red","green","blue","goldenrod","black"]
 			color=colors[i % len(colors)]
 			return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
 
 		with open(self._gp_fn,"w+") as f:
-			plots =[
-				""""{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4)*100/($2+$3+$4+$7+$8)) \
-					with lp ls {i} ps 0.8 title "{basename}" noenhanced,\\""".format(
-							roc_fn=self.bams[i].roc_fn(),
-							basename=os.path.basename(self.bams[i].roc_fn()),
-							i=i+1,
-						)
-					for i in range(len(self.bams))
-			]
 
 			f.write("""
 				set key spacing 0.8 opaque width -3
@@ -161,8 +230,6 @@ class Panel:
 
 				set format x "10^{{%L}}"
 				set format x2 "10^{{%L}}"
-				set xran  [{xran}]
-				set x2ran [{xran}]
 				set x2tics
 
 				{styles}
@@ -170,7 +237,6 @@ class Panel:
 				set ylab "sensitivity on reads to map (%)"
 
 				set format y "%g %%"
-				set yran [60:100]
 
 				set pointsize 1.5
 
@@ -180,23 +246,10 @@ class Panel:
 				set datafile separator "\t"
 				set palette negative
 
-				set termin svg size {svg_size} enhanced
-				set out "{svg_fn}"
-				{plots}
-
-
-				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
-				set out "{pdf_fn}"
-				{plots}
+				{all_plots}
 
 				""".format(
-					svg_fn=self._svg_fn,
-					pdf_fn=self._pdf_fn,
-					xran="{:.10f}:{:.10f}".format(self.report.plot_x_run[0],self.report.plot_x_run[1]),
-					yran="{:.10f}:{:.10f}".format(self.report.plot_y_run[0],self.report.plot_y_run[1]),
-					svg_size="{},{}".format(self.report.plot_svg_size[0],self.report.plot_svg_size[1]),
-					pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.plot_pdf_size_cm[0],self.report.plot_pdf_size_cm[1]),
-					plots="plot "+os.linesep.join(plots),
+					all_plots=os.linesep.join(self.gp_plots),
 					styles=os.linesep.join([gp_style(i) for i in range(40)]),
 				)
 			)
@@ -204,4 +257,5 @@ class Panel:
 	def create_graphics(self):
 		"""Create images related to this panel."""
 
-		snakemake.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+		if len(self._svg_fns)+len(self._pdf_fns)>0:
+			snakemake.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

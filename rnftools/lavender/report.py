@@ -3,8 +3,6 @@ import snakemake
 import os
 
 
-__all__=["Report"]
-
 ##############
 ##############
 ### REPORT ###
@@ -18,10 +16,10 @@ class Report:
 		name,
 		bam_dirs=[],
 		allowed_delta=5,
-		plot_x_run=(0.00001,1.0),
-		plot_y_run=(60,100),
-		plot_pdf_size_cm=(10,10),
-		plot_svg_size=(640,640),
+		default_plot_x_run=(0.00001,1.0),
+		default_plot_y_run=(60,100),
+		default_plot_pdf_size_cm=(10,10),
+		default_plot_svg_size_px=(640,640),
 		):
 		"""
 
@@ -29,16 +27,16 @@ class Report:
 		:type  name: str
 		:param bam_dirs: Directories with BAM files.
 		:type  bam_dirs: list of str
-		:param allowed_delta: Tolerance of difference between positions in assessing correct alignments.
+		:param allowed_delta: Tolerance of difference between positions in assessing correct alignments (very important parameter!).
 		:type  allowed_delta: int
-		:param plot_x_run: Range for x-axes in GnuPlot plots.
-		:type  plot_x_run: (float,float)
-		:param plot_y_run: Range for y-axes in GnuPlot plots.
-		:type  plot_y_run: (float,float)
-		:param plot_pdf_size_cm: Size of PDF page.
-		:type  plot_pdf_size_cm: (float,float)
-		:param plot_svg_size: Size of SVG picture.
-		:type  plot_svg_size: (int,int)
+		:param default_plot_x_run: Range for x-axes in GnuPlot plots.
+		:type  default_plot_x_run: (float,float)
+		:param default_plot_y_run: Range for y-axes in GnuPlot plots.
+		:type  default_plot_y_run: (float,float)
+		:param default_plot_pdf_size_cm: Size of PDF page.
+		:type  default_plot_pdf_size_cm: (float,float)
+		:param default_plot_svg_size_px: Size of SVG picture.
+		:type  default_plot_svg_size_px: (int,int)
 
 		"""
 
@@ -47,23 +45,13 @@ class Report:
 		self.name = name
 		self.report_dir = self.name
 
-		self.plot_x_run=[float(x) for x in plot_x_run]
-		self.plot_y_run=[float(x) for x in plot_y_run]
-		self.plot_pdf_size_cm=[float(x) for x in plot_pdf_size_cm]
-		self.plot_svg_size=[int(x) for x in plot_svg_size]
-
-		assert 0< self.plot_x_run[0] and self.plot_x_run[0]<=1.0
-		assert 0< self.plot_x_run[1] and self.plot_x_run[1]<=1.0
-		assert 0<=self.plot_y_run[0] and self.plot_y_run[0]<=100
-		assert 0<=self.plot_y_run[1] and self.plot_y_run[1]<=100
-		assert 0<=self.plot_pdf_size_cm[0] 
-		assert 0<=self.plot_pdf_size_cm[1]  
-		assert 0<=self.plot_svg_size[0]
-		assert 0<=self.plot_svg_size[1]
+		self.default_plot_x_run=self._load_plot_x_run(default_plot_x_run)
+		self.default_plot_y_run=self._load_plot_y_run(default_plot_y_run)
+		self.default_plot_pdf_size_cm=self._load_pdf_size_cm(default_plot_pdf_size_cm)
+		self.default_plot_svg_size_px=self._load_svg_size_px(default_plot_svg_size_px)
 
 		self.allowed_delta=int(allowed_delta)
 		assert 0 <= allowed_delta
-
 
 		self._html_fn = name+".html"
 		self.panels = [
@@ -77,6 +65,39 @@ class Report:
 			]
 
 		rnftools.lavender.add_input(self._html_fn)
+
+		# first graph
+		self.add_graph("({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})")
+
+	def add_graph(self,
+				y,
+				plot_x_run=None,
+				plot_y_run=None,
+				plot_pdf_size_cm=None,
+				plot_svg_size_px=None,
+			):
+
+		if plot_x_run==None:
+			plot_x_run=self.default_plot_x_run
+		if plot_y_run==None:
+			plot_y_run=self.default_plot_y_run
+		if plot_pdf_size_cm==None:
+			plot_pdf_size_cm=self.default_plot_pdf_size_cm
+		if plot_svg_size_px==None:
+			plot_svg_size_px=self.default_plot_svg_size_px
+
+		for panel in self.panels:
+			plot_x_run=self._load_plot_x_run(plot_x_run)
+			plot_y_run=self._load_plot_y_run(plot_y_run)
+			plot_pdf_size_cm=self._load_pdf_size_cm(plot_pdf_size_cm)
+			plot_svg_size_px=self._load_svg_size_px(plot_svg_size_px)
+			panel.add_graph(
+					y=y,
+					plot_x_run=plot_x_run,
+					plot_y_run=plot_y_run,
+					plot_pdf_size_cm=plot_pdf_size_cm,
+					plot_svg_size_px=plot_svg_size_px,
+				)
 
 	def get_report_dir(self):
 		"""Get directory report's auxiliary files."""
@@ -150,3 +171,36 @@ class Report:
 				)
 			f.write(html_src)
 
+	######################################
+	######################################
+
+	@staticmethod
+	def _load_plot_x_run(plot_x_run):
+		assert len(plot_x_run)==2
+		to_return=[float(x) for x in plot_x_run]
+		assert 0< to_return[0] and to_return[0]<=1.0
+		return to_return
+
+	@staticmethod
+	def _load_plot_y_run(plot_y_run):
+		assert len(plot_y_run)==2
+		to_return=[float(x) for x in plot_y_run]
+		assert 0<=to_return[0] and to_return[0]<=100
+		assert 0<=to_return[1] and to_return[1]<=100
+		return to_return
+
+	@staticmethod
+	def _load_pdf_size_cm(pdf_size_cm):
+		assert len(pdf_size_cm)==2
+		to_return=[float(x) for x in pdf_size_cm]
+		assert 0<=to_return[0]
+		assert 0<=to_return[1]
+		return to_return
+
+	@staticmethod
+	def _load_svg_size_px(svg_size_px):
+		assert len(svg_size_px)==2
+		to_return=[int(x) for x in svg_size_px]
+		assert 0<=to_return[0]
+		assert 0<=to_return[1]
+		return to_return
