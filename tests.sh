@@ -51,7 +51,7 @@ echo
 	set -ex -o pipefail; 
 
 	cd examples/02_more_complex_read_simulation
-	snakemake -p --allow-ambiguity
+	snakemake -p
 )
 
 echo
@@ -79,11 +79,11 @@ echo
 	cd examples/03_mapper_evaluation_SE
 	
 	cd bams
-	snakemake -p --allow-ambiguity
+	snakemake -p
 	cd ..
 
 	rm -fR ~/.smbl
-	snakemake -p --allow-ambiguity
+	snakemake -p
 )
 
 
