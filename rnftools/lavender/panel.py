@@ -139,6 +139,7 @@ class Panel:
 
 	def add_graph(self,
 				y,
+				ylabel,
 				plot_x_run,
 				plot_y_run,
 				plot_pdf_size_cm,
@@ -157,6 +158,21 @@ class Panel:
 		self._svg_fns.append(svg_file)
 		self._pdf_fns.append(pdf_file)
 
+		params = [
+			"",
+			'set ylab "{}"'.format(ylabel),
+			'set xran [{xran}]'.format(
+						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1])
+					),
+			'set x2ran [{xran}]'.format(
+						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1])
+					),
+			'set yran [{yran}]'.format(					
+						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
+					),
+			"",
+		]
+
 		plot =	[
 					""""{roc_fn}" using ({x}):({y}) \
 						with lp ls {i} ps 0.8 title "{basename}" noenhanced,\\""".format(
@@ -174,16 +190,9 @@ class Panel:
 					"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
 							pdf_size="{:.10f}cm,{:.10f}cm".format(plot_pdf_size_cm[0],plot_pdf_size_cm[1])
 						),
-					'set out "{}'.format(pdf_file),
+					'set out "{}"'.format(pdf_file),
 
-					"""
-						set xran  [{xran}]
-						set x2ran [{xran}]
-						set yran  [{yran}]
-					""".format(
-						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1]),
-						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
-					),
+				] + params + [
 
 					"plot \\"
 				] + plot + ["",""]
@@ -195,15 +204,7 @@ class Panel:
 							svg_size="{},{}".format(plot_svg_size_px[0],plot_svg_size_px[1])
 						),
 					'set out "{}"'.format(svg_file),
-
-					"""
-						set xran  [{xran}]
-						set x2ran [{xran}]
-						set yran  [{yran}]
-					""".format(
-						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1]),
-						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
-					),
+				] + params + [
 
 
 					"plot \\"

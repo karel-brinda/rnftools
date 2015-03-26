@@ -71,6 +71,7 @@ class Report:
 
 	def add_graph(self,
 				y,
+				ylabel="",
 				plot_x_run=None,
 				plot_y_run=None,
 				plot_pdf_size_cm=None,
@@ -97,6 +98,7 @@ class Report:
 					plot_y_run=plot_y_run,
 					plot_pdf_size_cm=plot_pdf_size_cm,
 					plot_svg_size_px=plot_svg_size_px,
+					ylabel=ylabel,
 				)
 
 	def get_report_dir(self):
