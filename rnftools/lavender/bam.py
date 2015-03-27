@@ -7,6 +7,7 @@ import snakemake
 import os
 import sys
 import pysam
+import gzip
 
 MAXIMAL_MAPPING_QUALITY=255
 
@@ -18,7 +19,13 @@ MAXIMAL_MAPPING_QUALITY=255
 class Bam:
 	"""Class for a single BAM file."""
 
-	def __init__(self,panel,bam_fn,name):
+	def __init__(self,
+				panel,
+				bam_fn,
+				name,
+				keep_aci,
+				compress_aci,
+			):
 		"""
 
 		:param panel: Panel containing this BAM file.
@@ -34,10 +41,16 @@ class Bam:
 		self.report=panel.get_report()
 		self.name=name
 
+		self.keep_aci=keep_aci
+		self.compress_aci=compress_aci
+
 		self._bam_fn  = bam_fn
 		self._gp_fn   = os.path.join(self.panel.get_panel_dir(),"gp",self.name+".gp")
 		self._html_fn = os.path.join(self.panel.get_panel_dir(),"html",self.name+".html")
-		self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci")
+		if compress_aci:
+			self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci.gz")
+		else:
+			self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
 		self._pdf_fn  = os.path.join(self.panel.get_panel_dir(),"pdf",self.name+".pdf")
@@ -365,7 +378,7 @@ class Bam:
 
 		diff_thr=self.report.allowed_delta
 
-		with open(self._aci_fn,"w+") as f:
+		with (gzip.open(self._aci_fn,"tw+") if self.compress_aci else open(self._aci_fn,"w+")) as f:
 			with pysam.AlignmentFile(self._bam_fn, "rb") as samfile:
 				references_dict = {}
 
@@ -603,8 +616,7 @@ Please contact the author on karel.brinda@gmail.com.
 			for i in range(MAXIMAL_MAPPING_QUALITY+1)
 		]
 
-		with open(self._aci_fn, "r") as g:
-
+		with (gzip.open(self._aci_fn,"tr") if self.compress_aci else open(self._aci_fn,"r")) as g:
 			last_rname=""
 			for line in g:
 				line=line.strip()

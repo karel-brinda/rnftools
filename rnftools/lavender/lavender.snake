@@ -112,7 +112,7 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 		input:
 			bam.bam_fn(),
 		output:
-			temp(bam.aci_fn())
+			bam.aci_fn() if bam.keep_aci else temp(bam.aci_fn())
 		params:
 			i=str(i)
 		run:

@@ -18,6 +18,8 @@ class Panel:
 			bam_dir,
 			panel_dir,
 			name,
+			keep_aci,
+			compress_aci
 		):
 		"""
 
@@ -48,8 +50,10 @@ class Panel:
 				rnftools.lavender.Bam(
 					bam_fn=bam_fn,
 					panel=self,
-					name=os.path.basename(bam_fn).replace(".bam","")		
-		) 
+					name=os.path.basename(bam_fn).replace(".bam",""),
+					keep_aci=keep_aci,
+					compress_aci=compress_aci,
+				) 
 				for bam_fn in sorted(bams_fns)
 			]
 
