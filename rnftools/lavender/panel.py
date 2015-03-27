@@ -19,7 +19,8 @@ class Panel:
 			panel_dir,
 			name,
 			keep_aci,
-			compress_aci
+			compress_aci,
+			default_x_axis,
 		):
 		"""
 
@@ -38,6 +39,7 @@ class Panel:
 		rnftools.lavender.add_panel(self)
 		self.name=name
 		self.panel_dir=panel_dir
+		self.default_x_axis=default_x_axis
 
 		self.gp_plots = []
 
@@ -53,6 +55,7 @@ class Panel:
 					name=os.path.basename(bam_fn).replace(".bam",""),
 					keep_aci=keep_aci,
 					compress_aci=compress_aci,
+					default_x_axis=default_x_axis,
 				) 
 				for bam_fn in sorted(bams_fns)
 			]
@@ -151,8 +154,7 @@ class Panel:
 			):
 		# default x .... ($3+$4)/($2+$3+$4)
 		# default y .... "($2+$3+$4)*100/($2+$3+$4+$7+$8)" ... ({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})
-		x="({m}+{w})/({M}+{m}+{w})"
-		x_gp=rnftools.lavender._format_xxx(x)
+		x_gp=rnftools.lavender._format_xxx(self.default_x_axis)
 		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))	
 
 		i=len(self.gp_plots)

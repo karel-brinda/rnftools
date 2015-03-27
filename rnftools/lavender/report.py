@@ -22,6 +22,7 @@ class Report:
 		default_plot_svg_size_px=(640,640),
 		keep_aci=False,
 		compress_aci=True,
+		default_x_axis="({m}+{w})/({M}+{m}+{w})",
 		):
 		"""
 
@@ -31,9 +32,9 @@ class Report:
 		:type  bam_dirs: list of str
 		:param allowed_delta: Tolerance of difference between positions in assessing correct alignments (very important parameter!).
 		:type  allowed_delta: int
-		:param default_plot_x_run: Range for x-axes in GnuPlot plots.
+		:param default_plot_x_run: Range for x-axis in GnuPlot plots.
 		:type  default_plot_x_run: (float,float)
-		:param default_plot_y_run: Range for y-axes in GnuPlot plots.
+		:param default_plot_y_run: Range for y-axis in GnuPlot plots.
 		:type  default_plot_y_run: (float,float)
 		:param default_plot_pdf_size_cm: Size of PDF page.
 		:type  default_plot_pdf_size_cm: (float,float)
@@ -64,6 +65,7 @@ class Report:
 					name=str(i),
 					keep_aci=keep_aci,
 					compress_aci=compress_aci,
+					default_x_axis=default_x_axis,
 				)
 				for i in range(len(bam_dirs))
 			]
@@ -71,7 +73,7 @@ class Report:
 		rnftools.lavender.add_input(self._html_fn)
 
 		# first graph
-		self.add_graph("({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})")
+		self.add_graph("({M}+{m}+{w})/({M}+{m}+{w}+{t}+{P})")
 
 	def add_graph(self,
 				y,

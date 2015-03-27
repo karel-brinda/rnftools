@@ -25,6 +25,7 @@ class Bam:
 				name,
 				keep_aci,
 				compress_aci,
+				default_x_axis,
 			):
 		"""
 
@@ -43,6 +44,7 @@ class Bam:
 
 		self.keep_aci=keep_aci
 		self.compress_aci=compress_aci
+		self.default_x_axis=default_x_axis
 
 		self._bam_fn  = bam_fn
 		self._gp_fn   = os.path.join(self.panel.get_panel_dir(),"gp",self.name+".gp")
@@ -103,6 +105,30 @@ class Bam:
 	def create_gp(self):
 		"""Create a GnuPlot file for this BAM file."""
 
+		categories_order=[
+			("{U}","violet",'Unmapped correctly'),
+			("{u}","red",'Unmapped incorrectly'),
+			("{t}","green",'Thresholded'),
+			("{P}","yellow",'Multimapped'),
+			("{w}","gray",'Mapped, should be unmapped'),
+			("{m}","black",'Mapped to wrong position'),
+			("{M}","blue",'Mapped correctly'),
+		]
+
+		plot_lines=[
+			'"{roc_fn}" using (( ({x}) )):({y}) lt rgb "{color}" with filledcurve x1 title "{title}", \\'.format(
+					roc_fn=self._roc_fn,
+					x=rnftools.lavender._format_xxx(self.default_x_axis),
+					y=rnftools.lavender._format_xxx('({sum})*100/{{all}}'.format(sum="+".join([c[0] for c in categories_order[i:]]))),
+					color=categories_order[i][1],
+					title=categories_order[i][2],
+				)
+
+			for i in range(len(categories_order))
+		]
+
+		plot=os.linesep.join((["plot \\"] + plot_lines))
+
 		with open(self._gp_fn,"w+") as f:
 			gp_content="""
 				set title "{plot_title}"
@@ -149,17 +175,7 @@ class Bam:
 				svg_size="{},{}".format(self.report.default_plot_svg_size_px[0],self.report.default_plot_svg_size_px[1]),
 				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.default_plot_pdf_size_cm[0],self.report.default_plot_pdf_size_cm[1]),
 				plot_title=os.path.basename(self._bam_fn),
-				plot="""
-					plot\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6+$5)*100/$10) lt rgb "violet" with filledcurve x1 title 'Unmapped correctly',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6)*100/$10) lt rgb "red" with filledcurve x1 title 'Unmapped incorrectly',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7)*100/$10) lt rgb "green" with filledcurve x1 title 'Thresholded',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8)*100/$10) lt rgb "yellow" with filledcurve x1 title 'Multimapped',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4)*100/$10) lt rgb "gray" with filledcurve x1 title 'Mapped, should be unmapped',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3)*100/$10) lt rgb "black" with filledcurve x1 title 'Mapped to wrong position',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2)*100/$10) lt rgb "blue" with filledcurve x1 title 'Mapped correctly',\\
-
-				""".format(roc_fn=self._roc_fn)
+				plot=plot,
 			)
 			f.write(gp_content)
 
@@ -180,7 +196,7 @@ class Bam:
 						"U":int(U),
 						"u":int(u),
 						"t":int(t),
-						"+":int(p),
+						"P":int(p),
 						"x":int(x),
 						"a":int(a)
 					}
@@ -207,8 +223,8 @@ class Bam:
 						<td><small> {unused_proc:.2f}   </small></td>
 						<td>        {t}                         </td>
 						<td><small> {t_proc:.2f}        </small></td>
-						<td>        {p}                         </td>
-						<td><small> {p_proc:.2f}        </small></td>
+						<td>        {P}                         </td>
+						<td><small> {P_proc:.2f}        </small></td>
 						<td>        {x}                         </td>
 						<td><small> {x_proc:.2f}        </small></td>
 						<td>        {sum}                       </td>
@@ -231,12 +247,12 @@ class Bam:
 						U_proc        = 100.0*(roc_dict["U"])/roc_dict["a"],
 						u             = roc_dict["u"],
 						u_proc        = 100.0*(roc_dict["u"])/roc_dict["a"],
-						unused        = roc_dict["t"]+roc_dict["+"]+roc_dict["x"],
-						unused_proc   = 100.0*(roc_dict["t"]+roc_dict["+"]+roc_dict["x"])/roc_dict["a"],
+						unused        = roc_dict["t"]+roc_dict["P"]+roc_dict["x"],
+						unused_proc   = 100.0*(roc_dict["t"]+roc_dict["P"]+roc_dict["x"])/roc_dict["a"],
 						t             = roc_dict["t"],
 						t_proc        = 100.0*(roc_dict["t"])/roc_dict["a"],
-						p             = roc_dict["+"],
-						p_proc        = 100.0*(roc_dict["+"])/roc_dict["a"],
+						P             = roc_dict["P"],
+						P_proc        = 100.0*(roc_dict["P"])/roc_dict["a"],
 						x             = roc_dict["x"],
 						x_proc        = 100.0*(roc_dict["x"])/roc_dict["a"],
 						sum           = roc_dict["a"],
@@ -290,14 +306,14 @@ class Bam:
 					</span>
 				</h2>
 
-				<p>
-					<strong>M</strong>: mapped correctly,
-					<strong>w</strong>: mapped to wrong position,
-					<strong>m</strong>: mapped but should be unmapped,
-					<strong>U</strong>: unmapped correctly,
-					<strong>u</strong>: unmapped but should be mapped,
+				<p style="font-size:90%">
+					<strong>M</strong>: mapped correctly (all segments of tuple are mapped once and correctly),<br />
+					<strong>w</strong>: mapped to wrong position (at least one segment was mapped to a wrong position),<br />
+					<strong>m</strong>: mapped but should be unmapped (at least one segment was mapped but the read should not be mapped),
+					<strong>U</strong>: unmapped correctly (all segments of the read were correctly marked as unmapped),
+					<strong>u</strong>: unmapped but should be mapped (at least one segment was mapped but entire read should be unmapped),
 					<strong>t</strong>: thresholded,
-					<strong>+</strong>: multimapped,
+					<strong>P</strong>: multimapped (read should be mapped but it at least one segment was mapped several times and all segments were mapped correctly at least once),
 					<strong>x</strong>: unknown (read is probably not present in SAM)
 				</p>
 				<table>
@@ -588,7 +604,7 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["u"]==0
 			):
 				#assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="+"
+				vec[q]="P"
 				#print("multi")
 
 		return vec
@@ -610,7 +626,7 @@ Please contact the author on karel.brinda@gmail.com.
 				"U":0,
 				"u":0,
 				"t":0,
-				"+":0,
+				"P":0,
 				"x":0
 			}
 			for i in range(MAXIMAL_MAPPING_QUALITY+1)
@@ -684,15 +700,16 @@ Please contact the author on karel.brinda@gmail.com.
 				f.write("#        m: Mapped but should be unmapped."+os.linesep)
 				f.write("#        U: Unmapped and should be unmapped."+os.linesep)
 				f.write("#        u: Unmapped but should be mapped."+os.linesep)
-				f.write("#        t: Thresholded."+os.linesep)
-				f.write("#        +: Multimapped."+os.linesep)
+				f.write("#        T: Thresholded correctly."+os.linesep)
+				f.write("#        t: Thresholded incorrectly."+os.linesep)
+				f.write("#        P: Multimapped."+os.linesep)
 				f.write("#        x: Unknown."+os.linesep)
 				f.write("#"+os.linesep)
-				f.write("# q\tM\tw\tm\tU\tu\tt\t+\tx\tall"+os.linesep)
+				f.write("# q\tM\tw\tm\tU\tu\tT\tt\tP\tx\tall"+os.linesep)
 
 				l_numbers = []
 				for line in stats_dicts:
-					numbers = [line["M"],line["w"],line["m"],line["U"],line["u"],line["t"],line["+"],line["x"]]
+					numbers = [line["M"],line["w"],line["m"],line["U"],line["u"],line["t"],line["P"],line["x"]]
 					if numbers != l_numbers:
 						f.write("\t".join(
 								[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
