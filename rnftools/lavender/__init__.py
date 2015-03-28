@@ -78,9 +78,10 @@ def _format_xxx(xxx):
 			U="$5",
 			u="$6",
 			t="$7",
-			P="$8",
-			x="$9",
-			all="$10",
+			T="$8",
+			P="$9",
+			x="$10",
+			all="$11",
 		)
 
 def _default_gp_style(i,count=0):

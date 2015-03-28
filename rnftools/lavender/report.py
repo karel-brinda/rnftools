@@ -73,7 +73,7 @@ class Report:
 		rnftools.lavender.add_input(self._html_fn)
 
 		# first graph
-		self.add_graph("({M}+{m}+{w})/({M}+{m}+{w}+{t}+{P})")
+		self.add_graph("({M}+{m}+{w})/{all}")
 
 	def add_graph(self,
 				y,

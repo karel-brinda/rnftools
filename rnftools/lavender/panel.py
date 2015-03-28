@@ -152,8 +152,7 @@ class Panel:
 				plot_pdf_size_cm,
 				plot_svg_size_px,
 			):
-		# default x .... ($3+$4)/($2+$3+$4)
-		# default y .... "($2+$3+$4)*100/($2+$3+$4+$7+$8)" ... ({M}+{m}+{w})/({M}+{m}+{w}+{t}+{p})
+
 		x_gp=rnftools.lavender._format_xxx(self.default_x_axis)
 		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))	
 

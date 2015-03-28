@@ -108,9 +108,10 @@ class Bam:
 		categories_order=[
 			("{U}","violet",'Unmapped correctly'),
 			("{u}","red",'Unmapped incorrectly'),
-			("{t}","green",'Thresholded'),
+			("{T}","seagreen",'Thresholded correctly'),
+			("{t}","green",'Thresholded incorrectly'),
 			("{P}","yellow",'Multimapped'),
-			("{w}","gray",'Mapped, should be unmapped'),
+			("{w}+{x}","gray",'Mapped, should be unmapped'),
 			("{m}","black",'Mapped to wrong position'),
 			("{M}","blue",'Mapped correctly'),
 		]
@@ -187,7 +188,7 @@ class Bam:
 			for line in f:
 				line=line.strip()
 				if line!="" and line[0]!="#":
-					(q,M,w,m,U,u,t,p,x,a)=line.split("\t")
+					(q,M,w,m,U,u,T,t,p,x,a)=line.split("\t")
 					roc_dict = {
 						"q":int(q),
 						"M":int(M),
@@ -195,6 +196,7 @@ class Bam:
 						"m":int(m),
 						"U":int(U),
 						"u":int(u),
+						"T":int(T),
 						"t":int(t),
 						"P":int(p),
 						"x":int(x),
@@ -221,6 +223,8 @@ class Bam:
 						<td><small> {u_proc:.2f}        </small></td>
 						<td>        {unused}                    </td>
 						<td><small> {unused_proc:.2f}   </small></td>
+						<td>        {T}                         </td>
+						<td><small> {T_proc:.2f}        </small></td>
 						<td>        {t}                         </td>
 						<td><small> {t_proc:.2f}        </small></td>
 						<td>        {P}                         </td>
@@ -247,8 +251,10 @@ class Bam:
 						U_proc        = 100.0*(roc_dict["U"])/roc_dict["a"],
 						u             = roc_dict["u"],
 						u_proc        = 100.0*(roc_dict["u"])/roc_dict["a"],
-						unused        = roc_dict["t"]+roc_dict["P"]+roc_dict["x"],
-						unused_proc   = 100.0*(roc_dict["t"]+roc_dict["P"]+roc_dict["x"])/roc_dict["a"],
+						unused        = roc_dict["T"]+roc_dict["t"]+roc_dict["P"]+roc_dict["x"],
+						unused_proc   = 100.0*(roc_dict["T"]+roc_dict["t"]+roc_dict["P"]+roc_dict["x"])/roc_dict["a"],
+						T             = roc_dict["T"],
+						T_proc        = 100.0*(roc_dict["T"])/roc_dict["a"],
 						t             = roc_dict["t"],
 						t_proc        = 100.0*(roc_dict["t"])/roc_dict["a"],
 						P             = roc_dict["P"],
@@ -323,7 +329,7 @@ class Bam:
 					<colgroup span="2" style="background-color:#ddd">
 					<colgroup span="4" style="">
 					<colgroup span="2" style="background-color:#ddd">
-					<colgroup span="6" style="">
+					<colgroup span="8" style="">
 					<colgroup span="1" style="background-color:#ddd">
 					<colgroup span="2" style="">
 					<thead style="font-weight:bold;background-color:#ddddff">
@@ -344,6 +350,8 @@ class Bam:
 							<td>u</td>
 							<td>%</td>
 							<td>unused</td>
+							<td>%</td>
+							<td>T</td>
 							<td>%</td>
 							<td>t</td>
 							<td>%</td>
@@ -514,15 +522,9 @@ Please contact the author on karel.brinda@gmail.com.
 	]))
 		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1
 
+		should_be_mapped=(srs[0]["m"]+srs[0]["U"]==0)
+
 		for q in range(len(srs)):
-
-			#assert (
-			#		len(set(srs[q]["M"]))+
-			#		srs[q]["m"]+
-			#		srs[q]["w"]+
-			#		srs[q]["U"]+
-			#		srs[q]["u"]) <= parts+1, "wrong single read statistics parts={}, q={}, '{}'".format(parts,q,str(srs[q]))
-
 
 			#####
 			# M # - all parts correctly aligned
@@ -587,10 +589,25 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["w"]==0 and
 				srs[q]["m"]==0 and
 				srs[q]["U"]==0 and
-				srs[q]["u"]==0
+				srs[q]["u"]==0 and
+				srs[q]["t"]>0
 			):
 				assert vec[q]=="x",str((q,srs[q]))
 				vec[q]="t"
+
+			#####
+			# T # - at least one segment was thresholded
+			#####
+			if (
+				len(srs[q]["M"])!=parts and
+				srs[q]["w"]==0 and
+				srs[q]["m"]==0 and
+				srs[q]["U"]==0 and
+				srs[q]["u"]==0 and
+				srs[q]["T"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="T"
 
 			#####
 			# + # - multimapped, M + w + m > parts
@@ -625,6 +642,7 @@ Please contact the author on karel.brinda@gmail.com.
 				"m":0,
 				"U":0,
 				"u":0,
+				"T":0,
 				"t":0,
 				"P":0,
 				"x":0
@@ -658,9 +676,25 @@ Please contact the author on karel.brinda@gmail.com.
 										"M":[],
 										"m":0,
 										"w":0,
+										"T":0,
+										"t":0,
 									} for i in range(MAXIMAL_MAPPING_QUALITY+1)
 								]
 						last_rname=rname
+						#
+						#
+						#
+						#
+						#
+						#
+						# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+						#
+						# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+						#
+						#
+						#
+						#
+						#
 
 					# processing of a segment
 					if category=="U":
@@ -675,6 +709,8 @@ Please contact the author on karel.brinda@gmail.com.
 						if category=="m":
 							for q in range(mapping_quality+1):
 								single_reads_statistics[q]["m"]+=1
+							for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+								single_reads_statistics[q]["T"]+=1
 						elif category=="w":
 							for q in range(mapping_quality+1):
 								single_reads_statistics[q]["w"]+=1
@@ -683,6 +719,8 @@ Please contact the author on karel.brinda@gmail.com.
 							segment_id=int(category.replace("M_",""))
 							for q in range(mapping_quality+1):
 								single_reads_statistics[q]["M"].append(segment_id)
+							for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+								single_reads_statistics[q]["t"]+=1
 
 			# last read
 			voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
@@ -709,7 +747,7 @@ Please contact the author on karel.brinda@gmail.com.
 
 				l_numbers = []
 				for line in stats_dicts:
-					numbers = [line["M"],line["w"],line["m"],line["U"],line["u"],line["t"],line["P"],line["x"]]
+					numbers = [line["M"],line["w"],line["m"],line["U"],line["u"],line["T"],line["t"],line["P"],line["x"]]
 					if numbers != l_numbers:
 						f.write("\t".join(
 								[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
