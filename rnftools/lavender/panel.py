@@ -18,8 +18,8 @@ class Panel:
 			bam_dir,
 			panel_dir,
 			name,
-			keep_aci,
-			compress_aci,
+			keep_mis,
+			compress_mis,
 			default_x_axis,
 		):
 		"""
@@ -53,8 +53,8 @@ class Panel:
 					bam_fn=bam_fn,
 					panel=self,
 					name=os.path.basename(bam_fn).replace(".bam",""),
-					keep_aci=keep_aci,
-					compress_aci=compress_aci,
+					keep_mis=keep_mis,
+					compress_mis=compress_mis,
 					default_x_axis=default_x_axis,
 				) 
 				for bam_fn in sorted(bams_fns)

@@ -23,8 +23,8 @@ class Bam:
 				panel,
 				bam_fn,
 				name,
-				keep_aci,
-				compress_aci,
+				keep_mis,
+				compress_mis,
 				default_x_axis,
 			):
 		"""
@@ -42,17 +42,17 @@ class Bam:
 		self.report=panel.get_report()
 		self.name=name
 
-		self.keep_aci=keep_aci
-		self.compress_aci=compress_aci
+		self.keep_mis=keep_mis
+		self.compress_mis=compress_mis
 		self.default_x_axis=default_x_axis
 
 		self._bam_fn  = bam_fn
 		self._gp_fn   = os.path.join(self.panel.get_panel_dir(),"gp",self.name+".gp")
 		self._html_fn = os.path.join(self.panel.get_panel_dir(),"html",self.name+".html")
-		if compress_aci:
-			self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci.gz")
+		if compress_mis:
+			self._mis_fn  = os.path.join(self.panel.get_panel_dir(),"mis",self.name+".mis.gz")
 		else:
-			self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci")
+			self._mis_fn  = os.path.join(self.panel.get_panel_dir(),"mis",self.name+".mis")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
 		self._pdf_fn  = os.path.join(self.panel.get_panel_dir(),"pdf",self.name+".pdf")
@@ -83,9 +83,9 @@ class Bam:
 		"""Get name of the HTML report."""
 		return self._html_fn
 
-	def aci_fn(self):
-		"""Get name of the ACIfile."""
-		return self._aci_fn
+	def mis_fn(self):
+		"""Get name of the MIS file."""
+		return self._mis_fn
 
 	def roc_fn(self):
 		"""Get name of the ROC file."""
@@ -450,14 +450,14 @@ class Bam:
 
 			f.write(html_src)
 
-	def create_aci(self):
-		"""Create an ACI (intermediate) file for this BAM file.
+	def create_mis(self):
+		"""Create an MIS (intermediate) file for this BAM file.
 		This is the function which asses if an alignment is correct
 		"""
 
 		diff_thr=self.report.allowed_delta
 
-		with (gzip.open(self._aci_fn,"tw+") if self.compress_aci else open(self._aci_fn,"w+")) as f:
+		with (gzip.open(self._mis_fn,"tw+") if self.compress_mis else open(self._mis_fn,"w+")) as f:
 			with pysam.AlignmentFile(self._bam_fn, "rb") as samfile:
 				references_dict = {}
 
@@ -722,7 +722,7 @@ class Bam:
 			for i in range(MAXIMAL_MAPPING_QUALITY+1)
 		]
 
-		with (gzip.open(self._aci_fn,"tr") if self.compress_aci else open(self._aci_fn,"r")) as g:
+		with (gzip.open(self._mis_fn,"tr") if self.compress_mis else open(self._mis_fn,"r")) as g:
 			last_rname=""
 			for line in g:
 				line=line.strip()

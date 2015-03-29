@@ -20,8 +20,8 @@ class Report:
 		default_plot_y_run=(60,100),
 		default_plot_pdf_size_cm=(10,10),
 		default_plot_svg_size_px=(640,640),
-		keep_aci=False,
-		compress_aci=True,
+		keep_mis=False,
+		compress_mis=True,
 		default_x_axis="({m}+{w})/({M}+{m}+{w})",
 		):
 		"""
@@ -63,8 +63,8 @@ class Report:
 					panel_dir=os.path.join(self.report_dir,str(i)),
 					report=self,
 					name=str(i),
-					keep_aci=keep_aci,
-					compress_aci=compress_aci,
+					keep_mis=keep_mis,
+					compress_mis=compress_mis,
 					default_x_axis=default_x_axis,
 				)
 				for i in range(len(bam_dirs))
