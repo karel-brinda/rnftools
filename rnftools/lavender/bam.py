@@ -112,14 +112,14 @@ class Bam:
 		"""Create a GnuPlot file for this BAM file."""
 
 		categories_order=[
-			("{U}","violet",'Unmapped correctly'),
-			("{u}","red",'Unmapped incorrectly'),
-			("{T}","seagreen",'Thresholded correctly'),
-			("{t}","green",'Thresholded incorrectly'),
-			("{P}","yellow",'Multimapped'),
-			("{w}+{x}","gray",'Mapped, should be unmapped'),
-			("{m}","black",'Mapped to wrong position'),
-			("{M}","blue",'Mapped correctly'),
+			("{U}",     "#ee82ee", 'Unmapped correctly'),
+			("{u}",     "#ff0000", 'Unmapped incorrectly'),
+			("{T}",     "#008800", 'Thresholded correctly'),
+			("{t}",     "#00ff00", 'Thresholded incorrectly'),
+			("{P}",     "#ffff00", 'Multimapped'),
+			("{w}+{x}", "#7f7f7f", 'Mapped, should be unmapped'),
+			("{m}",     "#000000", 'Mapped to wrong position'),
+			("{M}",     "#0000ff", 'Mapped correctly'),
 		]
 
 		plot_lines=[
