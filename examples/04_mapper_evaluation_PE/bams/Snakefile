@@ -16,13 +16,6 @@ reference_contam_2  = smbl.fasta.EXAMPLE_2
 reads_1 = "reads_a"
 reads_2 = "reads_b"
 
-##
-
-bwa_aln_1 = "bwa_mem_1.bam"
-bwa_aln_2 = "bwa_mem_2.bam"
-
-##
-
 
 #
 # READS
@@ -72,19 +65,36 @@ rnftools.mishmash.DwgSim(
 # ALIGNMENT
 #
 
-bwa1 = smbl.prog.BwaMem(
-	fasta=reference_basic_1,
-	fastq_1=reads_1+".1.fq",
-	fastq_2=reads_1+".2.fq",
-	bam=bwa_aln_1,
-)
+alignments = [
+		smbl.prog.BwaMem(
+			fasta=reference_basic_2,
+			fastq_1=reads_2+".1.fq",
+			fastq_2=reads_2+".2.fq",
+			bam="BWA-MEM.bam",
+		),
 
-bwa2 = smbl.prog.BwaMem(
-	fasta=reference_basic_2,
-	fastq_1=reads_2+".1.fq",
-	fastq_2=reads_2+".2.fq",
-	bam=bwa_aln_2,
-)
+		smbl.prog.BwaSw(
+			fasta=reference_basic_2,
+			fastq_1=reads_2+".1.fq",
+			fastq_2=reads_2+".2.fq",
+			bam="BWA-SW.bam",
+		),
+
+		smbl.prog.Bowtie2(
+			fasta=reference_basic_2,
+			fastq_1=reads_2+".1.fq",
+			fastq_2=reads_2+".2.fq",
+			bam="Bowtie2.bam",
+		),
+
+		smbl.prog.Yara(
+			fasta=reference_basic_2,
+			fastq_1=reads_2+".1.fq",
+			fastq_2=reads_2+".2.fq",
+			bam="Yara.bam",
+		),
+	]
+
 
 #
 # RULES
@@ -94,47 +104,6 @@ bwa2 = smbl.prog.BwaMem(
 
 rule basic:
 	input:
-		#rnftools.input(),
-		bwa1.bam_fn(),
-		bwa2.bam_fn(),
-
-
-
-#
-# BAM FILES
-#
-
-rule bwa_index_1:
-	input:
-		bwa1.make_index_input()
-	output:
-		bwa1.make_index_output()
-	run:
-		bwa1.make_index()
-
-rule bwa_index_2:
-	input:
-		bwa2.make_index_input()
-	output:
-		bwa2.make_index_output()
-	run:
-		bwa2.make_index()
-
-rule aln_bwa_1:
-	input:
-		bwa1.map_reads_input()
-	output:
-		bwa1.map_reads_output()
-	run:
-		bwa1.map_reads()
-
-rule aln_bwa_2:
-	input:
-		bwa2.map_reads_input()
-	output:
-		bwa2.map_reads_output()
-	run:
-		bwa2.map_reads()
-
+		[aln.bam_fn() for aln in alignments]
 
 include: rnftools.include()

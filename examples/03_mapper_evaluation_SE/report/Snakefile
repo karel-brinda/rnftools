@@ -4,7 +4,7 @@ import rnftools
 rnftools.lavender.Report(
 	bam_dirs=["../bams"],
 	name="report_SE",
-	keep_aci=True,
+	keep_intermediate_files=True,
 )
 
 rule all: input: rnftools.input()

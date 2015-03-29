@@ -194,17 +194,17 @@ class Bam:
 			for line in roc:
 				line=line.strip()
 				if line!="" and line[0]!="#":
-					(q,M,w,m,U,u,T,t,p,x,a)=line.split("\t")
+					(q,M,w,m,P,U,u,T,t,x,a)=line.split("\t")
 					roc_dict = {
 						"q":int(q),
 						"M":int(M),
 						"w":int(w),
 						"m":int(m),
+						"P":int(P),
 						"U":int(U),
 						"u":int(u),
 						"T":int(T),
 						"t":int(t),
-						"P":int(p),
 						"x":int(x),
 						"a":int(a)
 					}
@@ -221,6 +221,8 @@ class Bam:
 						<td><small> {w_proc:.2f}        </small></td>
 						<td>        {m}                         </td>
 						<td><small> {m_proc:.2f}        </small></td>
+						<td>        {P}                         </td>
+						<td><small> {P_proc:.2f}        </small></td>
 						<td>        {unmapped}                  </td>
 						<td><small> {unmapped_proc:.2f} </small></td>
 						<td>        {U}                         </td>
@@ -231,13 +233,10 @@ class Bam:
 						<td><small> {T_proc:.2f}        </small></td>
 						<td>        {t}                         </td>
 						<td><small> {t_proc:.2f}        </small></td>
-						<td>        {P}                         </td>
-						<td><small> {P_proc:.2f}        </small></td>
 						<td>        {x}                         </td>
 						<td><small> {x_proc:.2f}        </small></td>
 						<td>        {sum}                       </td>
 						<td>        {prec_proc:.3f}              </td>
-						<td>        {sens_proc:.3f}             </td>
 					</tr>
 				""".format(
 						quality       = roc_dict["q"],
@@ -251,7 +250,7 @@ class Bam:
 						m_proc        = 100.0*(roc_dict["m"])/roc_dict["a"],
 						P             = roc_dict["P"],
 						P_proc        = 100.0*(roc_dict["P"])/roc_dict["a"],
-						unmapped      = roc_dict["U"]+roc_dict["u"],
+						unmapped      = roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"],
 						unmapped_proc = 100.0*(roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"])/roc_dict["a"],
 						U             = roc_dict["U"],
 						U_proc        = 100.0*(roc_dict["U"])/roc_dict["a"],
@@ -264,7 +263,6 @@ class Bam:
 						x             = roc_dict["x"],
 						x_proc        = 100.0*(roc_dict["x"])/roc_dict["a"],
 						sum           = roc_dict["a"],
-						sens_proc     = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"])/roc_dict["a"],
 						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) if (roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) != 0 else 0,
 					)
 				for roc_dict in roc_dicts
@@ -386,7 +384,7 @@ class Bam:
 					<colgroup span="2" style="background-color:#ddd">
 					<colgroup span="10" style="">
 					<colgroup span="1" style="background-color:#ddd">
-					<colgroup span="2" style="">
+					<colgroup span="1" style="">
 					<thead style="font-weight:bold;background-color:#ddddff">
 						<tr style="font-weight:bold;background-color:#ddddff">
 							<td>q</td>
@@ -414,7 +412,6 @@ class Bam:
 							<td>%</td>
 							<td>sum</td>
 							<td>prec. (%)</td>
-							<td>sens. (%)</td>
 						</tr>
 					</thead>
 					<tbody>
@@ -464,11 +461,11 @@ class Bam:
 		diff_thr=self.report.allowed_delta
 
 		with (gzip.open(self._mis_fn,"tw+") if self.compress_intermediate_files else open(self._mis_fn,"w+")) as mis:
-			with pysam.AlignmentFile(self._bam_fn, "rb") as samfile:
+			with pysam.AlignmentFile(self._bam_fn, "rb") as sam:
 				references_dict = {}
 
-				for i in range(len(samfile.references)):
-					references_dict[ samfile.references[i] ] = i+1
+				for i in range(len(sam.references)):
+					references_dict[ sam.references[i] ] = i+1
 
 				mis.write("# RN:   read name"+os.linesep)
 				mis.write("# Q:    is mapped with quality"+os.linesep)
@@ -486,13 +483,13 @@ class Bam:
 				mis.write("# "+os.linesep)
 				mis.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
-				for read in samfile:
+				for read in sam:
 					rnf_read = rnftools.rnfformat.Read()
 					rnf_read.destringize(read.query_name)
 
 					left = read.reference_start+1
 					right = read.reference_end
-					chrom_id=references_dict[ samfile.references[read.reference_id] ]
+					chrom_id=references_dict[ sam.references[read.reference_id] ]
 
 					nb_of_segments=len(rnf_read.segments)
 
@@ -537,7 +534,6 @@ class Bam:
 						else:
 							category="m"
 
-
 					mis.write(
 						"\t".join(
 							map(str,[
@@ -572,7 +568,7 @@ class Bam:
 
 		# default value
 		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
-		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1
+		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1,srs
 
 		should_be_mapped=bool(srs[0]["m"]+srs[0]["U"]==0)
 
@@ -759,24 +755,53 @@ class Bam:
 									]
 							last_rname=rname
 
-						# processing of a segment
+						####################
+						# Unmapped segment #
+						####################
+
+						#####
+						# U #
+						#####
 						if category=="U":
 							for q in range(len(single_reads_statistics)):
 								single_reads_statistics[q]["U"]+=1
+
+						#####
+						# u #
+						#####
 						elif category=="u":
 							for q in range(len(single_reads_statistics)):
 								single_reads_statistics[q]["u"]+=1
+
+						##################
+						# Mapped segment #
+						##################
+
 						else:
 							mapping_quality=int(mapped.replace("mapped_",""))
-							assert mapping_quality<=MAXIMAL_MAPPING_QUALITY
+							assert 0<=mapping_quality and mapping_quality<=MAXIMAL_MAPPING_QUALITY, mapping_quality
+
+							#####
+							# m #
+							#####
 							if category=="m":
 								for q in range(mapping_quality+1):
 									single_reads_statistics[q]["m"]+=1
 								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
 									single_reads_statistics[q]["T"]+=1
+
+							#####
+							# w #
+							#####
 							elif category=="w":
 								for q in range(mapping_quality+1):
 									single_reads_statistics[q]["w"]+=1
+								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+									single_reads_statistics[q]["t"]+=1
+
+							#####
+							# M #
+							#####
 							else:
 								assert category[0]=="M", category
 								segment_id=int(category.replace("M_",""))

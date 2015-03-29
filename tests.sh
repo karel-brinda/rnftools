@@ -89,3 +89,38 @@ echo
 
 
 
+echo
+echo
+echo
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+echo "                 TEST: example 4" 
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+
+(
+	set -ex -o pipefail; 
+
+	cd examples/04_mapper_evaluation_PE
+	
+	cd bams
+	snakemake -p --cores
+	cd ..
+
+	cd report
+	snakemake -p --cores
+)
+
+
+
+
