@@ -90,20 +90,6 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 			rnftools.lavender.bams()[int(params.i)].create_html()
 
 ####################
-# roc
-####################
-for i, bam in enumerate(rnftools.lavender.bams()):
-	rule:
-		input:
-			bam.mis_fn()
-		output:
-			bam.roc_fn()
-		params:
-			i=str(i)
-		run:
-			rnftools.lavender.bams()[int(params.i)].create_roc()
-
-####################
 # mis
 ####################
 
@@ -112,11 +98,40 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 		input:
 			bam.bam_fn(),
 		output:
-			bam.mis_fn() if bam.keep_mis else temp(bam.mis_fn())
+			bam.mis_fn() if bam.keep_intermediate_files else temp(bam.mis_fn())
 		params:
 			i=str(i)
 		run:
 			rnftools.lavender.bams()[int(params.i)].create_mis()
+
+####################
+# mir
+####################
+
+for i, bam in enumerate(rnftools.lavender.bams()):
+	rule:
+		input:
+			bam.mis_fn(),
+		output:
+			bam.mir_fn() if bam.keep_intermediate_files else temp(bam.mir_fn())
+		params:
+			i=str(i)
+		run:
+			rnftools.lavender.bams()[int(params.i)].create_mir()
+
+####################
+# roc
+####################
+for i, bam in enumerate(rnftools.lavender.bams()):
+	rule:
+		input:
+			bam.mir_fn()
+		output:
+			bam.roc_fn()
+		params:
+			i=str(i)
+		run:
+			rnftools.lavender.bams()[int(params.i)].create_roc()
 
 ####################
 # graphics

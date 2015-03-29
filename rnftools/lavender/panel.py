@@ -18,8 +18,8 @@ class Panel:
 			bam_dir,
 			panel_dir,
 			name,
-			keep_mis,
-			compress_mis,
+			keep_intermediate_files,
+			compress_intermediate_files,
 			default_x_axis,
 		):
 		"""
@@ -53,8 +53,8 @@ class Panel:
 					bam_fn=bam_fn,
 					panel=self,
 					name=os.path.basename(bam_fn).replace(".bam",""),
-					keep_mis=keep_mis,
-					compress_mis=compress_mis,
+					keep_intermediate_files=keep_intermediate_files,
+					compress_intermediate_files=compress_intermediate_files,
 					default_x_axis=default_x_axis,
 				) 
 				for bam_fn in sorted(bams_fns)
@@ -115,7 +115,7 @@ class Panel:
 
 				os.linesep.join(
 					[
-						"""<img src="{svg}">""".format(
+						"""<img src="{svg}" />""".format(
 								svg=svg
 							)
 

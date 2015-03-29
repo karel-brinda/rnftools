@@ -23,8 +23,8 @@ class Bam:
 				panel,
 				bam_fn,
 				name,
-				keep_mis,
-				compress_mis,
+				keep_intermediate_files,
+				compress_intermediate_files,
 				default_x_axis,
 			):
 		"""
@@ -42,17 +42,19 @@ class Bam:
 		self.report=panel.get_report()
 		self.name=name
 
-		self.keep_mis=keep_mis
-		self.compress_mis=compress_mis
+		self.keep_intermediate_files=keep_intermediate_files
+		self.compress_intermediate_files=compress_intermediate_files
 		self.default_x_axis=default_x_axis
 
 		self._bam_fn  = bam_fn
 		self._gp_fn   = os.path.join(self.panel.get_panel_dir(),"gp",self.name+".gp")
 		self._html_fn = os.path.join(self.panel.get_panel_dir(),"html",self.name+".html")
-		if compress_mis:
+		if compress_intermediate_files:
 			self._mis_fn  = os.path.join(self.panel.get_panel_dir(),"mis",self.name+".mis.gz")
+			self._mir_fn  = os.path.join(self.panel.get_panel_dir(),"mir",self.name+".mir.gz")
 		else:
 			self._mis_fn  = os.path.join(self.panel.get_panel_dir(),"mis",self.name+".mis")
+			self._mir_fn  = os.path.join(self.panel.get_panel_dir(),"mir",self.name+".mir")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
 		self._pdf_fn  = os.path.join(self.panel.get_panel_dir(),"pdf",self.name+".pdf")
@@ -86,6 +88,10 @@ class Bam:
 	def mis_fn(self):
 		"""Get name of the MIS file."""
 		return self._mis_fn
+
+	def mir_fn(self):
+		"""Get name of the MIR file."""
+		return self._mir_fn
 
 	def roc_fn(self):
 		"""Get name of the ROC file."""
@@ -130,7 +136,7 @@ class Bam:
 
 		plot=os.linesep.join((["plot \\"] + plot_lines))
 
-		with open(self._gp_fn,"w+") as f:
+		with open(self._gp_fn,"w+") as gp:
 			gp_content="""
 				set title "{plot_title}"
 				set key spacing 0.8 opaque width -3
@@ -178,14 +184,14 @@ class Bam:
 				plot_title=os.path.basename(self._bam_fn),
 				plot=plot,
 			)
-			f.write(gp_content)
+			gp.write(gp_content)
 
 	def create_html(self):
 		"""Create a HTML page for this BAM file."""
 
 		roc_dicts = []
-		with open(self._roc_fn,"r") as f:
-			for line in f:
+		with open(self._roc_fn,"r") as roc:
+			for line in roc:
 				line=line.strip()
 				if line!="" and line[0]!="#":
 					(q,M,w,m,U,u,T,t,p,x,a)=line.split("\t")
@@ -265,7 +271,7 @@ class Bam:
 			])
 
 
-		with open(self._html_fn,"w+") as f:
+		with open(self._html_fn,"w+") as html:
 			program_info=["No information available (PG header is missing)."]
 			for x in snakemake.shell('"{samtools}" view -H "{bam}"'.format(
 							samtools=smbl.prog.SAMTOOLS,
@@ -313,7 +319,7 @@ class Bam:
 				</p>
 
 				<h2 id="info">
-					Information about mapper
+					Information about program
 					{headline_links}
 				</h2>
 
@@ -448,7 +454,7 @@ class Bam:
 						)
 				)
 
-			f.write(html_src)
+			html.write(html_src)
 
 	def create_mis(self):
 		"""Create an MIS (intermediate) file for this BAM file.
@@ -457,28 +463,28 @@ class Bam:
 
 		diff_thr=self.report.allowed_delta
 
-		with (gzip.open(self._mis_fn,"tw+") if self.compress_mis else open(self._mis_fn,"w+")) as f:
+		with (gzip.open(self._mis_fn,"tw+") if self.compress_intermediate_files else open(self._mis_fn,"w+")) as mis:
 			with pysam.AlignmentFile(self._bam_fn, "rb") as samfile:
 				references_dict = {}
 
 				for i in range(len(samfile.references)):
 					references_dict[ samfile.references[i] ] = i+1
 
-				f.write("# RN:   read name"+os.linesep)
-				f.write("# Q:    is mapped with quality"+os.linesep)
-				f.write("# Chr:  chr id"+os.linesep)
-				f.write("# D:    direction"+os.linesep)
-				f.write("# L:    the most left nucleotide"+os.linesep)
-				f.write("# R:    the most right nucleotide"+os.linesep)
-				f.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
-				f.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
-				f.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
-				f.write("#         w      segment is mapped to a wrong location"+os.linesep)
-				f.write("#         U      segment is unmapped and should be unmapped"+os.linesep)
-				f.write("#         u      segment is unmapped and should be mapped"+os.linesep)
-				f.write("# Segs: number of segments"+os.linesep)
-				f.write("# "+os.linesep)
-				f.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
+				mis.write("# RN:   read name"+os.linesep)
+				mis.write("# Q:    is mapped with quality"+os.linesep)
+				mis.write("# Chr:  chr id"+os.linesep)
+				mis.write("# D:    direction"+os.linesep)
+				mis.write("# L:    the most left nucleotide"+os.linesep)
+				mis.write("# R:    the most right nucleotide"+os.linesep)
+				mis.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
+				mis.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
+				mis.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
+				mis.write("#         w      segment is mapped to a wrong location"+os.linesep)
+				mis.write("#         U      segment is unmapped and should be unmapped"+os.linesep)
+				mis.write("#         u      segment is unmapped and should be mapped"+os.linesep)
+				mis.write("# Segs: number of segments"+os.linesep)
+				mis.write("# "+os.linesep)
+				mis.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
 				for read in samfile:
 					rnf_read = rnftools.rnfformat.Read()
@@ -532,7 +538,7 @@ class Bam:
 							category="m"
 
 
-					f.write(
+					mis.write(
 						"\t".join(
 							map(str,[
 								# read name
@@ -670,33 +676,120 @@ class Bam:
 				vec[q]="P"
 
 
-			#####
-			# x # - unrecognized - print details
-			#####
-			if vec[q]=="x":
-				smbl.messages.message(
-					" ".join(
-						[
-							"Unrecognized category for alignment of read '{}'.".format(read_name),
-							"Quality level: {}.".format(q),
-							"Debug info: '{}'.".format(str(
-									[
-										srs[q]["M"],
-										srs[q]["m"],
-										srs[q]["w"],
-										srs[q]["U"],
-										srs[q]["u"],
-										srs[q]["T"],
-										srs[q]["t"],
-									]
-								)),
-						]
-					),
-					program="RNFtools",
-					subprogram="bam=>roc",
-				)
+			######
+			## x # - unrecognized - print details
+			######
+			#if vec[q]=="x":
+			#	smbl.messages.message(
+			#		" ".join(
+			#			[
+			#				"Unrecognized category for alignment of read '{}'.".format(read_name),
+			#				"Quality level: {}.".format(q),
+			#				"Debug info: '{}'.".format(str(
+			#						[
+			#							srs[q]["M"],
+			#							srs[q]["m"],
+			#							srs[q]["w"],
+			#							srs[q]["U"],
+			#							srs[q]["u"],
+			#							srs[q]["T"],
+			#							srs[q]["t"],
+			#						]
+			#					)),
+			#			]
+			#		),
+			#		program="RNFtools",
+			#		subprogram="bam=>roc",
+			#	)
 
 		return vec
+
+
+	@staticmethod
+	def _mir_line(readname,vector_of_categories):
+		i=0
+		intervals=[]
+		for j in range(len(vector_of_categories)):
+			if vector_of_categories[i]!=vector_of_categories[j]:
+				intervals.append("{}:{}-{}".format(vector_of_categories[i],i,j-1))
+				i=j
+		intervals.append("{}:{}-{}".format(vector_of_categories[i],i,len(vector_of_categories)-1))
+
+		return "{}\t{}".format(readname,",".join(intervals))
+
+
+	def create_mir(self):
+		"""Create a ROC file for this BAM file.
+
+		:raises: ValueError
+
+		"""
+
+		with (gzip.open(self._mis_fn,"tr") if self.compress_intermediate_files else open(self._mis_fn,"r")) as mis:
+			with (gzip.open(self._mir_fn,"tw+") if self.compress_intermediate_files else open(self._mir_fn,"w+")) as mir:
+				last_rname=""
+				for line in mis:
+					line=line.strip()
+					if line=="" or line[0]=="#":
+						continue
+					else:
+						(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
+						nb_of_segments=int(nb_of_segments)
+
+						#print(rname,last_rname,mapped)
+						# new read
+						if rname!=last_rname:
+							# update
+							if last_rname!="":
+								voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
+								mir.write(self._mir_line(readname=rname,vector_of_categories=voc))
+								mir.write(os.linesep)
+
+							# nulling
+							single_reads_statistics= [
+										{
+											"U":0,
+											"u":0,
+											"M":[],
+											"m":0,
+											"w":0,
+											"T":0,
+											"t":0,
+										} for i in range(MAXIMAL_MAPPING_QUALITY+1)
+									]
+							last_rname=rname
+
+						# processing of a segment
+						if category=="U":
+							for q in range(len(single_reads_statistics)):
+								single_reads_statistics[q]["U"]+=1
+						elif category=="u":
+							for q in range(len(single_reads_statistics)):
+								single_reads_statistics[q]["u"]+=1
+						else:
+							mapping_quality=int(mapped.replace("mapped_",""))
+							assert mapping_quality<=MAXIMAL_MAPPING_QUALITY
+							if category=="m":
+								for q in range(mapping_quality+1):
+									single_reads_statistics[q]["m"]+=1
+								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+									single_reads_statistics[q]["T"]+=1
+							elif category=="w":
+								for q in range(mapping_quality+1):
+									single_reads_statistics[q]["w"]+=1
+							else:
+								assert category[0]=="M", category
+								segment_id=int(category.replace("M_",""))
+								for q in range(mapping_quality+1):
+									single_reads_statistics[q]["M"].append(segment_id)
+								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+									single_reads_statistics[q]["t"]+=1
+
+				# last read
+				voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
+				mir.write(self._mir_line(readname=rname,vector_of_categories=voc))
+				mir.write(os.linesep)
+
 
 
 	def create_roc(self):
@@ -708,7 +801,7 @@ class Bam:
 
 		stats_dicts = [
 			{
-				"q":i,
+				"q":q,
 				"M":0,
 				"w":0,
 				"m":0,
@@ -719,98 +812,48 @@ class Bam:
 				"t":0,
 				"x":0
 			}
-			for i in range(MAXIMAL_MAPPING_QUALITY+1)
+			for q in range(MAXIMAL_MAPPING_QUALITY+1)
 		]
 
-		with (gzip.open(self._mis_fn,"tr") if self.compress_mis else open(self._mis_fn,"r")) as g:
-			last_rname=""
-			for line in g:
+
+		with (gzip.open(self._mir_fn,"tr") if self.compress_intermediate_files else open(self._mir_fn,"r")) as mir:
+			for line in mir:
 				line=line.strip()
-				if line=="" or line[0]=="#":
-					continue
-				else:
-					(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
-					nb_of_segments=int(nb_of_segments)
+				if line!="" and line[0]!="#":
+					(read_name,tab,info_categories)=line.partition("\t")
+					intervals=info_categories.split(",")
+					for interval in intervals:
+						category=interval[0]
+						(left,colon,right)=interval[2:].partition("-")
+						for q in range(int(left),int(right)+1):
+							stats_dicts[q][category]+=1
 
-					#print(rname,last_rname,mapped)
-					# new read
-					if rname!=last_rname:
-						# update
-						if last_rname!="":
-							voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
-							for q in range(len(voc)):
-								stats_dicts[q][voc[q]]+=1
-						# nulling
-						single_reads_statistics= [
-									{
-										"U":0,
-										"u":0,
-										"M":[],
-										"m":0,
-										"w":0,
-										"T":0,
-										"t":0,
-									} for i in range(MAXIMAL_MAPPING_QUALITY+1)
-								]
-						last_rname=rname
+		with open(self._roc_fn, "w+") as roc:
+			roc.write("# Numbers of reads in several categories in dependence"+os.linesep)
+			roc.write("# on the applied threshold on mapping quality q"+os.linesep)
+			roc.write("# "+os.linesep)
+			roc.write("# Categories:"+os.linesep)
+			roc.write("#        M: Mapped correctly."+os.linesep)
+			roc.write("#        w: Mapped to a wrong position."+os.linesep)
+			roc.write("#        m: Mapped but should be unmapped."+os.linesep)
+			roc.write("#        P: Multimapped."+os.linesep)
+			roc.write("#        U: Unmapped and should be unmapped."+os.linesep)
+			roc.write("#        u: Unmapped but should be mapped."+os.linesep)
+			roc.write("#        T: Thresholded correctly."+os.linesep)
+			roc.write("#        t: Thresholded incorrectly."+os.linesep)
+			roc.write("#        x: Unknown."+os.linesep)
+			roc.write("#"+os.linesep)
+			roc.write("# q\tM\tw\tm\tP\tU\tu\tT\tt\tx\tall"+os.linesep)
 
-					# processing of a segment
-					if category=="U":
-						for q in range(len(single_reads_statistics)):
-							single_reads_statistics[q]["U"]+=1
-					elif category=="u":
-						for q in range(len(single_reads_statistics)):
-							single_reads_statistics[q]["u"]+=1
-					else:
-						mapping_quality=int(mapped.replace("mapped_",""))
-						assert mapping_quality<=MAXIMAL_MAPPING_QUALITY
-						if category=="m":
-							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["m"]+=1
-							for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
-								single_reads_statistics[q]["T"]+=1
-						elif category=="w":
-							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["w"]+=1
-						else:
-							assert category[0]=="M", category
-							segment_id=int(category.replace("M_",""))
-							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["M"].append(segment_id)
-							for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
-								single_reads_statistics[q]["t"]+=1
+			l_numbers = []
+			for line in stats_dicts:
+				numbers = [line["M"],line["w"],line["m"],line["P"],line["U"],line["u"],line["T"],line["t"],line["x"]]
+				if numbers != l_numbers:
+					roc.write("\t".join(
+							[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
+						)+os.linesep)
+				l_numbers=numbers
 
-			# last read
-			voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
-			for q in range(len(voc)):
-				stats_dicts[q][voc[q]]+=1
-
-
-			with open(self._roc_fn, "w+") as f:
-				f.write("# Numbers of reads in several categories in dependence"+os.linesep)
-				f.write("# on the applied threshold on mapping quality q"+os.linesep)
-				f.write("# "+os.linesep)
-				f.write("# Categories:"+os.linesep)
-				f.write("#        M: Mapped correctly."+os.linesep)
-				f.write("#        w: Mapped to a wrong position."+os.linesep)
-				f.write("#        m: Mapped but should be unmapped."+os.linesep)
-				f.write("#        P: Multimapped."+os.linesep)
-				f.write("#        U: Unmapped and should be unmapped."+os.linesep)
-				f.write("#        u: Unmapped but should be mapped."+os.linesep)
-				f.write("#        T: Thresholded correctly."+os.linesep)
-				f.write("#        t: Thresholded incorrectly."+os.linesep)
-				f.write("#        x: Unknown."+os.linesep)
-				f.write("#"+os.linesep)
-				f.write("# q\tM\tw\tm\tP\tU\tu\tT\tt\tx\tall"+os.linesep)
-
-				l_numbers = []
-				for line in stats_dicts:
-					numbers = [line["M"],line["w"],line["m"],line["P"],line["U"],line["u"],line["T"],line["t"],line["x"]]
-					if numbers != l_numbers:
-						f.write("\t".join(
-								[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
-							)+os.linesep)
-					l_numbers=numbers
 
 
 	def create_graphics(self):
