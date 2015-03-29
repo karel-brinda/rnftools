@@ -221,8 +221,6 @@ class Bam:
 						<td><small> {U_proc:.2f}        </small></td>
 						<td>        {u}                         </td>
 						<td><small> {u_proc:.2f}        </small></td>
-						<td>        {unused}                    </td>
-						<td><small> {unused_proc:.2f}   </small></td>
 						<td>        {T}                         </td>
 						<td><small> {T_proc:.2f}        </small></td>
 						<td>        {t}                         </td>
@@ -237,49 +235,54 @@ class Bam:
 					</tr>
 				""".format(
 						quality       = roc_dict["q"],
-						mapped        = roc_dict["M"]+roc_dict["w"]+roc_dict["m"],
-						mapped_proc   = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"])/roc_dict["a"],
+						mapped        = roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"],
+						mapped_proc   = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"])/roc_dict["a"],
 						M             = roc_dict["M"],
 						M_proc        = 100.0*(roc_dict["M"])/roc_dict["a"],
 						w             = roc_dict["w"],
 						w_proc        = 100.0*(roc_dict["w"])/roc_dict["a"],
 						m             = roc_dict["m"],
 						m_proc        = 100.0*(roc_dict["m"])/roc_dict["a"],
+						P             = roc_dict["P"],
+						P_proc        = 100.0*(roc_dict["P"])/roc_dict["a"],
 						unmapped      = roc_dict["U"]+roc_dict["u"],
-						unmapped_proc = 100.0*(roc_dict["U"]+roc_dict["u"])/roc_dict["a"],
+						unmapped_proc = 100.0*(roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"])/roc_dict["a"],
 						U             = roc_dict["U"],
 						U_proc        = 100.0*(roc_dict["U"])/roc_dict["a"],
 						u             = roc_dict["u"],
 						u_proc        = 100.0*(roc_dict["u"])/roc_dict["a"],
-						unused        = roc_dict["T"]+roc_dict["t"]+roc_dict["P"]+roc_dict["x"],
-						unused_proc   = 100.0*(roc_dict["T"]+roc_dict["t"]+roc_dict["P"]+roc_dict["x"])/roc_dict["a"],
 						T             = roc_dict["T"],
 						T_proc        = 100.0*(roc_dict["T"])/roc_dict["a"],
 						t             = roc_dict["t"],
 						t_proc        = 100.0*(roc_dict["t"])/roc_dict["a"],
-						P             = roc_dict["P"],
-						P_proc        = 100.0*(roc_dict["P"])/roc_dict["a"],
 						x             = roc_dict["x"],
 						x_proc        = 100.0*(roc_dict["x"])/roc_dict["a"],
 						sum           = roc_dict["a"],
-						sens_proc     = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"])/roc_dict["a"],
-						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]) if (roc_dict["M"]+roc_dict["w"]+roc_dict["m"]) != 0 else 0,
+						sens_proc     = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"])/roc_dict["a"],
+						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) if (roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) != 0 else 0,
 					)
-
 				for roc_dict in roc_dicts
 			])
 
 
 		with open(self._html_fn,"w+") as f:
-			program_info=""
+			program_info=["No information available (PG header is missing)."]
 			for x in snakemake.shell('"{samtools}" view -H "{bam}"'.format(
 							samtools=smbl.prog.SAMTOOLS,
 							bam=self._bam_fn,
 						),iterable=True):
 				x=x.strip()
+
 				if x[:3]=="@PG":
-					pg_header=x[4:]
-					program_info="<p><strong>Program header:</strong> {}</p>".format(pg_header)
+					pg_header=x[4:].strip()
+					parts=pg_header.split("\t")
+
+					program_info=["<table>"]
+					for part in parts:
+						(lvalue,colon,rvalue)=part.partition(":")
+						program_info.append('<tr><td style="font-weight:bold">{}:</td><td style="text-align:left">{}</td></tr>'.format(lvalue,rvalue))
+
+					program_info.append("</table>")
 
 
 			html_src="""<!DOCTYPE html>
@@ -288,48 +291,94 @@ class Bam:
 				<meta charset="UTF-8" />
 				<title>{name}</title>
 				<style type="text/css">
-					table            {{border-collapse:collapse}}
-					td               {{border: solid #aaaaff 1px;padding:4px;text-align:right}}
-					colgroup, thead  {{border: solid black 2px;padding 2px}}
-					.link_to_top     {{font-size:10pt}}
+					table            {{border-collapse:collapse;}}
+					td               {{border: solid #aaaaff 1px;padding:4px;text-align:right;}}
+					colgroup, thead  {{border: solid black 2px;padding 2px;}}
+					.link_to_top     {{font-size:10pt;}}
+					.desc            {{color:#aaa;}}
 				</style>
 			</head>
 			<body>
-				<h1 id="top">{name}</h1>
+				<h1 id="top">
+					{name}
+					<span class="link_to_top">
+						[<a href="{homepage}">Back to main report</a>]
+					</span>
+				</h1>
 
-				{program_info}
-				
 				<p>
+					<a href="#info">Information about program</a> -
 					<a href="#roctable">ROC table</a> -
 					<a href="#graphs">Graphs</a>
 				</p>
 
-				<h2 id="roctable">
-					ROC table
-					<span class="link_to_top">
-						[<a href="#top">Top of the page</a>]
-						[<a href="{homepage}">Main report</a>]
-					</span>
+				<h2 id="info">
+					Information about mapper
+					{headline_links}
 				</h2>
 
-				<p style="font-size:90%">
-					<strong>M</strong>: mapped correctly (all segments of tuple are mapped once and correctly),<br />
-					<strong>w</strong>: mapped to wrong position (at least one segment was mapped to a wrong position),<br />
-					<strong>m</strong>: mapped but should be unmapped (at least one segment was mapped but the read should not be mapped),
-					<strong>U</strong>: unmapped correctly (all segments of the read were correctly marked as unmapped),
-					<strong>u</strong>: unmapped but should be mapped (at least one segment was mapped but entire read should be unmapped),
-					<strong>t</strong>: thresholded,
-					<strong>P</strong>: multimapped (read should be mapped but it at least one segment was mapped several times and all segments were mapped correctly at least once),
-					<strong>x</strong>: unknown (read is probably not present in SAM)
+
+				{program_info}
+
+				<h2 id="roctable">
+					ROC table
+					{headline_links}
+				</h2>
+
+				<p style="font-size:80%">
+					<strong>M</strong>:
+						mapped correctly
+						<span class="desc">
+							(all segments of tuple are mapped once and correctly),
+						</span>
+					<strong>w</strong>:
+						mapped to wrong position
+						<span class="desc">
+							(at least one segment was mapped to a wrong position),
+						</span>
+					<strong>m</strong>:
+						mapped but should be unmapped
+						<span class="desc">
+							(at least one segment was mapped but the read should not be mapped),
+						</span>
+					<strong>P</strong>:
+						multimapped
+						<span class="desc">
+							(read should be mapped but it at least one segment was mapped several
+							times and all segments were mapped correctly at least once),
+						</span>
+					<strong>U</strong>:
+						unmapped correctly
+						<span class="desc">
+							(all segments of the read were correctly marked as unmapped),
+						</span>
+					<strong>u</strong>:
+						unmapped but should be mapped
+						<span class="desc">
+							(at least one segment was mapped but entire read should be unmapped),
+						</span>
+					<strong>T</strong>:	
+						thresholded correctly
+						<span class="desc">
+							(read shoud not be mapped),
+						</span>
+					<strong>t</strong>:
+						thresholded incorrectly
+						<span class="desc">
+							(read should be mapped),
+						</span>
+					<strong>x</strong>:
+						unknown
+						<span class="desc">
+							(read is probably not reported by mapper)
+						</span>
 				</p>
 				<table>
 					<colgroup span="1" style="">
 					<colgroup span="2" style="background-color:#ddd">
-					<colgroup span="6" style="">
-					<colgroup span="2" style="background-color:#ddd">
-					<colgroup span="4" style="">
-					<colgroup span="2" style="background-color:#ddd">
 					<colgroup span="8" style="">
+					<colgroup span="2" style="background-color:#ddd">
+					<colgroup span="10" style="">
 					<colgroup span="1" style="background-color:#ddd">
 					<colgroup span="2" style="">
 					<thead style="font-weight:bold;background-color:#ddddff">
@@ -343,19 +392,17 @@ class Bam:
 							<td>%</td>
 							<td>m</td>
 							<td>%</td>
+							<td>P</td>
+							<td>%</td>
 							<td>unmapped</td>
 							<td>%</td>
 							<td>U</td>
 							<td>%</td>
 							<td>u</td>
 							<td>%</td>
-							<td>unused</td>
-							<td>%</td>
 							<td>T</td>
 							<td>%</td>
 							<td>t</td>
-							<td>%</td>
-							<td>+</td>
 							<td>%</td>
 							<td>x</td>
 							<td>%</td>
@@ -371,10 +418,7 @@ class Bam:
 
 				<h2 id="graphs">
 					Graphs
-					<span class="link_to_top">
-						[<a href="#top">Top of this page</a>]
-						[<a href="{homepage}">Back to Main report</a>]
-					</span>
+					{headline_links}
 				</h2>
 				<img src="{svg_fn}" />
 			</body>
@@ -386,11 +430,22 @@ class Bam:
 						self._svg_fn,
 						os.path.dirname(self._html_fn)
 					),
+					program_info=os.linesep.join(program_info),
 					homepage=os.path.relpath(
 						self.report.html_fn(),
 						os.path.dirname(self._html_fn)
 					),
-					program_info=program_info,
+					headline_links='''
+						<span class="link_to_top">
+							[<a href="#top">Top of this page</a>]
+							[<a href="{homepage}">Back to main report</a>]
+						</span>
+					'''.format(
+							homepage=os.path.relpath(
+								self.report.html_fn(),
+								os.path.dirname(self._html_fn)
+							),
+						)
 				)
 
 			f.write(html_src)
@@ -409,19 +464,21 @@ class Bam:
 				for i in range(len(samfile.references)):
 					references_dict[ samfile.references[i] ] = i+1
 
-				f.write("# read name"+os.linesep)
-				f.write("# is mapped with quality"+os.linesep)
-				f.write("# chr id"+os.linesep)
-				f.write("# direction"+os.linesep)
-				f.write("# the most left nucleotide"+os.linesep)
-				f.write("# the most right nucleotide"+os.linesep)
-				f.write("# category of alignment assigned by LAVEnder"+os.linesep)
-				f.write("#      M_i    i-th bsegment is correctly mapped"+os.linesep)
-				f.write("#      m      segment should be unmapped but it is mapped"+os.linesep)
-				f.write("#      w      segment is mapped to a wrong location"+os.linesep)
-				f.write("#      U      segment is unmapped and should be unmapped"+os.linesep)
-				f.write("#      u      segment is unmapped and should be mapped"+os.linesep)
-				f.write("# number of segments"+os.linesep)
+				f.write("# RN:   read name"+os.linesep)
+				f.write("# Q:    is mapped with quality"+os.linesep)
+				f.write("# Chr:  chr id"+os.linesep)
+				f.write("# D:    direction"+os.linesep)
+				f.write("# L:    the most left nucleotide"+os.linesep)
+				f.write("# R:    the most right nucleotide"+os.linesep)
+				f.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
+				f.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
+				f.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
+				f.write("#         w      segment is mapped to a wrong location"+os.linesep)
+				f.write("#         U      segment is unmapped and should be unmapped"+os.linesep)
+				f.write("#         u      segment is unmapped and should be mapped"+os.linesep)
+				f.write("# Segs: number of segments"+os.linesep)
+				f.write("# "+os.linesep)
+				f.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
 				for read in samfile:
 					rnf_read = rnftools.rnfformat.Read()
@@ -455,8 +512,8 @@ class Bam:
 							for j in range(len(rnf_read.segments)):
 								segment=rnf_read.segments[j]
 								if (
-									(segment.left==0 or abs(segment.left - left) < diff_thr) and
-									(segment.right==0 or abs(segment.right - right) < diff_thr) and
+									(segment.left==0 or abs(segment.left - left) <= diff_thr) and
+									(segment.right==0 or abs(segment.right - right) <= diff_thr) and
 									(segment.left!=0 or segment.right==0) and
 									(chrom_id==0 or chrom_id==segment.chr)
 								):
@@ -509,20 +566,9 @@ class Bam:
 
 		# default value
 		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
-		val_err = lambda q : """\
-Invalid alignment for read '{}'. Debug info:
-	{dbg}
-Please contact the author on karel.brinda@gmail.com.
-""".format(read_name,dbg=str( [
-		srs[q]["M"],
-		srs[q]["m"],
-		srs[q]["w"],
-		srs[q]["U"],
-		srs[q]["u"]
-	]))
 		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1
 
-		should_be_mapped=(srs[0]["m"]+srs[0]["U"]==0)
+		should_be_mapped=bool(srs[0]["m"]+srs[0]["U"]==0)
 
 		for q in range(len(srs)):
 
@@ -610,10 +656,10 @@ Please contact the author on karel.brinda@gmail.com.
 				vec[q]="T"
 
 			#####
-			# + # - multimapped, M + w + m > parts
+			# P # - multimapped, M + w + m > parts
 			#####
 
-			# this only can remove some older
+			# this only can rewrite some older
 			if (
 				#len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts+srs[q]["m"]==0 and
 				len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts and
@@ -622,7 +668,33 @@ Please contact the author on karel.brinda@gmail.com.
 			):
 				#assert vec[q]=="x",str((q,srs[q]))
 				vec[q]="P"
-				#print("multi")
+
+
+			#####
+			# x # - unrecognized - print details
+			#####
+			if vec[q]=="x":
+				smbl.messages.message(
+					" ".join(
+						[
+							"Unrecognized category for alignment of read '{}'.".format(read_name),
+							"Quality level: {}.".format(q),
+							"Debug info: '{}'.".format(str(
+									[
+										srs[q]["M"],
+										srs[q]["m"],
+										srs[q]["w"],
+										srs[q]["U"],
+										srs[q]["u"],
+										srs[q]["T"],
+										srs[q]["t"],
+									]
+								)),
+						]
+					),
+					program="RNFtools",
+					subprogram="bam=>roc",
+				)
 
 		return vec
 
@@ -640,11 +712,11 @@ Please contact the author on karel.brinda@gmail.com.
 				"M":0,
 				"w":0,
 				"m":0,
+				"P":0,
 				"U":0,
 				"u":0,
 				"T":0,
 				"t":0,
-				"P":0,
 				"x":0
 			}
 			for i in range(MAXIMAL_MAPPING_QUALITY+1)
@@ -681,20 +753,6 @@ Please contact the author on karel.brinda@gmail.com.
 									} for i in range(MAXIMAL_MAPPING_QUALITY+1)
 								]
 						last_rname=rname
-						#
-						#
-						#
-						#
-						#
-						#
-						# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-						#
-						# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-						#
-						#
-						#
-						#
-						#
 
 					# processing of a segment
 					if category=="U":
@@ -736,18 +794,18 @@ Please contact the author on karel.brinda@gmail.com.
 				f.write("#        M: Mapped correctly."+os.linesep)
 				f.write("#        w: Mapped to a wrong position."+os.linesep)
 				f.write("#        m: Mapped but should be unmapped."+os.linesep)
+				f.write("#        P: Multimapped."+os.linesep)
 				f.write("#        U: Unmapped and should be unmapped."+os.linesep)
 				f.write("#        u: Unmapped but should be mapped."+os.linesep)
 				f.write("#        T: Thresholded correctly."+os.linesep)
 				f.write("#        t: Thresholded incorrectly."+os.linesep)
-				f.write("#        P: Multimapped."+os.linesep)
 				f.write("#        x: Unknown."+os.linesep)
 				f.write("#"+os.linesep)
-				f.write("# q\tM\tw\tm\tU\tu\tT\tt\tP\tx\tall"+os.linesep)
+				f.write("# q\tM\tw\tm\tP\tU\tu\tT\tt\tx\tall"+os.linesep)
 
 				l_numbers = []
 				for line in stats_dicts:
-					numbers = [line["M"],line["w"],line["m"],line["U"],line["u"],line["T"],line["t"],line["P"],line["x"]]
+					numbers = [line["M"],line["w"],line["m"],line["P"],line["U"],line["u"],line["T"],line["t"],line["x"]]
 					if numbers != l_numbers:
 						f.write("\t".join(
 								[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]

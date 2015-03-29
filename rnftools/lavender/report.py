@@ -73,7 +73,7 @@ class Report:
 		rnftools.lavender.add_input(self._html_fn)
 
 		# first graph
-		self.add_graph("({M}+{m}+{w})/{all}")
+		self.add_graph("({M}+{m}+{w}+{P}+{x})/{all}",ylabel="Mapped reads")
 
 	def add_graph(self,
 				y,
@@ -143,7 +143,7 @@ class Report:
 				"<tr>{}</tr>".format(
 					"".join(
 						[
-							"<td>{}</td>".format(
+							"<td style=\"width:50%\">{}</td>".format(
 								columns[col][row]
 							) for col in range(len(columns))
 						]
@@ -162,14 +162,13 @@ class Report:
 					table                             {{border-collapse:collapse}}
 					td                                {{border: solid #aaaaff 1px;padding:4px;vertical-alignment:top}}
 					colgroup, thead                   {{border: solid black 2px;padding 2px}}
-					td img                            {{width:100%}}
 					.configuration                    {{font-size:85%}}
 					.configuration, .configuration *  {{margin:0;padding:0}}
 				</style>
 			</head>
 			<body>
 				<h1>{name}</h1>
-				<table>
+				<table style="width:100%">
 				{html_table}
 				</table>
 			</body>

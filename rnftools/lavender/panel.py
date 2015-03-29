@@ -91,12 +91,12 @@ class Panel:
 
 		panel_id="panel_{}".format(self.name)
 		return [
-				(" <br>"+os.linesep).join(
+				(" <br />"+os.linesep).join(
 					[
 						"""
 							<strong>{bam_name}:</strong>
-							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';return false;" href="#">graph</a>,
-							<a href="{bam_html}">report</a>:
+							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';return false;" href="#">display graph</a>,
+							<a href="{bam_html}">detailed report</a>
 						""".format(
 							bam_name=bam.get_name(),
 							bam_html=bam.html_fn(),
