@@ -21,6 +21,7 @@ class Panel:
 			keep_intermediate_files,
 			compress_intermediate_files,
 			default_x_axis,
+			default_x_label,
 		):
 		"""
 
@@ -40,6 +41,7 @@ class Panel:
 		self.name=name
 		self.panel_dir=panel_dir
 		self.default_x_axis=default_x_axis
+		self.default_x_label=default_x_label
 
 		self.gp_plots = []
 
@@ -56,6 +58,7 @@ class Panel:
 					keep_intermediate_files=keep_intermediate_files,
 					compress_intermediate_files=compress_intermediate_files,
 					default_x_axis=default_x_axis,
+					default_x_label=default_x_label,
 				) 
 				for bam_fn in sorted(bams_fns)
 			]
@@ -95,7 +98,7 @@ class Panel:
 					[
 						"""
 							<strong>{bam_name}:</strong>
-							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';return false;" href="#">display graph</a>,
+							<a onclick="document.getElementById('{panel_id}').src='{bam_svg}';document.getElementById('{panel_id}_').href='{bam_html}';return false;" href="#">display graph</a>,
 							<a href="{bam_html}">detailed report</a>
 						""".format(
 							bam_name=bam.get_name(),
@@ -108,21 +111,39 @@ class Panel:
 
 				),
 
-				"""<img src="{svg}" id="{panel_id}">""".format(
+				"""
+					<div class="formats">
+						<a href="{html}" id="{panel_id}_">
+							<img src="{svg}" id="{panel_id}" />
+						</a>
+					</div>
+				""".format(
+						html=self.bams[0]._html_fn,
 						svg=self.bams[0]._svg_fn,
-						panel_id=panel_id
+						pdf=self.bams[0]._pdf_fn,
+						panel_id=panel_id,
 					),
+			] + [
+				"""
+					<div class="formats">
+						<img src="{svg}" />
+						<br />
+						<a href="{pdf}">PDF version</a>
+						|
+						<a href="{svg}">SVG version</a>
+						|
+						<a href="{gp}" type="text/plain">GP file</a>
+					</div>
 
-				os.linesep.join(
-					[
-						"""<img src="{svg}" />""".format(
-								svg=svg
-							)
+				""".format(
+						svg=svg,
+						pdf=pdf,
+						gp=self._gp_fn,
+					)
 
-						for svg in self._svg_fns
-					]
-				)
+				for (svg,pdf) in zip(self._svg_fns,self._pdf_fns)
 			]
+			
 
 	######################################
 	######################################
@@ -146,11 +167,13 @@ class Panel:
 
 	def add_graph(self,
 				y,
-				ylabel,
-				plot_x_run,
-				plot_y_run,
-				plot_pdf_size_cm,
-				plot_svg_size_px,
+				y_label,
+				x_label,
+				title,
+				x_run,
+				y_run,
+				pdf_size_cm,
+				svg_size_px,
 			):
 
 		x_gp=rnftools.lavender._format_xxx(self.default_x_axis)
@@ -165,15 +188,17 @@ class Panel:
 
 		params = [
 			"",
-			'set ylab "{}"'.format(ylabel),
+			'set title "{{/:Bold=16 {}}}"'.format(title),
+			'set xlab "{}"'.format(x_label),
+			'set ylab "{}"'.format(y_label),
 			'set xran [{xran}]'.format(
-						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1])
+						xran="{:.10f}:{:.10f}".format(x_run[0],x_run[1])
 					),
 			'set x2ran [{xran}]'.format(
-						xran="{:.10f}:{:.10f}".format(plot_x_run[0],plot_x_run[1])
+						xran="{:.10f}:{:.10f}".format(x_run[0],x_run[1])
 					),
 			'set yran [{yran}]'.format(					
-						yran="{:.10f}:{:.10f}".format(plot_y_run[0],plot_y_run[1]),
+						yran="{:.10f}:{:.10f}".format(y_run[0],y_run[1]),
 					),
 			"",
 		]
@@ -193,7 +218,7 @@ class Panel:
 		self.gp_plots.append( os.linesep.join(
 				[
 					"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
-							pdf_size="{:.10f}cm,{:.10f}cm".format(plot_pdf_size_cm[0],plot_pdf_size_cm[1])
+							pdf_size="{:.10f}cm,{:.10f}cm".format(pdf_size_cm[0],pdf_size_cm[1])
 						),
 					'set out "{}"'.format(pdf_file),
 
@@ -206,7 +231,7 @@ class Panel:
 		self.gp_plots.append( os.linesep.join(
 				[
 					"set termin svg size {svg_size} enhanced".format(
-							svg_size="{},{}".format(plot_svg_size_px[0],plot_svg_size_px[1])
+							svg_size="{},{}".format(svg_size_px[0],svg_size_px[1])
 						),
 					'set out "{}"'.format(svg_file),
 				] + params + [
@@ -230,7 +255,7 @@ class Panel:
 			f.write("""
 				set key spacing 0.8 opaque width -3
 
-				set x2lab "false positive rate\\n(#wrong mappings / #mapped)"
+				set x2lab "{x_lab}"
 				set log x
 				set log x2
 
@@ -257,6 +282,7 @@ class Panel:
 				""".format(
 					all_plots=os.linesep.join(self.gp_plots),
 					styles=os.linesep.join([gp_style(i) for i in range(40)]),
+					x_lab=self.default_x_label,
 				)
 			)
 
