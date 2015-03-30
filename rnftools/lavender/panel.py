@@ -221,7 +221,7 @@ class Panel:
 							pdf_size="{:.10f}cm,{:.10f}cm".format(pdf_size_cm[0],pdf_size_cm[1])
 						),
 					'set out "{}"'.format(pdf_file),
-
+					'set key spacing 0.8 opaque',
 				] + params + [
 
 					"plot \\"
@@ -234,6 +234,7 @@ class Panel:
 							svg_size="{},{}".format(svg_size_px[0],svg_size_px[1])
 						),
 					'set out "{}"'.format(svg_file),
+					'set key spacing 0.8 opaque',
 				] + params + [
 
 
@@ -253,8 +254,6 @@ class Panel:
 		with open(self._gp_fn,"w+") as f:
 
 			f.write("""
-				set key spacing 0.8 opaque width -3
-
 				set x2lab "{x_lab}"
 				set log x
 				set log x2

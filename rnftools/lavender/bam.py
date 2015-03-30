@@ -141,7 +141,6 @@ class Bam:
 		with open(self._gp_fn,"w+") as gp:
 			gp_content="""
 				set title "{{/:Bold=16 {title}}}"
-				set key spacing 0.8 opaque width -3
 
 				set x2lab "{x_lab}"
 				set log x
@@ -169,11 +168,13 @@ class Bam:
 
 				set termin svg size {svg_size} enhanced
 				set out "{svg_fn}"
+				set key spacing 0.8 opaque width -5
 				{plot}
 
 
 				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
 				set out "{pdf_fn}"
+				set key spacing 0.8 opaque width -1
 				{plot}
 
 			""".format(
