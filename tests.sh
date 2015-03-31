@@ -25,7 +25,7 @@ echo
 	set -ex -o pipefail; 
 
 	cd examples/01_simple_read_simulation
-	snakemake -p --allow-ambiguity
+	snakemake -p --cores
 )
 
 echo
@@ -51,7 +51,7 @@ echo
 	set -ex -o pipefail; 
 
 	cd examples/02_more_complex_read_simulation
-	snakemake -p --allow-ambiguity
+	snakemake -p --cores
 )
 
 echo
@@ -79,11 +79,46 @@ echo
 	cd examples/03_mapper_evaluation_SE
 	
 	cd bams
-	snakemake -p --allow-ambiguity
+	snakemake -p --cores
 	cd ..
 
-	rm -fR ~/.smbl
-	snakemake -p --allow-ambiguity
+	cd report
+	snakemake -p --cores
+)
+
+
+
+
+echo
+echo
+echo
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+echo "                 TEST: example 4" 
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+
+(
+	set -ex -o pipefail; 
+
+	cd examples/04_mapper_evaluation_PE
+	
+	cd bams
+	snakemake -p --cores
+	cd ..
+
+	cd report
+	snakemake -p --cores
 )
 
 

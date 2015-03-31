@@ -75,16 +75,17 @@ def _format_xxx(xxx):
 			M="$2",
 			m="$3",
 			w="$4",
-			U="$5",
-			u="$6",
-			t="$7",
-			p="$8",
-			x="$9",
-			all="$10",
+			P="$5",
+			U="$6",
+			u="$7",
+			T="$8",
+			t="$9",
+			x="$10",
+			all="$11",
 		)
 
 def _default_gp_style(i,count=0):
-	colors=["red","green","blue","goldenrod","black"]
+	colors=["#ff0000","#00ff00","#888888","#0000ff","#daa520","#000000"]
 	color=colors[i % len(colors)]
 	return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
 

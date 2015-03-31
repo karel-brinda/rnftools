@@ -7,6 +7,7 @@ import snakemake
 import os
 import sys
 import pysam
+import gzip
 
 MAXIMAL_MAPPING_QUALITY=255
 
@@ -18,7 +19,15 @@ MAXIMAL_MAPPING_QUALITY=255
 class Bam:
 	"""Class for a single BAM file."""
 
-	def __init__(self,panel,bam_fn,name):
+	def __init__(self,
+				panel,
+				bam_fn,
+				name,
+				keep_intermediate_files,
+				compress_intermediate_files,
+				default_x_axis,
+				default_x_label,
+			):
 		"""
 
 		:param panel: Panel containing this BAM file.
@@ -34,10 +43,20 @@ class Bam:
 		self.report=panel.get_report()
 		self.name=name
 
+		self.keep_intermediate_files=keep_intermediate_files
+		self.compress_intermediate_files=compress_intermediate_files
+		self.default_x_axis=default_x_axis
+		self.default_x_label=default_x_label
+
 		self._bam_fn  = bam_fn
 		self._gp_fn   = os.path.join(self.panel.get_panel_dir(),"gp",self.name+".gp")
 		self._html_fn = os.path.join(self.panel.get_panel_dir(),"html",self.name+".html")
-		self._aci_fn  = os.path.join(self.panel.get_panel_dir(),"aci",self.name+".aci")
+		if compress_intermediate_files:
+			self._mis_fn  = os.path.join(self.panel.get_panel_dir(),"mis",self.name+".mis.gz")
+			self._mir_fn  = os.path.join(self.panel.get_panel_dir(),"mir",self.name+".mir.gz")
+		else:
+			self._mis_fn  = os.path.join(self.panel.get_panel_dir(),"mis",self.name+".mis")
+			self._mir_fn  = os.path.join(self.panel.get_panel_dir(),"mir",self.name+".mir")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
 		self._pdf_fn  = os.path.join(self.panel.get_panel_dir(),"pdf",self.name+".pdf")
@@ -68,9 +87,13 @@ class Bam:
 		"""Get name of the HTML report."""
 		return self._html_fn
 
-	def aci_fn(self):
-		"""Get name of the ACIfile."""
-		return self._aci_fn
+	def mis_fn(self):
+		"""Get name of the MIS file."""
+		return self._mis_fn
+
+	def mir_fn(self):
+		"""Get name of the MIR file."""
+		return self._mir_fn
 
 	def roc_fn(self):
 		"""Get name of the ROC file."""
@@ -90,12 +113,36 @@ class Bam:
 	def create_gp(self):
 		"""Create a GnuPlot file for this BAM file."""
 
-		with open(self._gp_fn,"w+") as f:
-			gp_content="""
-				set title "{plot_title}"
-				set key spacing 0.8 opaque width -3
+		categories_order=[
+			("{U}",     "#ee82ee", 'Unmapped correctly'),
+			("{u}",     "#ff0000", 'Unmapped incorrectly'),
+			("{T}",     "#008800", 'Thresholded correctly'),
+			("{t}",     "#00ff00", 'Thresholded incorrectly'),
+			("{P}",     "#ffff00", 'Multimapped'),
+			("{w}+{x}", "#7f7f7f", 'Mapped, should be unmapped'),
+			("{m}",     "#000000", 'Mapped to wrong position'),
+			("{M}",     "#0000ff", 'Mapped correctly'),
+		]
 
-				set x2lab "false positive rate\\n(#wrong mappings / #mapped)"
+		plot_lines=[
+			'"{roc_fn}" using (( ({x}) )):({y}) lt rgb "{color}" with filledcurve x1 title "{title}", \\'.format(
+					roc_fn=self._roc_fn,
+					x=rnftools.lavender._format_xxx(self.default_x_axis),
+					y=rnftools.lavender._format_xxx('({sum})*100/{{all}}'.format(sum="+".join([c[0] for c in categories_order[i:]]))),
+					color=categories_order[i][1],
+					title=categories_order[i][2],
+				)
+
+			for i in range(len(categories_order))
+		]
+
+		plot=os.linesep.join((["plot \\"] + plot_lines))
+
+		with open(self._gp_fn,"w+") as gp:
+			gp_content="""
+				set title "{{/:Bold=16 {title}}}"
+
+				set x2lab "{x_lab}"
 				set log x
 				set log x2
 
@@ -121,53 +168,47 @@ class Bam:
 
 				set termin svg size {svg_size} enhanced
 				set out "{svg_fn}"
+				set key spacing 0.8 opaque width -5
 				{plot}
 
 
 				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
 				set out "{pdf_fn}"
+				set key spacing 0.8 opaque width -1
 				{plot}
 
 			""".format(
 				svg_fn=self._svg_fn,
 				pdf_fn=self._pdf_fn,
-				xran="{:.10f}:{:.10f}".format(self.report.default_plot_x_run[0],self.report.default_plot_x_run[1]),
-				yran="{:.10f}:{:.10f}".format(self.report.default_plot_y_run[0],self.report.default_plot_y_run[1]),
-				svg_size="{},{}".format(self.report.default_plot_svg_size_px[0],self.report.default_plot_svg_size_px[1]),
-				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.default_plot_pdf_size_cm[0],self.report.default_plot_pdf_size_cm[1]),
-				plot_title=os.path.basename(self._bam_fn),
-				plot="""
-					plot\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6+$5)*100/$10) lt rgb "violet" with filledcurve x1 title 'Unmapped correctly',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7+$6)*100/$10) lt rgb "red" with filledcurve x1 title 'Unmapped incorrectly',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8+$7)*100/$10) lt rgb "green" with filledcurve x1 title 'Thresholded',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4+$8)*100/$10) lt rgb "yellow" with filledcurve x1 title 'Multimapped',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3+$4)*100/$10) lt rgb "gray" with filledcurve x1 title 'Mapped, should be unmapped',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2+$3)*100/$10) lt rgb "black" with filledcurve x1 title 'Mapped to wrong position',\\
-						"{roc_fn}" using (( ($3+$4) / ($2+$3+$4) )):(($2)*100/$10) lt rgb "blue" with filledcurve x1 title 'Mapped correctly',\\
-
-				""".format(roc_fn=self._roc_fn)
+				xran="{:.10f}:{:.10f}".format(self.report.default_x_run[0],self.report.default_x_run[1]),
+				yran="{:.10f}:{:.10f}".format(self.report.default_y_run[0],self.report.default_y_run[1]),
+				svg_size="{},{}".format(self.report.default_svg_size_px[0],self.report.default_svg_size_px[1]),
+				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.default_pdf_size_cm[0],self.report.default_pdf_size_cm[1]),
+				title=os.path.basename(self._bam_fn)[:-4],
+				plot=plot,
+				x_lab=self.default_x_label,
 			)
-			f.write(gp_content)
+			gp.write(gp_content)
 
 	def create_html(self):
 		"""Create a HTML page for this BAM file."""
 
 		roc_dicts = []
-		with open(self._roc_fn,"r") as f:
-			for line in f:
+		with open(self._roc_fn,"r") as roc:
+			for line in roc:
 				line=line.strip()
 				if line!="" and line[0]!="#":
-					(q,M,w,m,U,u,t,p,x,a)=line.split("\t")
+					(q,M,w,m,P,U,u,T,t,x,a)=line.split("\t")
 					roc_dict = {
 						"q":int(q),
 						"M":int(M),
 						"w":int(w),
 						"m":int(m),
+						"P":int(P),
 						"U":int(U),
 						"u":int(u),
+						"T":int(T),
 						"t":int(t),
-						"+":int(p),
 						"x":int(x),
 						"a":int(a)
 					}
@@ -184,67 +225,72 @@ class Bam:
 						<td><small> {w_proc:.2f}        </small></td>
 						<td>        {m}                         </td>
 						<td><small> {m_proc:.2f}        </small></td>
+						<td>        {P}                         </td>
+						<td><small> {P_proc:.2f}        </small></td>
 						<td>        {unmapped}                  </td>
 						<td><small> {unmapped_proc:.2f} </small></td>
 						<td>        {U}                         </td>
 						<td><small> {U_proc:.2f}        </small></td>
 						<td>        {u}                         </td>
 						<td><small> {u_proc:.2f}        </small></td>
-						<td>        {unused}                    </td>
-						<td><small> {unused_proc:.2f}   </small></td>
+						<td>        {T}                         </td>
+						<td><small> {T_proc:.2f}        </small></td>
 						<td>        {t}                         </td>
 						<td><small> {t_proc:.2f}        </small></td>
-						<td>        {p}                         </td>
-						<td><small> {p_proc:.2f}        </small></td>
 						<td>        {x}                         </td>
 						<td><small> {x_proc:.2f}        </small></td>
 						<td>        {sum}                       </td>
 						<td>        {prec_proc:.3f}              </td>
-						<td>        {sens_proc:.3f}             </td>
 					</tr>
 				""".format(
 						quality       = roc_dict["q"],
-						mapped        = roc_dict["M"]+roc_dict["w"]+roc_dict["m"],
-						mapped_proc   = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"])/roc_dict["a"],
+						mapped        = roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"],
+						mapped_proc   = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"])/roc_dict["a"],
 						M             = roc_dict["M"],
 						M_proc        = 100.0*(roc_dict["M"])/roc_dict["a"],
 						w             = roc_dict["w"],
 						w_proc        = 100.0*(roc_dict["w"])/roc_dict["a"],
 						m             = roc_dict["m"],
 						m_proc        = 100.0*(roc_dict["m"])/roc_dict["a"],
-						unmapped      = roc_dict["U"]+roc_dict["u"],
-						unmapped_proc = 100.0*(roc_dict["U"]+roc_dict["u"])/roc_dict["a"],
+						P             = roc_dict["P"],
+						P_proc        = 100.0*(roc_dict["P"])/roc_dict["a"],
+						unmapped      = roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"],
+						unmapped_proc = 100.0*(roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"])/roc_dict["a"],
 						U             = roc_dict["U"],
 						U_proc        = 100.0*(roc_dict["U"])/roc_dict["a"],
 						u             = roc_dict["u"],
 						u_proc        = 100.0*(roc_dict["u"])/roc_dict["a"],
-						unused        = roc_dict["t"]+roc_dict["+"]+roc_dict["x"],
-						unused_proc   = 100.0*(roc_dict["t"]+roc_dict["+"]+roc_dict["x"])/roc_dict["a"],
+						T             = roc_dict["T"],
+						T_proc        = 100.0*(roc_dict["T"])/roc_dict["a"],
 						t             = roc_dict["t"],
 						t_proc        = 100.0*(roc_dict["t"])/roc_dict["a"],
-						p             = roc_dict["+"],
-						p_proc        = 100.0*(roc_dict["+"])/roc_dict["a"],
 						x             = roc_dict["x"],
 						x_proc        = 100.0*(roc_dict["x"])/roc_dict["a"],
 						sum           = roc_dict["a"],
-						sens_proc     = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"])/roc_dict["a"],
-						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]) if (roc_dict["M"]+roc_dict["w"]+roc_dict["m"]) != 0 else 0,
+						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) if (roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) != 0 else 0,
 					)
-
 				for roc_dict in roc_dicts
 			])
 
 
-		with open(self._html_fn,"w+") as f:
-			program_info=""
+		with open(self._html_fn,"w+") as html:
+			program_info=["No information available (PG header is missing)."]
 			for x in snakemake.shell('"{samtools}" view -H "{bam}"'.format(
 							samtools=smbl.prog.SAMTOOLS,
 							bam=self._bam_fn,
 						),iterable=True):
 				x=x.strip()
+
 				if x[:3]=="@PG":
-					pg_header=x[4:]
-					program_info="<p><strong>Program header:</strong> {}</p>".format(pg_header)
+					pg_header=x[4:].strip()
+					parts=pg_header.split("\t")
+
+					program_info=["<table>"]
+					for part in parts:
+						(lvalue,colon,rvalue)=part.partition(":")
+						program_info.append('<tr><td style="font-weight:bold">{}:</td><td style="text-align:left">{}</td></tr>'.format(lvalue,rvalue))
+
+					program_info.append("</table>")
 
 
 			html_src="""<!DOCTYPE html>
@@ -253,50 +299,97 @@ class Bam:
 				<meta charset="UTF-8" />
 				<title>{name}</title>
 				<style type="text/css">
-					table            {{border-collapse:collapse}}
-					td               {{border: solid #aaaaff 1px;padding:4px;text-align:right}}
-					colgroup, thead  {{border: solid black 2px;padding 2px}}
-					.link_to_top     {{font-size:10pt}}
+					table            {{border-collapse:collapse;}}
+					td               {{border: solid #aaaaff 1px;padding:4px;text-align:right;}}
+					colgroup, thead  {{border: solid black 2px;padding 2px;}}
+					.link_to_top     {{font-size:10pt;}}
+					.desc            {{color:#aaa;}}
+					.formats         {{text-align:left;margin-bottom:20px;}}
 				</style>
 			</head>
 			<body>
-				<h1 id="top">{name}</h1>
+				<h1 id="top">
+					{name}
+					<span class="link_to_top">
+						[<a href="{homepage}">Back to main report</a>]
+					</span>
+				</h1>
 
-				{program_info}
-				
 				<p>
+					<a href="#info">Information about program</a> -
 					<a href="#roctable">ROC table</a> -
 					<a href="#graphs">Graphs</a>
 				</p>
 
-				<h2 id="roctable">
-					ROC table
-					<span class="link_to_top">
-						[<a href="#top">Top of the page</a>]
-						[<a href="{homepage}">Main report</a>]
-					</span>
+				<h2 id="info">
+					Information about program
+					{headline_links}
 				</h2>
 
-				<p>
-					<strong>M</strong>: mapped correctly,
-					<strong>w</strong>: mapped to wrong position,
-					<strong>m</strong>: mapped but should be unmapped,
-					<strong>U</strong>: unmapped correctly,
-					<strong>u</strong>: unmapped but should be mapped,
-					<strong>t</strong>: thresholded,
-					<strong>+</strong>: multimapped,
-					<strong>x</strong>: unknown (read is probably not present in SAM)
+
+				{program_info}
+
+				<h2 id="roctable">
+					ROC table
+					{headline_links}
+				</h2>
+
+				<p style="font-size:80%">
+					<strong>M</strong>:
+						mapped correctly
+						<span class="desc">
+							(all segments of tuple are mapped once and correctly),
+						</span>
+					<strong>w</strong>:
+						mapped to wrong position
+						<span class="desc">
+							(at least one segment was mapped to a wrong position),
+						</span>
+					<strong>m</strong>:
+						mapped but should be unmapped
+						<span class="desc">
+							(at least one segment was mapped but the read should not be mapped),
+						</span>
+					<strong>P</strong>:
+						multimapped
+						<span class="desc">
+							(read should be mapped but it at least one segment was mapped several
+							times and all segments were mapped correctly at least once),
+						</span>
+					<strong>U</strong>:
+						unmapped correctly
+						<span class="desc">
+							(all segments of the read were correctly marked as unmapped),
+						</span>
+					<strong>u</strong>:
+						unmapped but should be mapped
+						<span class="desc">
+							(at least one segment was mapped but entire read should be unmapped),
+						</span>
+					<strong>T</strong>:	
+						thresholded correctly
+						<span class="desc">
+							(read shoud not be mapped),
+						</span>
+					<strong>t</strong>:
+						thresholded incorrectly
+						<span class="desc">
+							(read should be mapped),
+						</span>
+					<strong>x</strong>:
+						unknown
+						<span class="desc">
+							(read is probably not reported by mapper)
+						</span>
 				</p>
 				<table>
 					<colgroup span="1" style="">
 					<colgroup span="2" style="background-color:#ddd">
-					<colgroup span="6" style="">
+					<colgroup span="8" style="">
 					<colgroup span="2" style="background-color:#ddd">
-					<colgroup span="4" style="">
-					<colgroup span="2" style="background-color:#ddd">
-					<colgroup span="6" style="">
+					<colgroup span="10" style="">
 					<colgroup span="1" style="background-color:#ddd">
-					<colgroup span="2" style="">
+					<colgroup span="1" style="">
 					<thead style="font-weight:bold;background-color:#ddddff">
 						<tr style="font-weight:bold;background-color:#ddddff">
 							<td>q</td>
@@ -308,23 +401,22 @@ class Bam:
 							<td>%</td>
 							<td>m</td>
 							<td>%</td>
+							<td>P</td>
+							<td>%</td>
 							<td>unmapped</td>
 							<td>%</td>
 							<td>U</td>
 							<td>%</td>
 							<td>u</td>
 							<td>%</td>
-							<td>unused</td>
+							<td>T</td>
 							<td>%</td>
 							<td>t</td>
-							<td>%</td>
-							<td>+</td>
 							<td>%</td>
 							<td>x</td>
 							<td>%</td>
 							<td>sum</td>
 							<td>prec. (%)</td>
-							<td>sens. (%)</td>
 						</tr>
 					</thead>
 					<tbody>
@@ -334,65 +426,100 @@ class Bam:
 
 				<h2 id="graphs">
 					Graphs
-					<span class="link_to_top">
-						[<a href="#top">Top of this page</a>]
-						[<a href="{homepage}">Back to Main report</a>]
-					</span>
+					{headline_links}
 				</h2>
-				<img src="{svg_fn}" />
+
+				<div class="formats">
+					<img src="{svg}" />
+					<br />
+					<a href="{pdf}">PDF version</a>
+					|
+					<a href="{svg}">SVG version</a>
+					|
+					<a href="{roc}" type="text/csv">ROC file</a>
+					|
+					<a href="{gp}" type="text/plain">GP file</a>
+				</div>
+
+
 			</body>
 			</html>			
 			""".format(
 					name=self.name,
 					tbody=tbody,
-					svg_fn=os.path.relpath(
+					svg=os.path.relpath(
 						self._svg_fn,
 						os.path.dirname(self._html_fn)
 					),
+					pdf=os.path.relpath(
+						self._pdf_fn,
+						os.path.dirname(self._html_fn)
+					),
+					roc=os.path.relpath(
+						self._roc_fn,
+						os.path.dirname(self._html_fn)
+					),
+					gp=os.path.relpath(
+						self._gp_fn,
+						os.path.dirname(self._html_fn)
+					),
+					program_info=os.linesep.join(program_info),
 					homepage=os.path.relpath(
 						self.report.html_fn(),
 						os.path.dirname(self._html_fn)
 					),
-					program_info=program_info,
+					headline_links='''
+						<span class="link_to_top">
+							[<a href="#top">Top of this page</a>]
+							[<a href="{homepage}">Back to main report</a>]
+						</span>
+					'''.format(
+							homepage=os.path.relpath(
+								self.report.html_fn(),
+								os.path.dirname(self._html_fn)
+							),
+						)
 				)
 
-			f.write(html_src)
+			html.write(html_src)
 
-	def create_aci(self):
-		"""Create an ACI (intermediate) file for this BAM file.
+	def create_mis(self):
+		"""Create an MIS (intermediate) file for this BAM file.
 		This is the function which asses if an alignment is correct
 		"""
 
 		diff_thr=self.report.allowed_delta
 
-		with open(self._aci_fn,"w+") as f:
-			with pysam.AlignmentFile(self._bam_fn, "rb") as samfile:
+		with (gzip.open(self._mis_fn,"tw+") if self.compress_intermediate_files else open(self._mis_fn,"w+")) as mis:
+			with pysam.AlignmentFile(self._bam_fn, "rb") as sam:
 				references_dict = {}
 
-				for i in range(len(samfile.references)):
-					references_dict[ samfile.references[i] ] = i+1
+				for i in range(len(sam.references)):
+					references_dict[ sam.references[i] ] = i+1
 
-				f.write("# read name"+os.linesep)
-				f.write("# is mapped with quality"+os.linesep)
-				f.write("# chr id"+os.linesep)
-				f.write("# direction"+os.linesep)
-				f.write("# the most left nucleotide"+os.linesep)
-				f.write("# the most right nucleotide"+os.linesep)
-				f.write("# category of alignment assigned by LAVEnder"+os.linesep)
-				f.write("#      M_i    i-th bsegment is correctly mapped"+os.linesep)
-				f.write("#      m      segment should be unmapped but it is mapped"+os.linesep)
-				f.write("#      w      segment is mapped to a wrong location"+os.linesep)
-				f.write("#      U      segment is unmapped and should be unmapped"+os.linesep)
-				f.write("#      u      segment is unmapped and should be mapped"+os.linesep)
-				f.write("# number of segments"+os.linesep)
+				mis.write("# RN:   read name"+os.linesep)
+				mis.write("# Q:    is mapped with quality"+os.linesep)
+				mis.write("# Chr:  chr id"+os.linesep)
+				mis.write("# D:    direction"+os.linesep)
+				mis.write("# L:    the most left nucleotide"+os.linesep)
+				mis.write("# R:    the most right nucleotide"+os.linesep)
+				mis.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
+				mis.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
+				mis.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
+				mis.write("#         w      segment is mapped to a wrong location"+os.linesep)
+				mis.write("#         U      segment is unmapped and should be unmapped"+os.linesep)
+				mis.write("#         u      segment is unmapped and should be mapped"+os.linesep)
+				mis.write("# Segs: number of segments"+os.linesep)
+				mis.write("# "+os.linesep)
+				mis.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
-				for read in samfile:
+				for read in sam:
 					rnf_read = rnftools.rnfformat.Read()
 					rnf_read.destringize(read.query_name)
 
 					left = read.reference_start+1
 					right = read.reference_end
-					chrom_id=references_dict[ samfile.references[read.reference_id] ]
+					chrom_id=references_dict[ sam.references[read.reference_id] ]
 
 					nb_of_segments=len(rnf_read.segments)
 
@@ -418,8 +545,8 @@ class Bam:
 							for j in range(len(rnf_read.segments)):
 								segment=rnf_read.segments[j]
 								if (
-									(segment.left==0 or abs(segment.left - left) < diff_thr) and
-									(segment.right==0 or abs(segment.right - right) < diff_thr) and
+									(segment.left==0 or abs(segment.left - left) <= diff_thr) and
+									(segment.right==0 or abs(segment.right - right) <= diff_thr) and
 									(segment.left!=0 or segment.right==0) and
 									(chrom_id==0 or chrom_id==segment.chr)
 								):
@@ -437,8 +564,7 @@ class Bam:
 						else:
 							category="m"
 
-
-					f.write(
+					mis.write(
 						"\t".join(
 							map(str,[
 								# read name
@@ -472,28 +598,11 @@ class Bam:
 
 		# default value
 		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
-		val_err = lambda q : """\
-Invalid alignment for read '{}'. Debug info:
-	{dbg}
-Please contact the author on karel.brinda@gmail.com.
-""".format(read_name,dbg=str( [
-		srs[q]["M"],
-		srs[q]["m"],
-		srs[q]["w"],
-		srs[q]["U"],
-		srs[q]["u"]
-	]))
-		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1
+		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1,srs
+
+		should_be_mapped=bool(srs[0]["m"]+srs[0]["U"]==0)
 
 		for q in range(len(srs)):
-
-			#assert (
-			#		len(set(srs[q]["M"]))+
-			#		srs[q]["m"]+
-			#		srs[q]["w"]+
-			#		srs[q]["U"]+
-			#		srs[q]["u"]) <= parts+1, "wrong single read statistics parts={}, q={}, '{}'".format(parts,q,str(srs[q]))
-
 
 			#####
 			# M # - all parts correctly aligned
@@ -558,16 +667,31 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["w"]==0 and
 				srs[q]["m"]==0 and
 				srs[q]["U"]==0 and
-				srs[q]["u"]==0
+				srs[q]["u"]==0 and
+				srs[q]["t"]>0
 			):
 				assert vec[q]=="x",str((q,srs[q]))
 				vec[q]="t"
 
 			#####
-			# + # - multimapped, M + w + m > parts
+			# T # - at least one segment was thresholded
+			#####
+			if (
+				len(srs[q]["M"])!=parts and
+				srs[q]["w"]==0 and
+				srs[q]["m"]==0 and
+				srs[q]["U"]==0 and
+				srs[q]["u"]==0 and
+				srs[q]["T"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="T"
+
+			#####
+			# P # - multimapped, M + w + m > parts
 			#####
 
-			# this only can remove some older
+			# this only can rewrite some older
 			if (
 				#len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts+srs[q]["m"]==0 and
 				len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts and
@@ -575,10 +699,152 @@ Please contact the author on karel.brinda@gmail.com.
 				srs[q]["u"]==0
 			):
 				#assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="+"
-				#print("multi")
+				vec[q]="P"
+
+
+			######
+			## x # - unrecognized - print details
+			######
+			#if vec[q]=="x":
+			#	smbl.messages.message(
+			#		" ".join(
+			#			[
+			#				"Unrecognized category for alignment of read '{}'.".format(read_name),
+			#				"Quality level: {}.".format(q),
+			#				"Debug info: '{}'.".format(str(
+			#						[
+			#							srs[q]["M"],
+			#							srs[q]["m"],
+			#							srs[q]["w"],
+			#							srs[q]["U"],
+			#							srs[q]["u"],
+			#							srs[q]["T"],
+			#							srs[q]["t"],
+			#						]
+			#					)),
+			#			]
+			#		),
+			#		program="RNFtools",
+			#		subprogram="bam=>roc",
+			#	)
 
 		return vec
+
+
+	@staticmethod
+	def _mir_line(readname,vector_of_categories):
+		i=0
+		intervals=[]
+		for j in range(len(vector_of_categories)):
+			if vector_of_categories[i]!=vector_of_categories[j]:
+				intervals.append("{}:{}-{}".format(vector_of_categories[i],i,j-1))
+				i=j
+		intervals.append("{}:{}-{}".format(vector_of_categories[i],i,len(vector_of_categories)-1))
+
+		return "{}\t{}".format(readname,",".join(intervals))
+
+
+	def create_mir(self):
+		"""Create a ROC file for this BAM file.
+
+		:raises: ValueError
+
+		"""
+
+		with (gzip.open(self._mis_fn,"tr") if self.compress_intermediate_files else open(self._mis_fn,"r")) as mis:
+			with (gzip.open(self._mir_fn,"tw+") if self.compress_intermediate_files else open(self._mir_fn,"w+")) as mir:
+				last_rname=""
+				for line in mis:
+					line=line.strip()
+					if line=="" or line[0]=="#":
+						continue
+					else:
+						(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
+						nb_of_segments=int(nb_of_segments)
+
+						#print(rname,last_rname,mapped)
+						# new read
+						if rname!=last_rname:
+							# update
+							if last_rname!="":
+								voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
+								mir.write(self._mir_line(readname=rname,vector_of_categories=voc))
+								mir.write(os.linesep)
+
+							# nulling
+							single_reads_statistics= [
+										{
+											"U":0,
+											"u":0,
+											"M":[],
+											"m":0,
+											"w":0,
+											"T":0,
+											"t":0,
+										} for i in range(MAXIMAL_MAPPING_QUALITY+1)
+									]
+							last_rname=rname
+
+						####################
+						# Unmapped segment #
+						####################
+
+						#####
+						# U #
+						#####
+						if category=="U":
+							for q in range(len(single_reads_statistics)):
+								single_reads_statistics[q]["U"]+=1
+
+						#####
+						# u #
+						#####
+						elif category=="u":
+							for q in range(len(single_reads_statistics)):
+								single_reads_statistics[q]["u"]+=1
+
+						##################
+						# Mapped segment #
+						##################
+
+						else:
+							mapping_quality=int(mapped.replace("mapped_",""))
+							assert 0<=mapping_quality and mapping_quality<=MAXIMAL_MAPPING_QUALITY, mapping_quality
+
+							#####
+							# m #
+							#####
+							if category=="m":
+								for q in range(mapping_quality+1):
+									single_reads_statistics[q]["m"]+=1
+								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+									single_reads_statistics[q]["T"]+=1
+
+							#####
+							# w #
+							#####
+							elif category=="w":
+								for q in range(mapping_quality+1):
+									single_reads_statistics[q]["w"]+=1
+								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+									single_reads_statistics[q]["t"]+=1
+
+							#####
+							# M #
+							#####
+							else:
+								assert category[0]=="M", category
+								segment_id=int(category.replace("M_",""))
+								for q in range(mapping_quality+1):
+									single_reads_statistics[q]["M"].append(segment_id)
+								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+									single_reads_statistics[q]["t"]+=1
+
+				# last read
+				voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
+				mir.write(self._mir_line(readname=rname,vector_of_categories=voc))
+				mir.write(os.linesep)
+
 
 
 	def create_roc(self):
@@ -590,102 +856,59 @@ Please contact the author on karel.brinda@gmail.com.
 
 		stats_dicts = [
 			{
-				"q":i,
+				"q":q,
 				"M":0,
 				"w":0,
 				"m":0,
+				"P":0,
 				"U":0,
 				"u":0,
+				"T":0,
 				"t":0,
-				"+":0,
 				"x":0
 			}
-			for i in range(MAXIMAL_MAPPING_QUALITY+1)
+			for q in range(MAXIMAL_MAPPING_QUALITY+1)
 		]
 
-		with open(self._aci_fn, "r") as g:
 
-			last_rname=""
-			for line in g:
+		with (gzip.open(self._mir_fn,"tr") if self.compress_intermediate_files else open(self._mir_fn,"r")) as mir:
+			for line in mir:
 				line=line.strip()
-				if line=="" or line[0]=="#":
-					continue
-				else:
-					(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
-					nb_of_segments=int(nb_of_segments)
+				if line!="" and line[0]!="#":
+					(read_name,tab,info_categories)=line.partition("\t")
+					intervals=info_categories.split(",")
+					for interval in intervals:
+						category=interval[0]
+						(left,colon,right)=interval[2:].partition("-")
+						for q in range(int(left),int(right)+1):
+							stats_dicts[q][category]+=1
 
-					#print(rname,last_rname,mapped)
-					# new read
-					if rname!=last_rname:
-						# update
-						if last_rname!="":
-							voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
-							for q in range(len(voc)):
-								stats_dicts[q][voc[q]]+=1
-						# nulling
-						single_reads_statistics= [
-									{
-										"U":0,
-										"u":0,
-										"M":[],
-										"m":0,
-										"w":0,
-									} for i in range(MAXIMAL_MAPPING_QUALITY+1)
-								]
-						last_rname=rname
+		with open(self._roc_fn, "w+") as roc:
+			roc.write("# Numbers of reads in several categories in dependence"+os.linesep)
+			roc.write("# on the applied threshold on mapping quality q"+os.linesep)
+			roc.write("# "+os.linesep)
+			roc.write("# Categories:"+os.linesep)
+			roc.write("#        M: Mapped correctly."+os.linesep)
+			roc.write("#        w: Mapped to a wrong position."+os.linesep)
+			roc.write("#        m: Mapped but should be unmapped."+os.linesep)
+			roc.write("#        P: Multimapped."+os.linesep)
+			roc.write("#        U: Unmapped and should be unmapped."+os.linesep)
+			roc.write("#        u: Unmapped but should be mapped."+os.linesep)
+			roc.write("#        T: Thresholded correctly."+os.linesep)
+			roc.write("#        t: Thresholded incorrectly."+os.linesep)
+			roc.write("#        x: Unknown."+os.linesep)
+			roc.write("#"+os.linesep)
+			roc.write("# q\tM\tw\tm\tP\tU\tu\tT\tt\tx\tall"+os.linesep)
 
-					# processing of a segment
-					if category=="U":
-						for q in range(len(single_reads_statistics)):
-							single_reads_statistics[q]["U"]+=1
-					elif category=="u":
-						for q in range(len(single_reads_statistics)):
-							single_reads_statistics[q]["u"]+=1
-					else:
-						mapping_quality=int(mapped.replace("mapped_",""))
-						assert mapping_quality<=MAXIMAL_MAPPING_QUALITY
-						if category=="m":
-							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["m"]+=1
-						elif category=="w":
-							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["w"]+=1
-						else:
-							assert category[0]=="M", category
-							segment_id=int(category.replace("M_",""))
-							for q in range(mapping_quality+1):
-								single_reads_statistics[q]["M"].append(segment_id)
+			l_numbers = []
+			for line in stats_dicts:
+				numbers = [line["M"],line["w"],line["m"],line["P"],line["U"],line["u"],line["T"],line["t"],line["x"]]
+				if numbers != l_numbers:
+					roc.write("\t".join(
+							[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
+						)+os.linesep)
+				l_numbers=numbers
 
-			# last read
-			voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
-			for q in range(len(voc)):
-				stats_dicts[q][voc[q]]+=1
-
-
-			with open(self._roc_fn, "w+") as f:
-				f.write("# Numbers of reads in several categories in dependence"+os.linesep)
-				f.write("# on the applied threshold on mapping quality q"+os.linesep)
-				f.write("# "+os.linesep)
-				f.write("# Categories:"+os.linesep)
-				f.write("#        M: Mapped correctly."+os.linesep)
-				f.write("#        w: Mapped to a wrong position."+os.linesep)
-				f.write("#        m: Mapped but should be unmapped."+os.linesep)
-				f.write("#        U: Unmapped and should be unmapped."+os.linesep)
-				f.write("#        u: Unmapped but should be mapped."+os.linesep)
-				f.write("#        t: Thresholded."+os.linesep)
-				f.write("#        +: Multimapped."+os.linesep)
-				f.write("#        x: Unknown."+os.linesep)
-				f.write("#"+os.linesep)
-				f.write("# q\tM\tw\tm\tU\tu\tt\t+\tx\tall"+os.linesep)
-
-				l_numbers = []
-				for line in stats_dicts:
-					numbers = [line["M"],line["w"],line["m"],line["U"],line["u"],line["t"],line["+"],line["x"]]
-					if numbers != l_numbers:
-						f.write("\t".join(
-								[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
-							)+os.linesep)
-					l_numbers=numbers
 
 
 	def create_graphics(self):
