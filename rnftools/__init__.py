@@ -7,6 +7,7 @@ import os
 smbl.messages.message("",program="RNFtools")
 smbl.messages.message("Web:    http://github.com/karel-brinda/rnftools",program="RNFtools")
 smbl.messages.message("Author: Karel Brinda, karel.brinda@gmail.com",program="RNFtools")
+smbl.messages.message("",program="RNFtools")
 
 
 def include():

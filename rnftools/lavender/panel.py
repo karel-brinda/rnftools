@@ -174,6 +174,7 @@ class Panel:
 				y_run,
 				pdf_size_cm,
 				svg_size_px,
+				key_position,
 			):
 
 		x_gp=rnftools.lavender._format_xxx(self.default_x_axis)
@@ -188,8 +189,9 @@ class Panel:
 
 		params = [
 			"",
-			'set title "{{/:Bold=16 {}}}"'.format(title),
-			'set xlab "{}"'.format(x_label),
+			'set title "{{/:Bold {}}}"'.format(title),
+			'set key {}'.format(key_position),
+			'set x2lab "{}"'.format(x_label),
 			'set ylab "{}"'.format(y_label),
 			'set xran [{xran}]'.format(
 						xran="{:.10f}:{:.10f}".format(x_run[0],x_run[1])
@@ -200,12 +202,15 @@ class Panel:
 			'set yran [{yran}]'.format(					
 						yran="{:.10f}:{:.10f}".format(y_run[0],y_run[1]),
 					),
+			'set y2ran [{yran}]'.format(					
+						yran="{:.10f}:{:.10f}".format(y_run[0],y_run[1]),
+					),
 			"",
 		]
 
 		plot =	[
 					""""{roc_fn}" using ({x}):({y}) \
-						with lp ls {i} ps 0.8 title "{basename}" noenhanced,\\""".format(
+						with lp ls {i} ps 0.8 title "  {basename}" noenhanced,\\""".format(
 								x=x_gp,
 								y=y_gp,
 								roc_fn=self.bams[i].roc_fn(),
@@ -254,24 +259,24 @@ class Panel:
 		with open(self._gp_fn,"w+") as f:
 
 			f.write("""
-				set x2lab "{x_lab}"
 				set log x
 				set log x2
 
-				set format x "10^{{%L}}"
+
+				#set format x "10^{{%L}}"
 				set format x2 "10^{{%L}}"
 				set x2tics
+				unset xtics
 
 				{styles}
 
-				set ylab "sensitivity on reads to map (%)"
-
 				set format y "%g %%"
+				set ytics
 
 				set pointsize 1.5
 
 				set grid ytics lc rgb "#777777" lw 1 lt 0 front
-				set grid xtics lc rgb "#777777" lw 1 lt 0 front
+				set grid x2tics lc rgb "#777777" lw 1 lt 0 front
 
 				set datafile separator "\t"
 				set palette negative
