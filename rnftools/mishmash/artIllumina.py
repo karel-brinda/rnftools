@@ -5,10 +5,6 @@ import smbl
 import snakemake
 import os
 
-#
-# AUXILIARY FUNCTIONS
-#
-
 class ArtIllumina(Source):
 	"""Class for the ART Illumina.
 
@@ -28,23 +24,18 @@ class ArtIllumina(Source):
 			rng_seed=1
 		):
 		"""
-		:param fa: File name of the genome from which reads are created (FASTA file).
-		:type  fa: str
-		:param coverage: Average coverage of the genome.
-		:type  coverage: float
-		:param read_length_1: Length of the first end of a read.
-		:type  read_length_1: int
-		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
-		:type  read_length_2: int
-		:param other_params: Other parameters which are used on commandline.
-		:type  other_params: str
-		:param distance: Mean inner distance between ends.
-		:type  distance: int
-		:param distance_deviation: Devation of inner distances between ends.
-		:type  distance_deviation: int
-		:param rng_seed: Seed for simulator's random number generator.
-		:type  rng_seed: int
-		:raises: ValueError
+		Args:
+			fa (str): File name of the genome from which reads are created (FASTA file).
+			coverage (float): Average coverage of the genome.
+			read_length_1 (int): Length of the first end of a read.
+			read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
+			other_params (str): Other parameters which are used on commandline.
+			distance (int): Mean inner distance between ends.
+			distance_deviation (int): Devation of inner distances between ends.
+			rng_seed (int): Seed for simulator's random number generator.
+
+		Raises:
+			ValueError
 		"""
 
 		if read_length_2==0:

@@ -6,10 +6,6 @@ import smbl
 import snakemake
 import re
 
-#
-# AUXILIARY FUNCTIONS
-#
-
 class CuReSim(Source):
 	"""Class for CuReSim.
 
@@ -26,17 +22,15 @@ class CuReSim(Source):
 			rng_seed=1
 		):
 		"""
-		:param fa: File name of the genome from which reads are created (FASTA file).
-		:type  fa: str
-		:param coverage: Average coverage of the genome.
-		:type  coverage: float
-		:param read_length_1: Length of the first end of a read.
-		:type  read_length_1: int
-		:param read_length_2: Length of the second end of a read. It must be equal to zero.
-		:type  read_length_2: int
-		:param other_params: Other parameters which are used on commandline.
-		:type  other_params: str
-		:raises: ValueError
+		Args:
+			fa (str): File name of the genome from which reads are created (FASTA file).
+			coverage (float): Average coverage of the genome.
+			read_length_1 (int): Length of the first end of a read.
+			read_length_2 (int): Length of the second end of a read. It must be equal to zero.
+			other_params (str): Other parameters which are used on commandline.
+
+		Raises:
+			ValueError
 		"""
 		
 		if read_length_2!=0:
@@ -68,14 +62,6 @@ class CuReSim(Source):
 	def get_output(self):
 		return [
 				self._fq_fn,
-#				os.path.join(
-#					self.get_dir(),
-#					"output.fastq",
-#				),
-#				os.path.join(
-#					self.get_dir(),
-#					"log.txt",
-#				),
 			]
 
 	# TODO: find out how it is with RNG seeds
@@ -116,11 +102,12 @@ class CuReSim(Source):
 	def recode_curesim_reads(self,old_fq,number_of_reads=10**9):
 		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
 
-		:param old_fq: Od FASTQ file name.
-		:type  old_fq: str.
-		:param number_of_reads: Expected number of reads (to estimate number of digits in RNF).
-		:type  number_of_reads: int.
-		:raises: ValueError
+		Args:
+			old_fq (str): Od FASTQ file name.
+			number_of_reads (int): Expected number of reads (to estimate number of digits in RNF).
+
+		Raises:
+			ValueError
 		"""
 		curesim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)')
 		"""

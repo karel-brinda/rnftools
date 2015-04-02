@@ -3,3 +3,4 @@ snakemake
 smbl
 pysam
 termcolor
+sphinxcontrib-napoleon
