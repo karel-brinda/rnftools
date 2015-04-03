@@ -53,12 +53,17 @@ class DwgSim(Source):
 		fa (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
 		number_of_reads (int): Number of reads (if coverage specified, then it must be equal to zero).
-		read_length_1 (int): Length of the first end of a read.
-		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
+		read_length_1 (int): Length of the first read.
+		read_length_2 (int): Length of the second read (if zero, then single-end reads are created).
 		other_params (str): Other parameters which are used on commandline.
 		distance (int): Mean inner distance between ends.
 		distance_deviation (int): Deviation of inner distances between ends.
 		rng_seed (int): Seed for simulator's random number generator.
+		error_rate_1 (float): Base error rate in the first read (sequencing errors).
+		error_rate_2 (float): Base error rate in the second read (sequencing errors).
+		mutation_rate (float): Mutation rate.
+		indels (float): Rate of indels in mutations.
+		prob_indel_ext (float): Probability that an indel is extended.
 
 	Raises:
 		ValueError
@@ -74,7 +79,13 @@ class DwgSim(Source):
 				other_params="",
 				distance=500,
 				distance_deviation=50.0,
-				rng_seed=1
+				rng_seed=1,
+				haploid_mode=False,
+				error_rate_1=0.020,
+				error_rate_2=0.020,
+				mutation_rate=0.001,
+				indels=0.15,
+				prob_indel_ext=0.3,
 			):
 
 		if read_length_2==0:
@@ -99,6 +110,13 @@ class DwgSim(Source):
 
 		self.number_of_reads=number_of_reads
 		self.coverage=coverage
+
+		self.haploid_mode=haploid_mode
+		self.error_rate_1=error_rate_1
+		self.error_rate_2=error_rate_2
+		self.mutation_rate=mutation_rate
+		self.indels=indels
+		self.prob_indel_ext=prob_indel_ext
 
 		self.dwg_prefix=os.path.join(
 			self.get_dir(),
@@ -144,6 +162,12 @@ class DwgSim(Source):
 				-z {rng_seed} \
 				-y 0 \
 				-N {nb} \
+				-e {error_rate_1} \
+				-E {error_rate_2} \
+				-r {mutation_rate} \
+				-R {indels} \
+				-X {prob_indel_ext} \
+				{haploid} \
 				{paired_params} \
 				{other_params} \
 				"{fa}" \
@@ -159,6 +183,12 @@ class DwgSim(Source):
 				other_params=self.other_params,
 				paired_params=paired_params,
 				rng_seed=self._rng_seed,
+				haploid="-h" if self.haplid_mode else "",
+				error_rate_1=self.error_rate_1
+				error_rate_2=self.error_rate_2
+				mutation_rate=self.mutation_rate
+				indels=self.indels
+				prob_indel_ext=self.prob_indel_ext
 			)
 		)
 		self.recode_dwgsim_reads(

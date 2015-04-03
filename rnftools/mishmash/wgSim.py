@@ -17,8 +17,8 @@ class WgSim(Source):
 		fa (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
 		number_of_reads (int): Number of reads (if coverage specified, then it must be equal to zero).
-		read_length_1 (int): Length of the first end of a read.
-		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
+		read_length_1 (int): Length of the first read.
+		read_length_2 (int): Length of the second read (if zero, then single-end reads are created).
 		other_params (str): Other parameters on commandline.
 		distance (int): Mean inner distance between ends.
 		distance_deviation (int): Deviation of inner distances between ends.
@@ -44,9 +44,9 @@ class WgSim(Source):
 				distance=500,
 				distance_deviation=50.0,
 				rng_seed=1,
-				haplotype_mode=False,
+				haploid_mode=False,
 				error_rate=0.020,
-				mutations=0.001,
+				mutation_rate=0.001,
 				indels=0.15,
 				prob_indel_ext=0.3,
 			):
@@ -67,11 +67,11 @@ class WgSim(Source):
 
 		self.read_length_1=read_length_1
 		self.read_length_2=read_length_2
-		self.haplotype_mode=haplotype_mode
+		self.haploid_mode=haploid_mode
 		self.other_params=other_params
 
 		self.error_rate=error_rate
-		self.mutations=mutations
+		self.mutation_rate=mutation_rate
 		self.indels=indels
 		self.prob_indel_ext=prob_indel_ext
 
@@ -131,10 +131,10 @@ class WgSim(Source):
 				-S {rng_seed} \
 				-N {nb} \
 				-e {error_rate} \
-				-r {mutations} \
+				-r {mutation_rate} \
 				-R {indels} \
 				-X {prob_indel_ext} \
-				{haplotype}\
+				{haploid}\
 				{paired_params} \
 				{other_params} \
 				"{fa}" \
@@ -152,9 +152,9 @@ class WgSim(Source):
 				other_params=self.other_params,
 				paired_params=paired_params,
 				rng_seed=self._rng_seed,
-				haplotype="-h" if self.haplotype_mode else "",
+				haploid="-h" if self.haplid_mode else "",
 				error_rate=self.error_rate
-				mutations=self.mutations
+				mutation_rate=self.mutation_rate
 				indels=self.indels
 				prob_indel_ext=self.prob_indel_ext
 			)
