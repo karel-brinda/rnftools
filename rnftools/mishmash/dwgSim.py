@@ -183,12 +183,12 @@ class DwgSim(Source):
 				other_params=self.other_params,
 				paired_params=paired_params,
 				rng_seed=self._rng_seed,
-				haploid="-h" if self.haplid_mode else "",
-				error_rate_1=self.error_rate_1
-				error_rate_2=self.error_rate_2
-				mutation_rate=self.mutation_rate
-				indels=self.indels
-				prob_indel_ext=self.prob_indel_ext
+				haploid="-h" if self.haploid_mode else "",
+				error_rate_1=self.error_rate_1,
+				error_rate_2=self.error_rate_2,
+				mutation_rate=self.mutation_rate,
+				indels=self.indels,
+				prob_indel_ext=self.prob_indel_ext,
 			)
 		)
 		self.recode_dwgsim_reads(

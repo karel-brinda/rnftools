@@ -153,10 +153,10 @@ class WgSim(Source):
 				paired_params=paired_params,
 				rng_seed=self._rng_seed,
 				haploid="-h" if self.haplid_mode else "",
-				error_rate=self.error_rate
-				mutation_rate=self.mutation_rate
-				indels=self.indels
-				prob_indel_ext=self.prob_indel_ext
+				error_rate=self.error_rate,
+				mutation_rate=self.mutation_rate,
+				indels=self.indels,
+				prob_indel_ext=self.prob_indel_ext,
 			)
 		)
 		if self._ends==1:
