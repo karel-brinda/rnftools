@@ -92,6 +92,7 @@ alignments = [
 			fastq_1=reads_2+".1.fq",
 			fastq_2=reads_2+".2.fq",
 			bam="Yara.bam",
+			sort_by_name=True,
 		),
 	]
 
