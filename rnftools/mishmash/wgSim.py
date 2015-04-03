@@ -19,11 +19,15 @@ class WgSim(Source):
 		number_of_reads (int): Number of reads (if coverage specified, then it must be equal to zero).
 		read_length_1 (int): Length of the first end of a read.
 		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
-		other_params (str): Other parameters which are used on commandline.
+		other_params (str): Other parameters on commandline.
 		distance (int): Mean inner distance between ends.
 		distance_deviation (int): Deviation of inner distances between ends.
 		rng_seed (int): Seed for simulator's random number generator.
 		haplotype_mode (bools): Simulate reads in haplotype mode.
+		error_rate (float): Base error rate (sequencing errors).
+		mutation_rate (float): Mutation rate.
+		indels (float): Rate of indels in mutations.
+		prob_indel_ext (float): Probability that an indel is extended.
 
 	Raises:
 		ValueError
@@ -41,6 +45,10 @@ class WgSim(Source):
 				distance_deviation=50.0,
 				rng_seed=1,
 				haplotype_mode=False,
+				error_rate=0.020,
+				mutations=0.001,
+				indels=0.15,
+				prob_indel_ext=0.3,
 			):
 		
 		if read_length_2==0:
@@ -61,6 +69,12 @@ class WgSim(Source):
 		self.read_length_2=read_length_2
 		self.haplotype_mode=haplotype_mode
 		self.other_params=other_params
+
+		self.error_rate=error_rate
+		self.mutations=mutations
+		self.indels=indels
+		self.prob_indel_ext=prob_indel_ext
+
 
 		if coverage*number_of_reads!=0:
 			raise ValueError("coverage or number_of_reads must be equal to zero")
@@ -116,6 +130,10 @@ class WgSim(Source):
 				-2 {rlen2} \
 				-S {rng_seed} \
 				-N {nb} \
+				-e {error_rate} \
+				-r {mutations} \
+				-R {indels} \
+				-X {prob_indel_ext} \
 				{haplotype}\
 				{paired_params} \
 				{other_params} \
@@ -135,6 +153,10 @@ class WgSim(Source):
 				paired_params=paired_params,
 				rng_seed=self._rng_seed,
 				haplotype="-h" if self.haplotype_mode else "",
+				error_rate=self.error_rate
+				mutations=self.mutations
+				indels=self.indels
+				prob_indel_ext=self.prob_indel_ext
 			)
 		)
 		if self._ends==1:
