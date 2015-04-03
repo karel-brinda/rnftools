@@ -10,33 +10,32 @@ class ArtIllumina(Source):
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	lengths of both ends must be equal.
+
+	Args:
+		fa (str): File name of the genome from which reads are created (FASTA file).
+		coverage (float): Average coverage of the genome.
+		read_length_1 (int): Length of the first end of a read.
+		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
+		other_params (str): Other parameters which are used on commandline.
+		distance (int): Mean inner distance between ends.
+		distance_deviation (int): Devation of inner distances between ends.
+		rng_seed (int): Seed for simulator's random number generator.
+
+	Raises:
+		ValueError
 	"""
 
 	def __init__(self,
-			fa,
-			coverage=0,
-			number_of_reads=0,
-			read_length_1=100,
-			read_length_2=0,
-			other_params="",
-			distance=500,
-			distance_deviation=50.0,
-			rng_seed=1
-		):
-		"""
-		Args:
-			fa (str): File name of the genome from which reads are created (FASTA file).
-			coverage (float): Average coverage of the genome.
-			read_length_1 (int): Length of the first end of a read.
-			read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
-			other_params (str): Other parameters which are used on commandline.
-			distance (int): Mean inner distance between ends.
-			distance_deviation (int): Devation of inner distances between ends.
-			rng_seed (int): Seed for simulator's random number generator.
-
-		Raises:
-			ValueError
-		"""
+				fa,
+				coverage=0,
+				number_of_reads=0,
+				read_length_1=100,
+				read_length_2=0,
+				other_params="",
+				distance=500,
+				distance_deviation=50.0,
+				rng_seed=1
+			):
 
 		if read_length_2==0:
 			ends = 1

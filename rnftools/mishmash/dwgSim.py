@@ -49,35 +49,33 @@ class DwgSim(Source):
 	13) number of indels end 2
 	14) read number (unique within a given contig/chromsome)
 
+	Args:
+		fa (str): File name of the genome from which reads are created (FASTA file).
+		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
+		number_of_reads (int): Number of reads (if coverage specified, then it must be equal to zero).
+		read_length_1 (int): Length of the first end of a read.
+		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
+		other_params (str): Other parameters which are used on commandline.
+		distance (int): Mean inner distance between ends.
+		distance_deviation (int): Deviation of inner distances between ends.
+		rng_seed (int): Seed for simulator's random number generator.
+
+	Raises:
+		ValueError
 	"""
 
 	#TODO:estimate_unknown_values=False,
 	def __init__(self,
-			fa,
-			coverage=0,
-			number_of_reads=0,
-			read_length_1=100,
-			read_length_2=0,
-			other_params="",
-			distance=500,
-			distance_deviation=50.0,
-			rng_seed=1
-		):
-		"""
-		Args:
-			fa (str): File name of the genome from which reads are created (FASTA file).
-			coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
-			number_of_reads (int): Number of reads (if coverage specified, then it must be equal to zero).
-			read_length_1 (int): Length of the first end of a read.
-			read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
-			other_params (str): Other parameters which are used on commandline.
-			distance (int): Mean inner distance between ends.
-			distance_deviation (int): Deviation of inner distances between ends.
-			rng_seed (int): Seed for simulator's random number generator.
-
-		Raises:
-			ValueError
-		"""
+				fa,
+				coverage=0,
+				number_of_reads=0,
+				read_length_1=100,
+				read_length_2=0,
+				other_params="",
+				distance=500,
+				distance_deviation=50.0,
+				rng_seed=1
+			):
 
 		if read_length_2==0:
 			ends = 1

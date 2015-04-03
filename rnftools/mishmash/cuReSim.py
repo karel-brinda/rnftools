@@ -10,28 +10,27 @@ class CuReSim(Source):
 	"""Class for CuReSim.
 
 	Only single-end reads simulations are supported.
+
+	Args:
+		fa (str): File name of the genome from which reads are created (FASTA file).
+		coverage (float): Average coverage of the genome.
+		read_length_1 (int): Length of the first end of a read.
+		read_length_2 (int): Length of the second end of a read. It must be equal to zero.
+		other_params (str): Other parameters which are used on commandline.
+
+	Raises:
+		ValueError
 	"""
 
 	def __init__(self,
-			fa,
-			coverage=0,
-			number_of_reads=0,
-			read_length_1=100,
-			read_length_2=0,
-			other_params="",
-			rng_seed=1
-		):
-		"""
-		Args:
-			fa (str): File name of the genome from which reads are created (FASTA file).
-			coverage (float): Average coverage of the genome.
-			read_length_1 (int): Length of the first end of a read.
-			read_length_2 (int): Length of the second end of a read. It must be equal to zero.
-			other_params (str): Other parameters which are used on commandline.
-
-		Raises:
-			ValueError
-		"""
+				fa,
+				coverage=0,
+				number_of_reads=0,
+				read_length_1=100,
+				read_length_2=0,
+				other_params="",
+				rng_seed=1
+			):
 		
 		if read_length_2!=0:
 			raise ValueError("CuReSim supports only single-end reads")
