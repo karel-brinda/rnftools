@@ -1,5 +1,5 @@
 import rnftools
-from .source import Source
+from ._source import Source
 
 import os
 import smbl
@@ -12,7 +12,7 @@ class CuReSim(Source):
 	Only single-end reads simulations are supported.
 
 	Args:
-		fa (str): File name of the genome from which reads are created (FASTA file).
+		fasta (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome.
 		read_length_1 (int): Length of the first end of a read.
 		read_length_2 (int): Length of the second end of a read. It must be equal to zero.
@@ -25,7 +25,7 @@ class CuReSim(Source):
 	def __init__(self,
 				fasta,
 				coverage=0,
-				number_of_reads=0,
+				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
 				other_params="",
@@ -47,7 +47,7 @@ class CuReSim(Source):
 		self.read_length_2=read_length_2
 		self.other_params=other_params
 
-		self.number_of_reads=number_of_reads
+		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
 
 
@@ -65,9 +65,9 @@ class CuReSim(Source):
 
 	# TODO: find out how it is with RNG seeds
 	def create_fq(self):
-		if self.number_of_reads == 0:
+		if self.number_of_read_tuples == 0:
 			genome_size=os.stat(self._fa_fn).st_size
-			self.number_of_reads=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
+			self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
 
 		snakemake.shell("""
 				cd "{dir}"
@@ -85,7 +85,7 @@ class CuReSim(Source):
 				dir=self.get_dir(),
 				curesim=smbl.prog.CURESIM,
 				fa=self._fa_fn,
-				nb=self.number_of_reads,
+				nb=self.number_of_read_tuples,
 				rlen1=self.read_length_1,
 				other_params=self.other_params,
 				rng_seed=self._rng_seed,
@@ -98,12 +98,12 @@ class CuReSim(Source):
 				)
 		)
 
-	def recode_curesim_reads(self,old_fq,number_of_reads=10**9):
+	def recode_curesim_reads(self,old_fq,number_of_read_tuples=10**9):
 		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
 
 		Args:
 			old_fq (str): Od FASTQ file name.
-			number_of_reads (int): Expected number of reads (to estimate number of digits in RNF).
+			number_of_read_tuples (int): Expected number of read tuples (to estimate number of digits in RNF).
 
 		Raises:
 			ValueError
@@ -127,7 +127,7 @@ class CuReSim(Source):
 		max_seq_len=0
 
 		self.load_fai()
-		read_tuple_id_width=len(format(number_of_reads,'x'))
+		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		rn_formatter = rnftools.rnfformat.RnFormatter(
 				read_tuple_id_width=read_tuple_id_width,
@@ -137,8 +137,8 @@ class CuReSim(Source):
 			)
 
 		# parsing FQ file
-		last_new_read_name=""
-		read_id=0
+		last_new_read_tuple_name=""
+		read_tuple_id=0
 		with open(old_fq,"r+") as f1:
 			with open(self._fq_fn,"w+") as f2:
 				i=0
@@ -171,20 +171,20 @@ class CuReSim(Source):
 						end_pos += read_length
 
 						segment=rnftools.rnfformat.Segment(
-								source=self.source_id,
-								chr=chr_id,
+								genome_id=self.genome_id,
+								chr_id=chr_id,
 								direction=direction,
 								left=start_pos + 1,
 								right=end_pos,
 							)
 
-						read = rnftools.rnfformat.Read(segments=[segment],read_id=read_id+1,suffix="[single-end,curesim]")
-						new_read_name = rn_formatter.process_read(read)
+						read_tuple = rnftools.rnfformat.ReadTuple(segments=[segment],read_tuple_id=read_tuple_id+1,suffix="[single-end,curesim]")
+						new_read_tuple_name = rn_formatter.process_read_tuple(read_tuple)
 
-						read_id+=1
+						read_tuple_id+=1
 
-						line1="".join(["@",new_read_name,os.linesep])
-						last_new_read_name=new_read_name
+						line1="".join(["@",new_read_tuple_name,os.linesep])
+						last_new_read_tuple_name=new_read_tuple_name
 
 					elif i%4==2:
 						line3=line

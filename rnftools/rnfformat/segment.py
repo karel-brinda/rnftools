@@ -33,7 +33,7 @@ class Segment:
 		self.right=int(right)
 
 		if not (self.right == 0 or self.right >= self.left):
-			raise valueError("Leftmost coordinate cannot be higher than rightmost coordinate")
+			smbl.messages.error("Leftmost coordinate cannot be higher than rightmost coordinate.",program="RNFtools",subprogram="RNF format",exception=ValueError)
 
 	def stringize(
 				self,

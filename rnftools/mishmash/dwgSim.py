@@ -1,5 +1,5 @@
 import rnftools
-from .source import Source
+from ._source import Source
 
 import os
 import smbl
@@ -52,7 +52,7 @@ class DwgSim(Source):
 	Args:
 		fa (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
-		number_of_reads (int): Number of reads (if coverage specified, then it must be equal to zero).
+		number_of_read_tuples (int): Number of reads (if coverage specified, then it must be equal to zero).
 		read_length_1 (int): Length of the first read.
 		read_length_2 (int): Length of the second read (if zero, then single-end reads are created).
 		other_params (str): Other parameters which are used on commandline.
@@ -74,7 +74,7 @@ class DwgSim(Source):
 	def __init__(self,
 				fasta,
 				coverage=0,
-				number_of_reads=0,
+				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
 				other_params="",
@@ -106,10 +106,10 @@ class DwgSim(Source):
 		self.read_length_2=read_length_2
 		self.other_params=other_params
 
-		if coverage*number_of_reads!=0:
-			smbl.messages.error("coverage or number_of_reads must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+		if coverage*number_of_read_tuples!=0:
+			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
-		self.number_of_reads=number_of_reads
+		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
 
 		self.haploid_mode=haploid_mode
@@ -121,7 +121,7 @@ class DwgSim(Source):
 
 		self.dwg_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.source_id)
+			"tmp.{}".format(self.genome_id)
 		)
 
 
@@ -143,9 +143,9 @@ class DwgSim(Source):
 			]
 
 	def create_fq(self):
-		if self.number_of_reads == 0:
+		if self.number_of_read_tuples == 0:
 			genome_size=os.stat(self._fa_fn).st_size
-			self.number_of_reads=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
+			self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
 
 
 		if self._reads_in_tuple==2:
@@ -178,7 +178,7 @@ class DwgSim(Source):
 				dwgsim=smbl.prog.DWGSIM,
 				fa=self._fa_fn,
 				pref=self.dwg_prefix,
-				nb=self.number_of_reads,
+				nb=self.number_of_read_tuples,
 				rlen1=self.read_length_1,
 				rlen2=self.read_length_2,
 				other_params=self.other_params,
@@ -196,7 +196,7 @@ class DwgSim(Source):
 			old_fq=self.dwg_prefix+".bfast.fastq",
 		)
 
-	def recode_dwgsim_reads(self,old_fq,number_of_reads=10**9):
+	def recode_dwgsim_reads(self,old_fq,number_of_read_tuples=10**9):
 		dwgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)')
 		"""
 			DWGSIM read name format
@@ -220,7 +220,7 @@ class DwgSim(Source):
 		max_seq_len=0
 
 		self.load_fai()
-		read_tuple_id_width=len(format(number_of_reads,'x'))
+		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		rn_formatter = rnftools.rnfformat.RnFormatter(
 				read_tuple_id_width=read_tuple_id_width,
@@ -233,8 +233,8 @@ class DwgSim(Source):
 		single_end=os.stat(self.dwg_prefix+".bwa.read2.fastq").st_size==0
 
 		# parsing FQ file
-		last_new_read_name=""
-		read_id=0
+		last_new_read_tuple_name=""
+		read_tuple_id=0
 		with open(old_fq,"r+") as f1:
 			with open(self._fq_fn,"w+") as f2:
 				i=0
@@ -244,22 +244,22 @@ class DwgSim(Source):
 
 						m = dwgsim_pattern.search(line)
 						if m is None:
-							smbl.messages.error("Read '{}' was not by DwgSim.".format(line[1:]),program="RNFtools",subprogram="MIShmash",exception=ValueError)
+							smbl.messages.error("Read tuple '{}' was not created by DwgSim.".format(line[1:]),program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
-						contig_name     = m.group(1)
-						start_1         = int(m.group(2))
-						start_2         = int(m.group(3))
-						direction_1     = "F" if int(m.group(4))==0 else "R"
-						direction_2     = "F" if int(m.group(5))==0 else "R"
-						random_1        = bool(m.group(6))
-						random_2        = bool(m.group(7))
-						seq_err_1       = int(m.group(8))
-						snp_1           = int(m.group(9))
-						indels_1        = int(m.group(10))
-						seq_err_2       = int(m.group(11))
-						snp_2           = int(m.group(12))
-						indels_2        = int(m.group(13))
-						read_id_dwg     = int(m.group(14),16)
+						contig_name       = m.group(1)
+						start_1           = int(m.group(2))
+						start_2           = int(m.group(3))
+						direction_1       = "F" if int(m.group(4))==0 else "R"
+						direction_2       = "F" if int(m.group(5))==0 else "R"
+						random_1          = bool(m.group(6))
+						random_2          = bool(m.group(7))
+						seq_err_1         = int(m.group(8))
+						snp_1             = int(m.group(9))
+						indels_1          = int(m.group(10))
+						seq_err_2         = int(m.group(11))
+						snp_2             = int(m.group(12))
+						indels_2          = int(m.group(13))
+						read_tuple_id_dwg = int(m.group(14),16)
 
 						chr_id = self.dict_chr_ids[contig_name] if self.dict_chr_ids!={} else "0"
 
@@ -268,39 +268,39 @@ class DwgSim(Source):
 						read_length=len(line2.strip())
 
 						segment1=rnftools.rnfformat.Segment(
-								source=self.source_id,
-								chr=chr_id,
+								genome_id=self.genome_id,
+								chr_id=chr_id,
 								direction=direction_1,
 								left=start_1,
 								right=0
 							)
 
 						segment2=rnftools.rnfformat.Segment(
-								source=self.source_id,
-								chr=chr_id,
+								genome_id=self.genome_id,
+								chr_id=chr_id,
 								direction=direction_2,
 								left=start_2,
 								right=0
 							)
 						
 						if single_end:
-							read = rnftools.rnfformat.Read(segments=[segment1],read_id=read_id+1,suffix="[single-end,dwgsim]")
+							read_tuple = rnftools.rnfformat.ReadTuple(segments=[segment1],read_tuple_id=read_tuple_id+1,suffix="[single-end,dwgsim]")
 						else:
-							read = rnftools.rnfformat.Read(segments=[segment1,segment2],read_id=read_id+1,suffix="[pair-end,dwgsim]")
-						new_read_name = rn_formatter.process_read(read)
+							read_tuple = rnftools.rnfformat.ReadTuple(segments=[segment1,segment2],read_tuple_id=read_tuple_id+1,suffix="[pair-end,dwgsim]")
+						new_read_tuple_name = rn_formatter.process_read_tuple(read_tuple)
 
 						if single_end:
 							ends_suffix=""
-							read_id+=1
+							read_tuple_id+=1
 						else:
-							if last_new_read_name!=new_read_name:
+							if last_new_read_tuple_name!=new_read_tuple_name:
 								ends_suffix="/1"
 							else:
 								ends_suffix="/2"
-								read_id+=1
+								read_tuple_id+=1
 
-						line1="".join(["@",new_read_name,ends_suffix,os.linesep])
-						last_new_read_name=new_read_name
+						line1="".join(["@",new_read_tuple_name,ends_suffix,os.linesep])
+						last_new_read_tuple_name=new_read_tuple_name
 
 					elif i%4==2:
 						line3=line

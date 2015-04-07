@@ -82,11 +82,11 @@ class ReadTuple:
 		"""
 
 		#todo: assert -- starting with (, ending with )
-		#(prefix,read_id,segments_t,suffix)=(text).split("__")
+		#(prefix,read_tuple_id,segments_t,suffix)=(text).split("__")
 		#segments=segments_t.split("),(")
 		m=read_tuple_destr_pattern.match(string)
 		if not m:
-			raise ValueError("'{}' is not a valid read name with respect to the RNF specification".format(string))
+			smbl.messages.error("'{}' is not a valid read name with respect to the RNF specification".format(string),program="RNFtools",subprogram="RNF format",exception=ValueError)
 		groups=m.groups()
 		#todo: check number of groups
 		self.prefix=groups[0]

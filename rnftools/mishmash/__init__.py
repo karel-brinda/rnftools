@@ -2,7 +2,7 @@ import smbl
 
 from .sample import *
 
-from .source import *
+from ._source import *
 
 from .artIllumina import *
 from .cuReSim import *

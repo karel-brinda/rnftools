@@ -1,5 +1,5 @@
 import rnftools
-from .source import Source
+from ._source import Source
 
 import smbl
 import snakemake
@@ -12,10 +12,11 @@ class ArtIllumina(Source):
 	lengths of both ends must be equal.
 
 	Args:
-		fasta (str): File name of the genome from which reads are created (FASTA file).
+		fasta (str): File name of the genome from which read tuples are created (FASTA file).
 		coverage (float): Average coverage of the genome.
-		read_length_1 (int): Length of the first end of a read.
-		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
+		number_of_read_tuples (int): Number of read tuples.
+		read_length_1 (int): Length of the first end of a read tuple.
+		read_length_2 (int): Length of the second end of a read tuple (if zero, then single-end reads are created).
 		other_params (str): Other parameters which are used on commandline.
 		distance (int): Mean inner distance between ends.
 		distance_deviation (int): Devation of inner distances between ends.
@@ -28,7 +29,7 @@ class ArtIllumina(Source):
 	def __init__(self,
 				fasta,
 				coverage=0,
-				number_of_reads=0,
+				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
 				other_params="",
@@ -57,15 +58,15 @@ class ArtIllumina(Source):
 		self.other_params=other_params
 
 
-		if coverage*number_of_reads!=0:
-			smbl.messages.error("coverage or number_of_reads must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+		if coverage*number_of_read_tuples!=0:
+			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
-		self.number_of_reads=number_of_reads
+		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
 
 		self.art_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.source_id)
+			"tmp.{}".format(self.genome_id)
 		)
 
 		self._sam1_fn = self.art_prefix+".sam"
@@ -92,7 +93,7 @@ class ArtIllumina(Source):
 	def create_fq(self):
 		if self.coverage == 0:
 			genome_size=os.stat(self._fa_fn).st_size
-			self.coverage = 1.0 * self.number_of_reads * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
+			self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
 
 		if self._reads_in_tuple==2:
 			paired_params="-p -m {dist} -s {dist_dev}".format(

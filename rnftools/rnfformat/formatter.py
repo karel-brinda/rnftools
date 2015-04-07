@@ -21,12 +21,12 @@ class RnFormatter:
 		self.chr_id_width=chr_id_width
 		self.coor_width=coor_width
 	
-	def process_read(self,read):
+	def process_read_tuple(self,read_tuple):
 		"""Get well-formatted RNF representation of a read.
 
-		read (rnftools.rnFormatter.Read): Read.
+		read_tuple (rnftools.rnFormatter.ReadTuple): Read tuple.
 		"""
-		return read.stringize(
+		return read_tuple.stringize(
 					read_tuple_id_width=self.read_tuple_id_width,
 					genome_id_width=self.genome_id_width,
 					chr_id_width=self.chr_id_width,
