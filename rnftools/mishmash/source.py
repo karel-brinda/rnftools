@@ -192,13 +192,13 @@ class Source(object):
 		last_read_name=[]
 		read_id=0
 
-		id_str_size=len(format(number_of_read_tuples,'x'))
+		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		rn_formatter = rnftools.rnfformat.RnFormatter(
-				id_str_size=id_str_size,
-				source_str_size=2,
-				chr_str_size=self.chr_str_size,
-				pos_str_size=self.pos_str_size
+				read_tuple_id_width=read_tuple_id_width,
+				genome_id_width=2,
+				chr_id_width=self.chr_id_width,
+				coor_width=self.coor_width,
 			)
 
 		segments_buffer=[]
@@ -310,5 +310,5 @@ class Source(object):
 					i+=1
 
 		self.number_of_chromosomes=len(self.dict_chr_ids)
-		self.chr_str_size=len(str(self.number_of_chromosomes))
-		self.pos_str_size=len(str(max(self.dict_chr_lengths.values())))
+		self.chr_id_width=len(str(self.number_of_chromosomes))
+		self.coor_width=len(str(max(self.dict_chr_lengths.values())))

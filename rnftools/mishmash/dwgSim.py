@@ -220,13 +220,13 @@ class DwgSim(Source):
 		max_seq_len=0
 
 		self.load_fai()
-		id_str_size=len(format(number_of_reads,'x'))
+		read_tuple_id_width=len(format(number_of_reads,'x'))
 
 		rn_formatter = rnftools.rnfformat.RnFormatter(
-				id_str_size=id_str_size,
-				source_str_size=2,
-				chr_str_size=self.chr_str_size,
-				pos_str_size=self.pos_str_size
+				read_tuple_id_width=read_tuple_id_width,
+				genome_id_width=2,
+				chr_id_width=self.chr_id_width,
+				coor_width=self.coor_width,
 			)
 
 		#one or two ends?
