@@ -10,19 +10,25 @@ import rnftools
 
 class Source(object):
 	"""	Abstract class for a genome from which reads are simulated.
+
+	Args:
+		fasta (str): File name of the genome from which reads are created (FASTA file).
+		reads_in_tuple (int): Number of reads in each read tuple.
+		rng_seed (int): Seed for simulator's random number generator.
+		number_of_required_cores (int): Number of cores used by the simulator. It can be used to prevent running other threads at the same time.
 	"""
 
 	__metaclass__ = abc.ABCMeta
 
-	def __init__(self, fa, ends, rng_seed, number_of_threads=1):
+	def __init__(self, fasta, reads_in_tuple, rng_seed, number_of_required_cores=1):
 		rnftools.mishmash.add_source(self)
 		self._rng_seed = rng_seed
-		self._ends=ends
+		self._reads_in_tuple=reads_in_tuple
 
 		self._sample=rnftools.mishmash.current_sample()
 		self._sample.add_source(self)
 		self.source_id=len(self._sample.get_sources())
-		self._number_of_threads=number_of_threads
+		self._number_of_required_cores=number_of_required_cores
 
 		self._name=str(self.source_id).zfill(3)
 
@@ -30,8 +36,8 @@ class Source(object):
 					self._sample.get_dir(),
 					self._name
 				)
-		self._fa_fn=fa
-		self._fai_fn = fa+".fai"
+		self._fa_fn=fasta
+		self._fai_fn = fasta+".fai"
 		self._fq_fn=os.path.join(self._dir,"_final_reads.fq")
 		self.dict_chr_ids = {}
 		self.dict_chr_lengths = {}
@@ -40,31 +46,50 @@ class Source(object):
 	############################################################################
 
 	def get_dir(self):
+		"""Get working directory.
+
+		Returns:
+			str: Working directory.
+		"""
 		return self._dir
 
 	def get_source_id(self):
-		"""
-			Get source ID compatible to the specification (without padding),
-			it is assigned automatically
+		"""Get genome ID.
+
+		Returns:
+			int: Genome ID.
 		"""
 		return self.source_id
 
-	def get_number_of_ends(self):
-		return self._ends
+	def get_reads_in_tuple(self):
+		"""Get number of entries in a read tuple.
 
-	def get_number_of_threads(self):
-		return self._number_of_threads
+		Returns:
+			int: Number of reads in a read tuple.
+		"""
+		return self._reads_in_tuple
+
+	def get_number_of_required_cores(self):
+		"""Get number of required cores.
+
+		Returns:
+			int: Number of required cores.
+		"""
+		return self._number_of_required_cores
 
 	def clean(self):
+		"""Clean working directory.
+		"""
 		snakemake.shell('rm -fR "{}"'.format(self.get_dir()))
 
 	############################################################################
 	############################################################################
 
 	def fa_fn(self):
-		"""
-			Get input Fasta file (registered when object was created),
-			it can be an empty list.
+		"""Get input FASTA file. It can be an empty list.
+
+		Returns:
+			str: Input FASTA file.
 		"""
 		return self._fa_fn
 
@@ -103,15 +128,28 @@ class Source(object):
 
 	@abc.abstractmethod
 	def create_fq(self):
-		"""Perform read simulation."""
+		"""Simulate reads.
+		"""
 		return
 
 	def _fq_buffer(self,read_id,segments_buffer,sequences_buffer,rn_formatter,simulator_name=""):
+		"""From local buffers, create FASTQ string.
+
+		Args:
+			reads_id (int): ID of read tuple.
+			segments_buffer(list of rnftools.rnfformat.Segment): Buffer of segments.
+			sequences_buffer(list of (bases,qualities)):  Buffer of sequences.
+			rn_formatter (rnftools.rnfformat.RnFormatter): Read formatter.
+			simulator_name (str): Name of the simulator. Used for comment in read name.
+
+		Returns:
+			str: Part of FASTQ file.
+		"""
 		read_suffix_comment_buffer=[]
 		if len(segments_buffer)==1:
 			read_suffix_comment_buffer.append("single-end")
 		elif len(segments_buffer)==2 and set([segments_buffer[i].direction for i in [0,1]])==set(["R","F"]):
-			read_suffix_comment_buffer.append("pair-end")
+			read_suffix_comment_buffer.append("paired-end")
 
 		if simulator_name!="":
 			read_suffix_comment_buffer.append(simulator_name)
@@ -139,7 +177,17 @@ class Source(object):
 		]
 		return "".join(to_return)
 
-	def recode_sam_reads(self,sam,number_of_reads=10**9,simulator_name=""):
+	def recode_sam_reads(self,sam,number_of_read_tuples=10**9,simulator_name=""):
+		"""Create FASTQ file from SAM file.
+
+		Args:
+			sam (str): Name of SAM file.
+			number_of_read_tuples (int): Number of read tuples. It is needed to set width of read tuple id.
+			simulator_name (str): Name of the simulator. Used for comment in read name.
+
+		Raises:
+			NotImplementedError
+		"""
 		self.load_fai()
 		last_read_name=[]
 		read_id=0
@@ -185,11 +233,11 @@ class Source(object):
 					last_read_name = alignment.query_name
 
 					if alignment.is_unmapped:
-						raise NotImplementedError(
+						smbl.messages.error(
 							"SAM files used for conversion should not contain unaligned segments. "
 							"This condition is broken by read "
-							"'{}' in file '{}'.".format(alignment.query_name,sam)
-						)
+							"'{}' in file '{}'.".format(alignment.query_name,sam),program="RNFtools",subprogram="MIShmash",exception=NotImplementedError)
+
 
 					if alignment.is_reverse:
 						direction  = "R"
@@ -233,9 +281,7 @@ class Source(object):
 				)
 
 
-	"""
-		name to number translation
-
+	"""Load dictionaries with sizes of chromosomes and with id-name correspondance.
 	"""
 	def load_fai(self):
 		self.dict_chr_ids = {}
@@ -266,4 +312,3 @@ class Source(object):
 		self.number_of_chromosomes=len(self.dict_chr_ids)
 		self.chr_str_size=len(str(self.number_of_chromosomes))
 		self.pos_str_size=len(str(max(self.dict_chr_lengths.values())))
-

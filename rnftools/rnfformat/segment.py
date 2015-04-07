@@ -15,17 +15,15 @@ class Segment:
 				right=0
 			):
 		"""
-		:param source: ID of source.
-		:type  fa: int
-		:param chr: ID of chromosome.
-		:type  chr: int
-		:param direction: Direction (F/R/N).
-		:type  direction: str
-		:param left: Leftmost coordinate.
-		:type  left: int
-		:param right: Rightmost coordinate.
-		:type  right: int
-		:raises: ValueError
+		Args:
+			source (int): ID of source.
+			chr (int): ID of chromosome.
+			direction (str): Direction (F/R/N).
+			left (int): Leftmost coordinate.
+			right (int): Rightmost coordinate.
+		
+		Raises:
+			ValueError
 		"""
 
 		self.source=int(source)
@@ -45,12 +43,10 @@ class Segment:
 			):
 		"""Create RNF representation of this segment.
 
-		:param source_str_size: Maximal expected length of string of ID of genome.
-		:type  source_str_size: int
-		:param chr_str_size: Maximal expected length of string of ID of chromosome.
-		:type  chr_str_size: int
-		:param pos_str_size: Maximal expected length of string of maximal coordinate.
-		:type  pos_str_size: int
+		Args:
+			source_str_size (int): Maximal expected length of string of ID of genome.
+			chr_str_size (int): Maximal expected length of string of ID of chromosome.
+			pos_str_size (int): Maximal expected length of string of maximal coordinate.
 		"""
 
 		pos_str_size=max(pos_str_size,len(str(self.left)),len(str(self.right)))
@@ -66,8 +62,8 @@ class Segment:
 		"""Get RNF values for this segment from its textual representation and
 		save them into this object.
 
-		:param string: Textual representation of a segment.
-		:type  string: str
+		Args:
+			string (str): Textual representation of a segment.
 		"""
 
 		m=segment_destr_pattern.match(string)

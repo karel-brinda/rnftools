@@ -12,7 +12,7 @@ class ArtIllumina(Source):
 	lengths of both ends must be equal.
 
 	Args:
-		fa (str): File name of the genome from which reads are created (FASTA file).
+		fasta (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome.
 		read_length_1 (int): Length of the first end of a read.
 		read_length_2 (int): Length of the second end of a read (if zero, then single-end reads are created).
@@ -26,7 +26,7 @@ class ArtIllumina(Source):
 	"""
 
 	def __init__(self,
-				fa,
+				fasta,
 				coverage=0,
 				number_of_reads=0,
 				read_length_1=100,
@@ -44,12 +44,11 @@ class ArtIllumina(Source):
 			self.distance=distance
 			self.distance_deviation=distance_deviation
 			if read_length_1!=read_length_2:
-				raise ValueError("art_illumina can simulate only pairs with equal lengths")
-
+				smbl.messages.error("art_illumina can simulate only pairs with equal lengths",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		
 		super().__init__(
-				fa=fa,
-				ends=ends,
+				fasta=fasta,
+				reads_in_tuple=ends,
 				rng_seed=rng_seed,
 			)
 
@@ -59,7 +58,7 @@ class ArtIllumina(Source):
 
 
 		if coverage*number_of_reads!=0:
-			raise ValueError("coverage or number_of_reads must be equal to zero")
+			smbl.messages.error("coverage or number_of_reads must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 		self.number_of_reads=number_of_reads
 		self.coverage=coverage
@@ -85,18 +84,17 @@ class ArtIllumina(Source):
 				self._fq_fn,
 				self._sam1_fn,
 				self._sam2_fn,
-				self.art_prefix+".fq" if self._ends==1 else
+				self.art_prefix+".fq" if self._reads_in_tuple==1 else
 					[self.art_prefix+"1.fq",self.art_prefix+"2.fq"],
 			]
 
 
 	def create_fq(self):
-		"""Perform the simulation."""
 		if self.coverage == 0:
 			genome_size=os.stat(self._fa_fn).st_size
 			self.coverage = 1.0 * self.number_of_reads * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
 
-		if self._ends==2:
+		if self._reads_in_tuple==2:
 			paired_params="-p -m {dist} -s {dist_dev}".format(
 					dist=self.distance,
 					dist_dev=self.distance_deviation,

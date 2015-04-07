@@ -3,10 +3,10 @@ import rnftools
 
 fasta=smbl.fasta.EXAMPLE
 
-rnftools.mishmash.sample("simple_example",ends=1)
+rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
 
 rnftools.mishmash.ArtIllumina(
-	fa=fasta,
+	fasta=fasta,
 	number_of_reads=10000,
 	read_length_1=100,
 	read_length_2=0,

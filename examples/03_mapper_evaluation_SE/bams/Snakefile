@@ -23,10 +23,10 @@ reads_2 = "reads_2.fq"
 
 # sample 1
 
-rnftools.mishmash.sample(reads_1[:-3],ends=1)
+rnftools.mishmash.sample(reads_1[:-3],reads_in_tuple=1)
 
 rnftools.mishmash.DwgSim(
-	fa=reference_basic_1,
+	fasta=reference_basic_1,
 	read_length_1=100,
 	read_length_2=0,
 	number_of_reads=10000
@@ -34,7 +34,7 @@ rnftools.mishmash.DwgSim(
 
 
 rnftools.mishmash.DwgSim(
-	fa=reference_contam_1,
+	fasta=reference_contam_1,
 	read_length_1=100,
 	read_length_2=0,
 	number_of_reads=2000
@@ -43,10 +43,10 @@ rnftools.mishmash.DwgSim(
 
 # sample 2
 
-rnftools.mishmash.sample(reads_2[:-3],ends=1)
+rnftools.mishmash.sample(reads_2[:-3],reads_in_tuple=1)
 
 rnftools.mishmash.DwgSim(
-	fa=reference_basic_2,
+	fasta=reference_basic_2,
 	read_length_1=100,
 	read_length_2=0,
 	number_of_reads=10000
@@ -54,7 +54,7 @@ rnftools.mishmash.DwgSim(
 
 
 rnftools.mishmash.DwgSim(
-	fa=reference_contam_2,
+	fasta=reference_contam_2,
 	read_length_1=100,
 	read_length_2=0,
 	number_of_reads=2000

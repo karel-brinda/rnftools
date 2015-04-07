@@ -49,8 +49,7 @@ __SOURCES__ = []
 
 def add_source(sample):
 	if len(samples()) == 0:
-		smbl.messages.error("No sample defined",program="RNFtools",subprogram="MIShmash")
-		raise ValueError("No sample defined")
+		smbl.messages.error("No sample defined",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 	__SOURCES__.append(sample)
 
 def sources():
@@ -60,11 +59,10 @@ def sources():
 """
 	Create a new sample
 """
-def sample(name,ends):
+def sample(name,reads_in_tuple):
 	if name in [sample.get_name() for sample in __SAMPLES__]:
-		smbl.messages.error("More samples have the same name. Each sample must have a unique name.",program="RNFtools",subprogram="MIShmash")
-		raise ValueError("More samples have the same name. Each sample must have a unique name.")
+		smbl.messages.error("More samples have the same name. Each sample must have a unique name.",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
-	Sample(name=name,ends=ends)
+	Sample(name=name,reads_in_tuple=reads_in_tuple)
 	add_input(current_sample().fq_fns())
 

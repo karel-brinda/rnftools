@@ -5,6 +5,12 @@ read_destr_pattern = re.compile(r'(.*)__([0-9abcdef]+)__(\([0-9abcdefFRN,]*\))(,
 
 class Read:
 	"""Class for a RNF read.
+
+	Args:
+		segments (list of rnftools.rnfformat.Segment): Segments of the read.
+		read_id (int): Read ID.
+		prefix (str): Prefix for the read name.
+		suffix (str): Suffix for the read name.
 	"""
 
 	def __init__(
@@ -14,16 +20,6 @@ class Read:
 				prefix="",
 				suffix="",
 			):
-		"""
-		:param segments: Segments of the read.
-		:type  segments: list of rnftools.rnfformat.Segment
-		:param read_id: Read ID.
-		:type  read_id: int
-		:param prefix: Prefix for the read name.
-		:type  prefix: str
-		:param suffix: Suffix for the read name.
-		:type  suffix: str
-		"""
 		self.read_id=read_id
 		self.segments=segments
 		self.prefix=prefix
@@ -38,14 +34,11 @@ class Read:
 			):
 		"""Create RNF representation of this read.
 
-		:param id_str_size: Maximal expected length of string of ID of a read.
-		:type  id_str_size: int
-		:param source_str_size: Maximal expected length of string of ID of genome.
-		:type  source_str_size: int
-		:param chr_str_size: Maximal expected length of string of ID of chromosome.
-		:type  chr_str_size: int
-		:param pos_str_size: Maximal expected length of string of maximal coordinate.
-		:type  pos_str_size: int
+		Args:
+			id_str_size (int): Maximal expected length of string of ID of a read.
+			source_str_size (int): Maximal expected length of string of ID of genome.
+			chr_str_size (int): Maximal expected length of string of ID of chromosome.
+			pos_str_size (int): Maximal expected length of string of maximal coordinate.
 		"""
 
 		sorted_segments = sorted(self.segments,
@@ -81,8 +74,11 @@ class Read:
 		"""Get RNF values for this read from its textual representation and save them 
 		into this object.
 
-		:param string: Textual representation of a read.
-		:type  string: str
+		Args:
+			string(str): Textual representation of a read.
+
+		Raises:
+			ValueError
 		"""
 
 		#todo: assert -- starting with (, ending with )

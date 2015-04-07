@@ -59,6 +59,7 @@ class DwgSim(Source):
 		distance (int): Mean inner distance between ends.
 		distance_deviation (int): Deviation of inner distances between ends.
 		rng_seed (int): Seed for simulator's random number generator.
+		haploid_mode (bools): Simulate reads in haploid mode.
 		error_rate_1 (float): Base error rate in the first read (sequencing errors).
 		error_rate_2 (float): Base error rate in the second read (sequencing errors).
 		mutation_rate (float): Mutation rate.
@@ -71,7 +72,7 @@ class DwgSim(Source):
 
 	#TODO:estimate_unknown_values=False,
 	def __init__(self,
-				fa,
+				fasta,
 				coverage=0,
 				number_of_reads=0,
 				read_length_1=100,
@@ -96,8 +97,8 @@ class DwgSim(Source):
 			self.distance_deviation=distance_deviation
 		
 		super().__init__(
-				fa=fa,
-				ends=ends,
+				fasta=fasta,
+				reads_in_tuple=ends,
 				rng_seed=rng_seed,
 			)
 
@@ -106,7 +107,7 @@ class DwgSim(Source):
 		self.other_params=other_params
 
 		if coverage*number_of_reads!=0:
-			raise ValueError("coverage or number_of_reads must be equal to zero")
+			smbl.messages.error("coverage or number_of_reads must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 		self.number_of_reads=number_of_reads
 		self.coverage=coverage
@@ -147,7 +148,7 @@ class DwgSim(Source):
 			self.number_of_reads=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
 
 
-		if self._ends==2:
+		if self._reads_in_tuple==2:
 			paired_params="-d {dist} -s {dist_dev}".format(
 					dist=self.distance,
 					dist_dev=self.distance_deviation,
@@ -243,7 +244,7 @@ class DwgSim(Source):
 
 						m = dwgsim_pattern.search(line)
 						if m is None:
-							raise ValueError("Read '{}' was not by DwgSim.".format(line[1:]))
+							smbl.messages.error("Read '{}' was not by DwgSim.".format(line[1:]),program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 						contig_name     = m.group(1)
 						start_1         = int(m.group(2))
