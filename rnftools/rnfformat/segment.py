@@ -8,16 +8,16 @@ class Segment:
 
 	def __init__(
 				self,
-				source=0,
-				chr=0,
+				genome_id=0,
+				chr_id=0,
 				direction="N",
 				left=0,
 				right=0
 			):
 		"""
 		Args:
-			source (int): ID of source.
-			chr (int): ID of chromosome.
+			genome_id (int): ID of genome.
+			chr_id (int): ID of chromosome.
 			direction (str): Direction (F/R/N).
 			left (int): Leftmost coordinate.
 			right (int): Rightmost coordinate.
@@ -26,8 +26,8 @@ class Segment:
 			ValueError
 		"""
 
-		self.source=int(source)
-		self.chr=int(chr)
+		self.genome_id=int(genome_id)
+		self.chr_id=int(chr_id)
 		self.direction=direction
 		self.left=int(left)
 		self.right=int(right)
@@ -37,25 +37,25 @@ class Segment:
 
 	def stringize(
 				self,
-				source_str_size=1,
-				chr_str_size=1,
-				pos_str_size=1
+				genome_id_width=1,
+				chr_id_width=1,
+				coor_width=1
 			):
 		"""Create RNF representation of this segment.
 
 		Args:
-			source_str_size (int): Maximal expected length of string of ID of genome.
-			chr_str_size (int): Maximal expected length of string of ID of chromosome.
-			pos_str_size (int): Maximal expected length of string of maximal coordinate.
+			genome_id_width (int): Maximal expected string length of ID of genome.
+			chr_id_width (int): Maximal expected string length of ID of chromosome.
+			coor_width (int): Maximal expected string length of maximal coordinate.
 		"""
 
-		pos_str_size=max(pos_str_size,len(str(self.left)),len(str(self.right)))
+		coor_width=max(coor_width,len(str(self.left)),len(str(self.right)))
 		return "({},{},{},{},{})".format(
-				str(self.source).zfill(source_str_size),
-				str(self.chr).zfill(chr_str_size),
+				str(self.genome_id).zfill(genome_id_width),
+				str(self.chr_id).zfill(chr_id_width),
 				self.direction,
-				str(self.left).zfill(pos_str_size),
-				str(self.right).zfill(pos_str_size)
+				str(self.left).zfill(coor_width),
+				str(self.right).zfill(coor_width)
 			)
 
 	def destringize(self,string):
@@ -67,8 +67,8 @@ class Segment:
 		"""
 
 		m=segment_destr_pattern.match(string)
-		self.source=int(m.group(1))
-		self.chr=int(m.group(2))
+		self.genome_id=int(m.group(1))
+		self.chr_id=int(m.group(2))
 		self.direction=m.group(3)
 		self.left=int(m.group(4))
 		self.right=int(m.group(5))

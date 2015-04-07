@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
 from .formatter import *
-from .read import *
+from .read_tuple import *
 from .segment import *
 
 __all__=[
 	"Segment",
-	"Read",
+	"ReadTuple",
 	"formatter",
 ]
 

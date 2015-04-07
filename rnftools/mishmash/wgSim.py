@@ -158,7 +158,7 @@ class WgSim(Source):
 				prob_indel_ext=self.prob_indel_ext,
 			)
 		)
-		if self._ends==1:
+		if self._reads_in_tuple==1:
 			self.recode_wgsim_reads(
 				old_fq1=self._tmp_fq1_fn,
 			)

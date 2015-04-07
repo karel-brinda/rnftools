@@ -37,21 +37,21 @@ class Mixer:
 				)
 
 		if args.m=="single-end":
-			self.output=Output(fn_1="{}.fq".format(output_prefix),ends=1,read_id_length=read_id_length_est)
-			self._ends=1
+			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=1,read_id_length=read_id_length_est)
+			self._reads_in_tuple=1
 		elif args.m=="pair-end-bwa":
-			self.output=Output(fn_1="{}.1.fq".format(output_prefix),fn_2="{}.2.fq".format(output_prefix),ends=2,read_id_length=read_id_length_est)
-			self._ends=2
+			self.output=Output(fn_1="{}.1.fq".format(output_prefix),fn_2="{}.2.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
+			self._reads_in_tuple=2
 		elif args.m=="pair-end-bfast":
-			self.output=Output(fn_1="{}.fq".format(output_prefix),ends=2,read_id_length=read_id_length_est)
-			self._ends=2
+			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
+			self._reads_in_tuple=2
 		else:
 			raise ValueError("Unknown mode '{}'".format(args.m))
 
 	def run(self):
 		while len(self.i_files_weighted)>0:
 			file_id=self.rng.randint(0,len(self.i_files_weighted)-1)
-			for i in range(READS_IN_GROUP*self._ends):
+			for i in range(READS_IN_GROUP*self._reads_in_tuple):
 				if self.i_files_weighted[file_id].closed:
 					del self.i_files_weighted[file_id]
 					break
@@ -69,8 +69,8 @@ class Mixer:
 
 
 class Output:
-	def __init__(self,ends,fn_1,fn_2=None,read_id_length=6):
-		self.ends=ends
+	def __init__(self,reads_in_tuple,fn_1,fn_2=None,read_id_length=6):
+		self.reads_in_tuple=reads_in_tuple
 		self.read_id_length=read_id_length
 		self.fs=[open(fn_1,"w+")]
 		if fn_2 is not None:
@@ -88,7 +88,7 @@ class Output:
 		ln1_parts[1]="{:x}".format(self.read_tuple_counter).zfill(self.read_id_length)
 		ln1="__".join(ln1_parts)
 	
-		if self.ends==1:
+		if self.reads_in_tuple==1:
 			file_id=0
 			if ln1[-2]=="/":
 				raise ValueError("Wrong read name '{}'. Single end read should not contain '/'.".format(ln1[1:]))

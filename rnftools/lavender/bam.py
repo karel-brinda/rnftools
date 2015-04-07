@@ -516,16 +516,16 @@ class Bam:
 				mis.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
 				for read in sam:
-					rnf_read = rnftools.rnfformat.Read()
-					rnf_read.destringize(read.query_name)
+					rnf_read_tuple = rnftools.rnfformat.ReadTuple()
+					rnf_read_tuple.destringize(read.query_name)
 
 					left = read.reference_start+1
 					right = read.reference_end
 					chrom_id=references_dict[ sam.references[read.reference_id] ]
 
-					nb_of_segments=len(rnf_read.segments)
+					nb_of_segments=len(rnf_read_tuple.segments)
 
-					if rnf_read.segments[0].source==1:
+					if rnf_read_tuple.segments[0].genome_id==1:
 						should_be_mapped=True
 					else:
 						should_be_mapped=False
@@ -544,13 +544,13 @@ class Bam:
 						if should_be_mapped:
 							exists_corresponding_segment=False
 
-							for j in range(len(rnf_read.segments)):
-								segment=rnf_read.segments[j]
+							for j in range(len(rnf_read_tuple.segments)):
+								segment=rnf_read_tuple.segments[j]
 								if (
 									(segment.left==0 or abs(segment.left - left) <= diff_thr) and
 									(segment.right==0 or abs(segment.right - right) <= diff_thr) and
 									(segment.left!=0 or segment.right==0) and
-									(chrom_id==0 or chrom_id==segment.chr)
+									(chrom_id==0 or chrom_id==segment.chr_id)
 								):
 									exists_corresponding_segment=True
 									segment=str(j+1)

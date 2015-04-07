@@ -2,24 +2,24 @@ class RnFormatter:
 	"""Class for formatting RNF reads in the same format.
 
 	Args:
-		id_str_size (int): Maximal expected length of string of ID of a read.
-		source_str_size (int): Maximal expected length of string of ID of genome.
-		chr_str_size (int): Maximal expected length of string of ID of chromosome.
-		pos_str_size (int): Maximal expected length of string of maximal coordinate.
+		read_tuple_id_width (int): Maximal expected string length of read tuple ID.
+		genome_id_width (int): Maximal expected string length of genome ID.
+		chr_id_width (int): Maximal expected string length of chromosome ID.
+		coor_width (int): Maximal expected string length of a coordinate.
 	"""
 
 	def __init__(
 				self,
-				id_str_size=16,
-				source_str_size=2,
-				chr_str_size=2,
-				pos_str_size=8,
+				read_tuple_id_width=16,
+				genome_id_width=2,
+				chr_id_width=2,
+				coor_width=8,
 			):
 
-		self.id_str_size=id_str_size
-		self.source_str_size=source_str_size
-		self.chr_str_size=chr_str_size
-		self.pos_str_size=pos_str_size
+		self.read_tuple_id_width=read_tuple_id_width
+		self.genome_id_width=genome_id_width
+		self.chr_id_width=chr_id_width
+		self.coor_width=coor_width
 	
 	def process_read(self,read):
 		"""Get well-formatted RNF representation of a read.
@@ -27,8 +27,8 @@ class RnFormatter:
 		read (rnftools.rnFormatter.Read): Read.
 		"""
 		return read.stringize(
-					id_str_size=self.id_str_size,
-					source_str_size=self.source_str_size,
-					chr_str_size=self.chr_str_size,
-					pos_str_size=self.pos_str_size
+					read_tuple_id_width=self.read_tuple_id_width,
+					genome_id_width=self.genome_id_width,
+					chr_id_width=self.chr_id_width,
+					coor_width=self.coor_width
 				)
