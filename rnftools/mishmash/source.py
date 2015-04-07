@@ -192,7 +192,7 @@ class Source(object):
 		last_read_name=[]
 		read_id=0
 
-		id_str_size=len(format(number_of_reads,'x'))
+		id_str_size=len(format(number_of_read_tuples,'x'))
 
 		rn_formatter = rnftools.rnfformat.RnFormatter(
 				id_str_size=id_str_size,
