@@ -23,7 +23,7 @@ class Report:
 		keep_intermediate_files=False,
 		compress_intermediate_files=True,
 		default_x_axis="({m}+{w})/({M}+{m}+{w})",
-		default_x_label="false positive rate\\n{/:Italic(#wrong mappings / #mapped)}",
+		default_x_label="FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  ",
 		):
 		"""
 
@@ -79,30 +79,30 @@ class Report:
 		self.add_graph(
 			"({M}+{m}+{w}+{P}+{x})/{all}",
 			title="Mapped reads in all reads",
-			y_label="Mapped reads"
+			y_label="#mapped reads / #reads"
 		)
 		self.add_graph(
 			"{M}/({M}+{m}+{w}+{P}+{x})",
 			title="Correctly mapped reads in all mapped reads",
-			y_label="Part of correctly mapped reads in all mapped reads",
+			y_label="#correctly mapped reads / #mapped reads",
 		)
 
 		self.add_graph(
 			"{M}/({M}+{w}+{x}+{u}+{t}+{P})",
 			title="Correctly mapped reads in all reads which should be mapped",
-			y_label="Part of correctly mapped reads in reads which should be mapped",
+			y_label="#correctly mapped reads / #reads which should be mapped",
 		)
 
 		self.add_graph(
 			"({U}+{T})/({u}+{U}+{t}+{T})",
 			title="Correctly unmapped reads in all unmapped reads",
-			y_label="Part of correctly unmapped reads in all unmapped reads",
+			y_label="#correctly unmapped reads / #unmapped reads",
 		)
 
 		self.add_graph(
 			"({U}+{T})/({U}+{T}+{m})",
 			title="Correctly unmapped reads in all reads which should be unmapped",
-			y_label="Part of correctly unmapped reads in reads which should be unmapped",
+			y_label="#correctly unmapped reads / #reads which should be unmapped",
 		)
 
 
@@ -116,6 +116,7 @@ class Report:
 				y_run=None,
 				pdf_size_cm=None,
 				svg_size_px=None,
+				key_position="top left",
 			):
 
 		if x_run==None:
@@ -141,6 +142,7 @@ class Report:
 					y_label=y_label,
 					x_label=x_label if x_label != None else self.default_x_label,
 					title=title,
+					key_position=key_position,
 				)
 
 	def get_report_dir(self):

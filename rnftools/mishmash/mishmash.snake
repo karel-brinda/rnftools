@@ -47,6 +47,6 @@ for i, source in enumerate(rnftools.mishmash.sources()):
 		params:
 			i=str(i)
 		threads:
-			source.get_number_of_threads()
+			source.get_number_of_required_cores()
 		run:
 			rnftools.mishmash.sources()[int(params.i)].create_fq()

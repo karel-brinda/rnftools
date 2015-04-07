@@ -7,27 +7,27 @@ import re
 import os
 
 class Sample:
-	def __init__(self, name, ends, paired_end_mode="bwa"):
+	def __init__(self, name, reads_in_tuple, paired_end_mode="bwa"):
 		self._name=name
 		self._sources=[]
 		self._dir=name
-		self._ends=ends
+		self._reads_in_tuple=reads_in_tuple
 		self._pair_end_mode=paired_end_mode
 
-		if self._ends==1:
+		if self._reads_in_tuple==1:
 			self._fq_fns=[self._name+".fq"]
 			self._mode="single-end"
-		elif self._ends==2 and self._pair_end_mode=="bwa":
+		elif self._reads_in_tuple==2 and self._pair_end_mode=="bwa":
 			self._fq_fns=[self._name+".1.fq",self._name+".2.fq"]
 			self._mode="pair-end-bwa"
-		elif self/_ends==2 and self._pair_end_mode=="bfast":
+		elif self._reads_in_tuple==2 and self._pair_end_mode=="bfast":
 			self._fq_fns=[self._name+".fq"]
 			self._mode="pair-end-bfast"
 
 		rnftools.mishmash.add_sample(self)
 
 		if paired_end_mode not in ["bwa","bfast"]:
-			raise ValueError("paired_end_mode must be 'bwa' or 'bfast'")
+			smbl.messages.error("paired_end_mode must be 'bwa' or 'bfast'",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 	def get_name(self):
 		return self._name
@@ -42,11 +42,10 @@ class Sample:
 		return [source.fq_fn() for source in self._sources]
 
 	def add_source(self,source):
-		if self._ends!=source.get_number_of_ends():
-			raise ValueError(
-				"It is not possible to combine reads with different number of ends in a single sample. "
-				"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(self._name,self._ends,source.get_number_of_ends(),source)
-			)
+		if self._reads_in_tuple!=source.get_reads_in_tuple():
+			smbl.messages.error("It is not possible to combine reads with different number of ends in a single sample. "
+				"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(self._name,self._reads_in_tuple,source.get_reads_in_tuple(),source),
+				program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		self._sources.append(source)
 
 	def clean(self):

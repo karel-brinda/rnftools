@@ -3,6 +3,7 @@
 import argparse
 import os
 import random
+import math
 
 # number of reads taken in a single run
 READS_IN_GROUP=10
@@ -21,29 +22,36 @@ class Mixer:
 		self.rng=random.Random()
 		self.rng.seed(1)
 
-		if args.m=="single-end":
-			self.output=Output(fn_1="{}.fq".format(output_prefix),ends=1)
-			self._ends=1
-		elif args.m=="pair-end-bwa":
-			self.output=Output(fn_1="{}.1.fq".format(output_prefix),fn_2="{}.2.fq".format(output_prefix),ends=2)
-			self._ends=2
-		elif args.m=="pair-end-bfast":
-			self.output=Output(fn_1="{}.fq".format(output_prefix),ends=2)
-			self._ends=2
-		else:
-			raise ValueError("Unknown mode '{}'".format(args.m))
-
 		self.i_files=[open(fn) for fn in input_files]
-		self.i_files_proc=[os.path.getsize(fn) for fn in input_files]
-		self.i_files_proc=[int((100.0*x)/sum(self.i_files_proc)) for x in self.i_files_proc]
+		self.i_files_sizes=[os.path.getsize(fn) for fn in input_files]
+		self.i_files_proc=[int((100.0*x)/sum(self.i_files_sizes)) for x in self.i_files_sizes]
 		self.i_files_weighted=[]
 		for i in range(len(self.i_files)):
 			self.i_files_weighted.extend(self.i_files_proc[i]*[self.i_files[i]])
 
+		read_id_length_est=math.ceil(
+					math.log(
+						sum(self.i_files_sizes)/20,
+						16,
+					)
+				)
+
+		if args.m=="single-end":
+			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=1,read_id_length=read_id_length_est)
+			self._reads_in_tuple=1
+		elif args.m=="pair-end-bwa":
+			self.output=Output(fn_1="{}.1.fq".format(output_prefix),fn_2="{}.2.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
+			self._reads_in_tuple=2
+		elif args.m=="pair-end-bfast":
+			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
+			self._reads_in_tuple=2
+		else:
+			raise ValueError("Unknown mode '{}'".format(args.m))
+
 	def run(self):
 		while len(self.i_files_weighted)>0:
 			file_id=self.rng.randint(0,len(self.i_files_weighted)-1)
-			for i in range(READS_IN_GROUP*self._ends):
+			for i in range(READS_IN_GROUP*self._reads_in_tuple):
 				if self.i_files_weighted[file_id].closed:
 					del self.i_files_weighted[file_id]
 					break
@@ -61,11 +69,13 @@ class Mixer:
 
 
 class Output:
-	def __init__(self,ends,fn_1,fn_2=None):
-		self.ends=ends
+	def __init__(self,reads_in_tuple,fn_1,fn_2=None,read_id_length=6):
+		self.reads_in_tuple=reads_in_tuple
+		self.read_id_length=read_id_length
 		self.fs=[open(fn_1,"w+")]
 		if fn_2 is not None:
 			self.fs.append(open(fn_2,"w+"))
+		self.read_tuple_counter=0
 
 	def __del__(self):
 		for f in self.fs:
@@ -73,11 +83,16 @@ class Output:
 
 	def save_read(self,ln1,ln2,ln3,ln4):
 		[ln1,ln2,ln3,ln4]=[ln1.strip(),ln2.strip(),ln3.strip(),ln4.strip()]
+
+		ln1_parts=ln1.split("__")
+		ln1_parts[1]="{:x}".format(self.read_tuple_counter).zfill(self.read_id_length)
+		ln1="__".join(ln1_parts)
 	
-		if self.ends==1:
+		if self.reads_in_tuple==1:
 			file_id=0
 			if ln1[-2]=="/":
 				raise ValueError("Wrong read name '{}'. Single end read should not contain '/'.".format(ln1[1:]))
+			self.read_tuple_counter+=1
 	
 		else:
 			if ln1[-2]!="/":
@@ -85,11 +100,13 @@ class Output:
 			if len(self.fs)==1:
 				ln1=ln1[:-2]
 				file_id=0
+				self.read_tuple_counter+=1
 			else:
 				if ln1[-1]=="1":
 					file_id=0
 				elif ln1[-1]=="2":
 					file_id=1
+					self.read_tuple_counter+=1
 				else:
 					raise ValueError("Wrong read name '{}'.".format(ln1[1:]))
 

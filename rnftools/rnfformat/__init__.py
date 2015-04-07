@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
 from .formatter import *
-from .read import *
+from .readTuple import *
 from .segment import *
 
 __all__=[
 	"Segment",
-	"Read",
+	"ReadTuple",
 	"formatter",
 ]
 
@@ -25,17 +25,17 @@ if __name__ == "__main__":
 		print("Segment after destringization", segment.stringize())
 
 	print ()
-	print ("2) READ")
+	print ("2) READ TUPLE")
 	print ()
 
 
-	read=Read()
+	read=ReadTuple()
 
-	for read_name_test in [
+	for read_tuple_name_test in [
 				"__000324a__(2,3,R,34,3643),(4,3,F,1,56)__",
 				"__00000000__(01,1,F,0390501,0000000)__"
 			]:
-		read.destringize(read_name_test)
+		read_tuple.destringize(read_tuple_name_test)
 		print()
-		print("Original read string", read_name_test)
-		print("Read after destringization", read.stringize ())
+		print("Original read string", read_tuple_name_test)
+		print("Read after destringization", read_tuple.stringize ())

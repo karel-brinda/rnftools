@@ -116,8 +116,8 @@ class Bam:
 		categories_order=[
 			("{U}",     "#ee82ee", 'Unmapped correctly'),
 			("{u}",     "#ff0000", 'Unmapped incorrectly'),
-			("{T}",     "#008800", 'Thresholded correctly'),
-			("{t}",     "#00ff00", 'Thresholded incorrectly'),
+			("{T}",     "#00ff00", 'Thresholded correctly'),
+			("{t}",     "#008800", 'Thresholded incorrectly'),
 			("{P}",     "#ffff00", 'Multimapped'),
 			("{w}+{x}", "#7f7f7f", 'Mapped, should be unmapped'),
 			("{m}",     "#000000", 'Mapped to wrong position'),
@@ -151,17 +151,19 @@ class Bam:
 				set xran  [{xran}]
 				set x2ran [{xran}]
 				set x2tics
+				unset xtics
 
 
-				set ylab "part of all reads (%)"
+				set ylab "Part of all reads (%)"
 
 				set format y "%g %%"
 				set yran [{yran}]
+				set y2ran [{yran}]
 
 				set pointsize 1.5
 
 				set grid ytics lc rgb "#777777" lw 1 lt 0 front
-				set grid xtics lc rgb "#777777" lw 1 lt 0 front
+				set grid x2tics lc rgb "#777777" lw 1 lt 0 front
 
 				set datafile separator "\t"
 				set palette negative
@@ -174,7 +176,7 @@ class Bam:
 
 				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
 				set out "{pdf_fn}"
-				set key spacing 0.8 opaque width -1
+				set key spacing 0.8 opaque width 0
 				{plot}
 
 			""".format(
@@ -514,16 +516,16 @@ class Bam:
 				mis.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
 				for read in sam:
-					rnf_read = rnftools.rnfformat.Read()
-					rnf_read.destringize(read.query_name)
+					rnf_read_tuple = rnftools.rnfformat.ReadTuple()
+					rnf_read_tuple.destringize(read.query_name)
 
 					left = read.reference_start+1
 					right = read.reference_end
 					chrom_id=references_dict[ sam.references[read.reference_id] ]
 
-					nb_of_segments=len(rnf_read.segments)
+					nb_of_segments=len(rnf_read_tuple.segments)
 
-					if rnf_read.segments[0].source==1:
+					if rnf_read_tuple.segments[0].genome_id==1:
 						should_be_mapped=True
 					else:
 						should_be_mapped=False
@@ -542,13 +544,13 @@ class Bam:
 						if should_be_mapped:
 							exists_corresponding_segment=False
 
-							for j in range(len(rnf_read.segments)):
-								segment=rnf_read.segments[j]
+							for j in range(len(rnf_read_tuple.segments)):
+								segment=rnf_read_tuple.segments[j]
 								if (
 									(segment.left==0 or abs(segment.left - left) <= diff_thr) and
 									(segment.right==0 or abs(segment.right - right) <= diff_thr) and
 									(segment.left!=0 or segment.right==0) and
-									(chrom_id==0 or chrom_id==segment.chr)
+									(chrom_id==0 or chrom_id==segment.chr_id)
 								):
 									exists_corresponding_segment=True
 									segment=str(j+1)
@@ -745,7 +747,7 @@ class Bam:
 
 
 	def create_mir(self):
-		"""Create a ROC file for this BAM file.
+		"""Create a MIR file for this BAM file (mapping information about read tuples).
 
 		:raises: ValueError
 
@@ -753,6 +755,15 @@ class Bam:
 
 		with (gzip.open(self._mis_fn,"tr") if self.compress_intermediate_files else open(self._mis_fn,"r")) as mis:
 			with (gzip.open(self._mir_fn,"tw+") if self.compress_intermediate_files else open(self._mir_fn,"w+")) as mir:
+
+				mir.write("# Mapping information for read tuples"+os.linesep)
+				mir.write("#"+os.linesep)
+				mir.write("# RN:   read name"+os.linesep)
+				mir.write("# I:    intervals with asigned categories"+os.linesep)
+				mir.write("#"+os.linesep)
+				mir.write("# RN	I"+os.linesep)
+
+
 				last_rname=""
 				for line in mis:
 					line=line.strip()

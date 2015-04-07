@@ -23,7 +23,7 @@ install:
 - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
 - sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
 - sudo apt-get install git-svn
-- pip install --use-wheel --find-links=http://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
+- pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
 #- pip install -r requirements.txt
 - pip install .
 script:

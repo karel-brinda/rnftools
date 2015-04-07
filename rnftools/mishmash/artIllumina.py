@@ -1,51 +1,42 @@
 import rnftools
-from .source import Source
+from ._source import Source
 
 import smbl
 import snakemake
 import os
-
-#
-# AUXILIARY FUNCTIONS
-#
 
 class ArtIllumina(Source):
 	"""Class for the ART Illumina.
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	lengths of both ends must be equal.
+
+	Args:
+		fasta (str): File name of the genome from which read tuples are created (FASTA file).
+		coverage (float): Average coverage of the genome.
+		number_of_read_tuples (int): Number of read tuples.
+		read_length_1 (int): Length of the first end of a read tuple.
+		read_length_2 (int): Length of the second end of a read tuple (if zero, then single-end reads are created).
+		other_params (str): Other parameters which are used on commandline.
+		distance (int): Mean inner distance between ends.
+		distance_deviation (int): Devation of inner distances between ends.
+		rng_seed (int): Seed for simulator's random number generator.
+
+	Raises:
+		ValueError
 	"""
 
 	def __init__(self,
-			fa,
-			coverage=0,
-			number_of_reads=0,
-			read_length_1=100,
-			read_length_2=0,
-			other_params="",
-			distance=500,
-			distance_deviation=50.0,
-			rng_seed=1
-		):
-		"""
-		:param fa: File name of the genome from which reads are created (FASTA file).
-		:type  fa: str
-		:param coverage: Average coverage of the genome.
-		:type  coverage: float
-		:param read_length_1: Length of the first end of a read.
-		:type  read_length_1: int
-		:param read_length_2: Length of the second end of a read (if zero, then single-end reads are created).
-		:type  read_length_2: int
-		:param other_params: Other parameters which are used on commandline.
-		:type  other_params: str
-		:param distance: Mean inner distance between ends.
-		:type  distance: int
-		:param distance_deviation: Devation of inner distances between ends.
-		:type  distance_deviation: int
-		:param rng_seed: Seed for simulator's random number generator.
-		:type  rng_seed: int
-		:raises: ValueError
-		"""
+				fasta,
+				coverage=0,
+				number_of_read_tuples=0,
+				read_length_1=100,
+				read_length_2=0,
+				other_params="",
+				distance=500,
+				distance_deviation=50.0,
+				rng_seed=1
+			):
 
 		if read_length_2==0:
 			ends = 1
@@ -54,12 +45,11 @@ class ArtIllumina(Source):
 			self.distance=distance
 			self.distance_deviation=distance_deviation
 			if read_length_1!=read_length_2:
-				raise ValueError("art_illumina can simulate only pairs with equal lengths")
-
+				smbl.messages.error("art_illumina can simulate only pairs with equal lengths",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		
 		super().__init__(
-				fa=fa,
-				ends=ends,
+				fasta=fasta,
+				reads_in_tuple=ends,
 				rng_seed=rng_seed,
 			)
 
@@ -68,15 +58,15 @@ class ArtIllumina(Source):
 		self.other_params=other_params
 
 
-		if coverage*number_of_reads!=0:
-			raise ValueError("coverage or number_of_reads must be equal to zero")
+		if coverage*number_of_read_tuples!=0:
+			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
-		self.number_of_reads=number_of_reads
+		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
 
 		self.art_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.source_id)
+			"tmp.{}".format(self.genome_id)
 		)
 
 		self._sam1_fn = self.art_prefix+".sam"
@@ -95,18 +85,17 @@ class ArtIllumina(Source):
 				self._fq_fn,
 				self._sam1_fn,
 				self._sam2_fn,
-				self.art_prefix+".fq" if self._ends==1 else
+				self.art_prefix+".fq" if self._reads_in_tuple==1 else
 					[self.art_prefix+"1.fq",self.art_prefix+"2.fq"],
 			]
 
 
 	def create_fq(self):
-		"""Perform the simulation."""
 		if self.coverage == 0:
 			genome_size=os.stat(self._fa_fn).st_size
-			self.coverage = 1.0 * self.number_of_reads * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
+			self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
 
-		if self._ends==2:
+		if self._reads_in_tuple==2:
 			paired_params="-p -m {dist} -s {dist_dev}".format(
 					dist=self.distance,
 					dist_dev=self.distance_deviation,
