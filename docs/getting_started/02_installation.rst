@@ -13,23 +13,22 @@ Requirements
 * `Python`_ 3.2+. If not installed yet, Anaconda is a recommended Python distribution.
 * `SnakeMake`_
 
-.. _Python: http://python.org
-.. _Anaconda: http://continuum.io/downloads
-.. _SnakeMake: http://bitbucket.org/johanneskoester/snakemake/
-.. _PIP: http://pip.pypa.io/en/latest/installing.html
-.. _GIT repository: http://github.com/karel-brinda/rnftools
-
-
 Installation
 ------------
 
-* using _PIP (recommended):
+* using PIP_ (recommended):
 
 	.. code-block:: bash
 	
 		pip install rnftools
 
-* from the _`GIT repository` (the last development version):
+* using `Easy Install`_:
+
+	.. code-block:: bash
+	
+		easy_install rnftools
+
+* from the `GIT repository`_:
 
 	.. code-block:: bash
 	
@@ -41,10 +40,18 @@ Installation
 Upgrade to the newest version
 -----------------------------
 
-* using _PIP (recommended):
+* using PIP_ (recommended):
 
 	.. code-block:: bash
 	
 		pip install --upgrade rnftools
 
-* from the _`GIT repository` - the same steps as for the installation
+* from the `GIT repository`_ - the same steps as for the installation
+
+
+.. _Python: http://python.org
+.. _Anaconda: http://continuum.io/downloads
+.. _SnakeMake: http://bitbucket.org/johanneskoester/snakemake/
+.. _PIP: http://pip.pypa.io/en/latest/installing.html
+.. _`Easy Install`: http://pypi.python.org/pypi/setuptools
+.. _GIT repository: http://github.com/karel-brinda/rnftools
