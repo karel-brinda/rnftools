@@ -1,5 +1,5 @@
-Helloworld
-----------
+Hello world!
+------------
 
 In this chapter we show how to create and use RNFtools on a Hello world example. Little knowledge
 of Python can be helpful but it is not required.

@@ -1,5 +1,5 @@
-Mapper evaluation
-=================
+LAVEnder reference
+==================
 
 .. contents::
    :depth: 2

@@ -18,7 +18,7 @@ corresponding RNFtools configuration script looks as follows:
 	rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
 
 	rnftools.mishmash.ArtIllumina(
-		fasta=smbl.fasta.EXAMPLE,
+		fasta=smbl.fasta.EXAMPLE_1,
 		number_of_read_tuples=10000,
 		read_length_1=100,
 		read_length_2=0,
@@ -38,14 +38,144 @@ An example reference is downloaded. Finally reads are simulated and you obtain f
 
 All programs were installed into ``~/.smbl/bin/`` and the example FASTA file to ``~/.smbl/fa/``.
 
+RNFtools can work with more read simulators and work with them is very similar, however there exist differences between
+their interfaces. Full documentation of simulators with all parameters is available in Reference/MIShmash.
+
+
+Simulation of 'paired-end' reads
+""""""""""""""""""""""""""""""""
+
+.. code-block:: python
+
+	import rnftools
+	import smbl
+
+	rnftools.mishmash.sample("simple_example",reads_in_tuple=2)
+
+	rnftools.mishmash.ArtIllumina(
+		fasta=smbl.fasta.EXAMPLE_1,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
+
+	include: rnftools.include()
+	rule: input: rnftools.input()
+
+
 Simulator change
 """"""""""""""""
+
+To change simulator in our example, just replace ``rnftools.mishmash.ArtIllumina`` by class of other simulator, e.g., ```rnftools.mishmash.ArtIllumina```. Parameters like ``fasta``, ``read_length_1``, ``read_length_2``, and ``number_of_read_tuples`` is same for all of them.
+
+When you are changing the employed simulator, be aware of these limitations:
+
+* CuReSim supports only single-end reads.
+* ART Illumina in paired-end mode can simulate only reads of equal lengths.
+
+
+.. code-block:: python
+
+	import rnftools
+	import smbl
+
+	rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
+
+	rnftools.mishmash.DwgSim(
+		fasta=smbl.fasta.EXAMPLE_1,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+	include: rnftools.include()
+	rule: input: rnftools.input()
+
 
 More genomes
 """"""""""""
 
+To simulate reads from more genomes and mix them in one sample (in order to simulate, e.g., metagenome or contamination), add a new 
+
+
+.. code-block:: python
+
+	import rnftools
+	import smbl
+
+	rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
+
+	rnftools.mishmash.ArtIllumina(
+		fasta=smbl.fasta.EXAMPLE_1,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+	rnftools.mishmash.ArtIllumina(
+		fasta=smbl.fasta.EXAMPLE_2,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+	include: rnftools.include()
+	rule: input: rnftools.input()
+
+
+
+
+
 More samples
 """"""""""""
 
+.. code-block:: python
 
+	import rnftools
+	import smbl
+
+	rnftools.mishmash.sample("simple_end_simulation",reads_in_tuple=1)
+
+	rnftools.mishmash.ArtIllumina(
+		fasta=smbl.fasta.EXAMPLE_1,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=0,
+	)
+
+	rnftools.mishmash.sample("paired_end_simulation",reads_in_tuple=2)
+
+	rnftools.mishmash.ArtIllumina(
+		fasta=smbl.fasta.EXAMPLE_1,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=100,
+	)
+
+	include: rnftools.include()
+	rule: input: rnftools.input()
+
+
+
+
+Flexibility in parameters
+"""""""""""""""""""""""""
+
+.. code-block:: python
+
+	import rnftools
+	import smbl
+
+	rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
+
+	rnftools.mishmash.ArtIllumina(
+		fasta=smbl.fasta.EXAMPLE_1,
+		number_of_read_tuples=10000,
+		read_length_1=100,
+		read_length_2=0,
+		other_params="-amp",
+	)
+
+	include: rnftools.include()
+	rule: input: rnftools.input()
 
