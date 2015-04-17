@@ -7,7 +7,7 @@ It can:
 
 * call existing read simulators and transform simulated reads to RNF,
 * evaluate read mappers using RNF reads,
-* create RNF read names.
+* parse and compose RNF read names (for other programs).
 
 For details about RNF and RNFtools, see
 
