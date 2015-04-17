@@ -1,5 +1,5 @@
-MIShmash reference
-==================
+MIShmash
+========
 
 .. contents::
    :depth: 3

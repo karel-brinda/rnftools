@@ -1,5 +1,5 @@
-LAVEnder reference
-==================
+LAVEnder
+========
 
 .. contents::
    :depth: 2
