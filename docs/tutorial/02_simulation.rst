@@ -1,5 +1,5 @@
-Simulation
-----------
+Read simulation
+---------------
 
 In this chapter we show how to simulate reads in basic simulation. For this task, component called MIShmash is used.
 
