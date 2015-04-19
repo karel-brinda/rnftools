@@ -8,7 +8,7 @@ rnftools.mishmash.ArtIllumina(
 	number_of_read_tuples=10000,
 	read_length_1=100,
 	read_length_2=0,
-	other_params="-amp",
+	other_params="-qs 5",
 )
 
 include: rnftools.include()
