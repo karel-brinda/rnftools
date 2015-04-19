@@ -1,50 +1,5 @@
-Simulation of NGS reads
-======================
-
-.. contents::
-   :depth: 3
-
-
-MIShmash
---------
-
-MIShmash is a part of RNFtools responsible for simulation of Next-Generation Sequencing reads. It employs
-existing read simulators and combines the obtained reads into bigger single set.
-
-
-Usage
-^^^^^
-
-Create there an empty file named ``Snakefile``, which will serve as a configuration script.
-Then save the following content into it:
-
-.. code-block:: python
-	
-	# required line, it should be the first line of all your configuration scripts
-	import rnftools
-
-	# this line tells MIShmash that there will be a new sample
-	rnftools.mishmash.sample("new_sample")
-	
-	# then you can add arbitrary number of sources
-	rnftools.mishmash.ArtIllumina(
-		fa="my_fast.fa",
-		number_of_reads=10000,
-		read_length_1=100,
-		read_length_2=0,
-	)
-	
-	# if you want to create more simulated samples, call again the mishmash.sample
-	# function but with another sample name
-
-
-	# these lines are mandatory as the last lines of the file
-	include: rnftools.mishmash.include()
-	rule: input: rnftools.mishmash.input()
-
-
-Supported simulators
-^^^^^^^^^^^^^^^^^^^^
+List of read simulators
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ART
 ~~~
@@ -59,14 +14,6 @@ ART
 |              | *Bioinformatics* **28**\(4), pp. 593--594, 2011.                        |
 +--------------+-------------------------------------------------------------------------+
 
-
-ART Illumina
-""""""""""""
-
-.. autoclass:: rnftools.mishmash.ArtIllumina
-        :members:
-        :inherited-members:
-        :show-inheritance:
 
 
 CuReSim
@@ -83,10 +30,6 @@ CuReSim
 |              | *BMC Genomics* **15**\:264, 2014.                                       |
 +--------------+-------------------------------------------------------------------------+
 
-.. autoclass:: rnftools.mishmash.CuReSim
-        :members:
-        :inherited-members:
-        :show-inheritance:
 
 
 DwgSim
@@ -98,7 +41,8 @@ DwgSim
 | URL:         | http://github.com/nh13/dwgsim                                           |
 +--------------+-------------------------------------------------------------------------+
 
-**Format of read names (before conversion to RNF)**
+Format of read names
+""""""""""""""""""""
 
 .. code-block::
 
@@ -121,81 +65,22 @@ DwgSim
 14) read number (unique within a given contig/chromosome)
 
 
-.. autoclass:: rnftools.mishmash.DwgSim
-        :members:
-        :inherited-members:
-        :show-inheritance:
- 
-WgSim
-~~~~~
+
+FASTQSim
+~~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
-| Author:      | Heng Li                                                                 |
+| Author:      | Anna Shcherbina                                                         |
 +--------------+-------------------------------------------------------------------------+
-| URL:         | http://github.com/lh3/wgsim                                             |
+| URL:         | http://sourceforge.net/projects/fastqsim                                |
 +--------------+-------------------------------------------------------------------------+
-
-.. autoclass:: rnftools.mishmash.WgSim
-        :members:
-        :inherited-members:
-        :show-inheritance:
-
-
-Supported simulators
-^^^^^^^^^^^^^^^^^^^^
-
-For completeness, we mention also other simulators of NGS reads.
-
-pIRS
-~~~~
-
-+--------------+-------------------------------------------------------------------------+
-| Authors:     | Jianying Yuan, Eric Biggers                                             |
-+--------------+-------------------------------------------------------------------------+
-| URL:         | http://code.google.com/p/pirs                                           |
-|              | http://github.com/galaxy001/pirs                                        |
-+--------------+-------------------------------------------------------------------------+
-| Publication: | Hu, X., *et al.*                                                        |
-|              | pIRS: Profile-based Illumina pair-end reads simulator.                  |
-|              | *Bioinformatics* **28**\(11):1533--1535, 2012.                          |
+| Publication: | Shcherbina, A.                                                          |
+|              | FASTQSim: platform-independent data characterization and in silico      |
+|              | read generation for NGS datasets.                                       |
+|              | *BMC Research Notes* **7**\:533, 2014.                                  |
 +--------------+-------------------------------------------------------------------------+
 
-Mason
-~~~~~
 
-+--------------+-------------------------------------------------------------------------+
-| Author:      | Manuel Holtgrewe                                                        |
-+--------------+-------------------------------------------------------------------------+
-| URL:         | https://www.seqan.de/projects/mason/                                    |
-+--------------+-------------------------------------------------------------------------+
-| Publication: | Holtgrewe, M.                                                           |
-|              | Mason -- a read simulator for second generation sequencing data.        |
-|              | Technical Report TR-B-10-06,                                            |
-|              | Institut für Mathematik und Informatik, Freie Universität Berlin, 2010. |
-+--------------+-------------------------------------------------------------------------+
-
-SimNGS
-~~~~~~
-
-+--------------+-------------------------------------------------------------------------+
-| Author:      | Tim Massingham                                                          |
-+--------------+-------------------------------------------------------------------------+
-| URL:         | http://www.ebi.ac.uk/goldman-srv/simNGS/                                |
-+--------------+-------------------------------------------------------------------------+
-
-GemSIM
-~~~~~~
-
-+--------------+-------------------------------------------------------------------------+
-| Author:      | Kerensa E. McElroy                                                      |
-+--------------+-------------------------------------------------------------------------+
-| URL:         | http://sourceforge.net/projects/gemsim                                  |
-+--------------+-------------------------------------------------------------------------+
-| Publication: | McElroy, K. E. *et al.*                                                 |
-|              | GemSIM: general, error-model based simulator of next-generation         |
-|              | sequencing data.                                                        |
-|              | *BMC Genomics* **13**\:74, 2012.                                        |
-+--------------+-------------------------------------------------------------------------+
 
 FlowSIM
 ~~~~~~~
@@ -211,14 +96,38 @@ FlowSIM
 |              | *Bioinformatics* **26**\(18):i420--i425, 2010.                          |
 +--------------+-------------------------------------------------------------------------+
 
-SimSEQ
+
+
+GemSIM
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
-| Authors:     | John St. John                                                           |
+| Author:      | Kerensa E. McElroy                                                      |
 +--------------+-------------------------------------------------------------------------+
-| URL:         | http://github.com/jstjohn/SimSeq                                        |
+| URL:         | http://sourceforge.net/projects/gemsim                                  |
 +--------------+-------------------------------------------------------------------------+
+| Publication: | McElroy, K. E. *et al.*                                                 |
+|              | GemSIM: general, error-model based simulator of next-generation         |
+|              | sequencing data.                                                        |
+|              | *BMC Genomics* **13**\:74, 2012.                                        |
++--------------+-------------------------------------------------------------------------+
+
+
+
+Mason
+~~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Author:      | Manuel Holtgrewe                                                        |
++--------------+-------------------------------------------------------------------------+
+| URL:         | https://www.seqan.de/projects/mason/                                    |
++--------------+-------------------------------------------------------------------------+
+| Publication: | Holtgrewe, M.                                                           |
+|              | Mason -- a read simulator for second generation sequencing data.        |
+|              | Technical Report TR-B-10-06,                                            |
+|              | Institut für Mathematik und Informatik, Freie Universität Berlin, 2010. |
++--------------+-------------------------------------------------------------------------+
+
 
 
 PbSIM
@@ -233,6 +142,56 @@ PbSIM
 |              | PBSIM: PacBio reads simulator -- toward accurate genome assembly.       |
 |              | *Bioinformatics* **29**\(1):119--121, 2013.                             |
 +--------------+-------------------------------------------------------------------------+
+
+
+
+pIRS
+~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Authors:     | Jianying Yuan, Eric Biggers                                             |
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://code.google.com/p/pirs                                           |
+|              | http://github.com/galaxy001/pirs                                        |
++--------------+-------------------------------------------------------------------------+
+| Publication: | Hu, X., *et al.*                                                        |
+|              | pIRS: Profile-based Illumina pair-end reads simulator.                  |
+|              | *Bioinformatics* **28**\(11):1533--1535, 2012.                          |
++--------------+-------------------------------------------------------------------------+
+
+
+
+Sherman
+~~~~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Author:      | Felix Krueger                                                           |
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://www.bioinformatics.babraham.ac.uk/projects/sherman               |
++--------------+-------------------------------------------------------------------------+
+
+
+
+SimNGS
+~~~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Author:      | Tim Massingham                                                          |
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://www.ebi.ac.uk/goldman-srv/simNGS/                                |
++--------------+-------------------------------------------------------------------------+
+
+
+
+SimSEQ
+~~~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Authors:     | John St. John                                                           |
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://github.com/jstjohn/SimSeq                                        |
++--------------+-------------------------------------------------------------------------+
+
 
 
 SInC
@@ -258,19 +217,16 @@ Wessim
 +--------------+-------------------------------------------------------------------------+
 
 
-FASTQSim
-~~~~~~~~
+ 
+WgSim
+~~~~~
 
 +--------------+-------------------------------------------------------------------------+
-| Author:      | Anna Shcherbina                                                         |
+| Author:      | Heng Li                                                                 |
 +--------------+-------------------------------------------------------------------------+
-| URL:         | http://sourceforge.net/projects/fastqsim                                |
+| URL:         | http://github.com/lh3/wgsim                                             |
 +--------------+-------------------------------------------------------------------------+
-| Publication: | Shcherbina, A.                                                          |
-|              | FASTQSim: platform-independent data characterization and in silico      |
-|              | read generation for NGS datasets.                                       |
-|              | *BMC Research Notes* **7**\:533, 2014.                                  |
-+--------------+-------------------------------------------------------------------------+
+
 
 
 XS
@@ -284,14 +240,4 @@ XS
 | Publication: | Pratas, D. *et al.*                                                     |
 |              | XS: a FASTQ read simulator.                                             |
 |              | *BMC Research Notes* **7**\:40, 2014.                                   |
-+--------------+-------------------------------------------------------------------------+
-
-
-Sherman
-~~~~~~~
-
-+--------------+-------------------------------------------------------------------------+
-| Author:      | Felix Krueger                                                           |
-+--------------+-------------------------------------------------------------------------+
-| URL:         | http://www.bioinformatics.babraham.ac.uk/projects/sherman               |
 +--------------+-------------------------------------------------------------------------+

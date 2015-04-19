@@ -1,12 +1,14 @@
+.. _introduction:
+
 Introduction
 ============
 
-RNFtools is a software package for purposes of the `RNF`_, a format for assigning read names for simulated
-Next-Generation Sequencing reads. The format aims to remove independency of evaluation tools of read mappers
+RNFtools is an associate software package for `RNF`_, a generic format for assigning read names of simulated
+Next-Generation Sequencing reads. The format aims to remove dependency of evaluation tools of read mappers
 on the used read simulators. RNFtools consist of two principal parts:
 
-* MIShmash - a tool which creates data sets of simulated NGS reads using existing simulators.
-* LAVEnder - a tool to evaluate NGS read mappers using simulated reads in RNF format.
+* **MIShmash** - a tool for simulating NGS reads in RNF format using existing simulators.
+* **LAVEnder** - a tool for evaluation of NGS read mappers using simulated reads in RNF format.
 
 Technically, the entire RNFtools package is based on `SnakeMake`_, a `Make`_-like `Python`_-based software
 developed primarly for creating bioinformatics pipelines. Basic usage of RNFtools is easily
@@ -22,8 +24,7 @@ RNFtools have few unique features:
 How to start with RNFtools
 --------------------------
 
-First we recommend to start with page `First steps`_. If anything is not clear, please look into `FAQ`_ if the
-answer already exists. If not, use the RNFtools mailing list. 
+First we recommend to start with `tutorial`_ which demonstrates how to install RNFtools and how to use it. If anything is not clear, please look into `FAQ`_ if the answer already exists. If not, use the RNFtools mailing list. 
 
 
 Have you found a bug?
@@ -39,5 +40,3 @@ Please, report it as a `GitHub ticket`_. We will try to correct it as soon as po
 .. _SnakeMake: http://bitbucket.org/johanneskoester/snakemake
 .. _Make: http://www.gnu.org/software/make
 .. _Python: http://python.org
-
-
