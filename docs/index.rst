@@ -17,7 +17,7 @@ Publication
 Table of contents
 -----------------
 
-:ref:`getting_started`
+:ref:`introduction`
 	Basic introduction about RNFtools.
 
 :ref:`tutorial`
