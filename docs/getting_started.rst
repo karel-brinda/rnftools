@@ -7,8 +7,8 @@ RNFtools is an associate software package for `RNF`_, a generic format for assig
 Next-Generation Sequencing reads. The format aims to remove dependency of evaluation tools of read mappers
 on the used read simulators. RNFtools consist of two principal parts:
 
-* MIShmash - a tool for simulating NGS reads in RNF format using existing simulators.
-* LAVEnder - a tool for evaluation of NGS read mappers using simulated reads in RNF format.
+* **MIShmash** - a tool for simulating NGS reads in RNF format using existing simulators.
+* **LAVEnder** - a tool for evaluation of NGS read mappers using simulated reads in RNF format.
 
 Technically, the entire RNFtools package is based on `SnakeMake`_, a `Make`_-like `Python`_-based software
 developed primarly for creating bioinformatics pipelines. Basic usage of RNFtools is easily
