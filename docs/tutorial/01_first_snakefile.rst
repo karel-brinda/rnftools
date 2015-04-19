@@ -14,18 +14,8 @@ you configuration script).
 
 Every RNFtools script consists of three parts:
 
-.. code-block:: python
-
-	# 1) importing rnftools Python package
-	import rnftools
-
-	# 2) your Python code will be located here
-	print("Hello world!")
-
-	# 3) including Snakemake rules created by RNFtools and defining the main Snakemake rule (declaring which files are requested)
-	include: rnftools.include()
-	rule: input: rnftools.input()
-
+.. literalinclude:: ../../examples/tutorial/01_first_snakefile/Snakefile
+	:language: python
 
 As it has been mentioned in comment, all your code must be inserted into part 2. Now save this file with name ``Snakefile`` and run
 
@@ -35,4 +25,3 @@ As it has been mentioned in comment, all your code must be inserted into part 2.
 
 in that directory. Nothing will happed, only your "Hello world" message and few informative messages will
 be printed.
-
