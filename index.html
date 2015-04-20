@@ -1,37 +1,66 @@
-r<!doctype html>
+<!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>RNFtools by karel-brinda</title>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>RNFtools</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1 class="header">RNFtools</h1>
-        <p class="header"></p>
+	<link rel="stylesheet" href="stylesheets/styles.css">
+	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<script src="javascripts/scale.fix.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/karel-brinda/rnftools/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/karel-brinda/rnftools/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/karel-brinda/rnftools">View On GitHub</a></li>
-        </ul>
+	<style type="text/css">
+		/* section.main_section a{color:#0000dd;} */
+		header{}
+		footer {margin:0px;padding:0px;width:250px;text-align:center;}
+		footer img {border-width: 0px;height:90px;}
+	</style>
+	</head>
+	<body>
+	<div class="wrapper">
+		<header>
+			<h1 class="header">RNFtools</h1>
+		
+			<ul>
+				<li class="download">
+					<a class="buttons" href="http://rnftools.rtfd.org">Documentation</a>
+				</li>
+				<li class="download">
+					<a class="buttons" href="http://karel-brinda.github.io/rnf-spec/RNF.pdf">RNF spec.</a>
+				</li>
+				<li class="download">
+					<a class="buttons" href="http://arxiv.org/abs/1504.00556">Publication</a>
+				</li>
+				<br />
+				<li class="download">
+					<a class="buttons" href="https://github.com/karel-brinda/rnftools">View On GitHub</a>
+				</li>
+				<li class="download">
+					<a class="buttons" href="https://github.com/karel-brinda/rnftools/issues/new">Report a bug</a>
+				</li>
+				<!--
+				<li class="download">
+					<a class="buttons" href="https://github.com/karel-brinda/rnftools/zipball/master">Download ZIP</a>
+				</li>
+				-->
+				<li class="download">
+					<a class="buttons" href="https://github.com/karel-brinda/rnftools/tarball/master">Download TAR</a>
+				</li>
+			</ul>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/karel-brinda">karel-brinda</a></p>
+		<!--
+		<p class="header">This project is maintained by <a class="header name" href="https://github.com/karel-brinda">karel-brinda</a></p>
+		-->
 
 
-      </header>
-      <section>
+		</header>
+		<section class="main_section">
 
-<h1>RNFtools</h1>
+			<h1>RNFtools</h1>
 
 <!--
 	========================================================
@@ -47,12 +76,11 @@ r<!doctype html>
 <p>
 	<strong>RNFtools</strong> is an associated software package for RNF based on <a href="https://bitbucket.org/johanneskoester/snakemake/wiki/Home">SnakeMake</a>.
 	<!-- To install it, a Unix-like system with Python 3.2+ is required. -->
-	A full documentation with tutorials is available on <a href="http://rnftools.rtfd.org">http://rnftools.rtfd.org</a>. It can be
-	easily installed using PIP by <br />
+	A full documentation with tutorials is available on <a href="http://rnftools.rtfd.org">http://rnftools.rtfd.org</a>. It works on any Unix-like OS with Python 3.2+. A preferred way of installation is using PIP: <br />
 	<code>&gt; pip install rnftools</code>
 	<br />
 	Source codes are available in its <a href="http://github.com/karel-brinda/rnftools/">GitHub repository</a>
-	and can be cloned by<br />
+	which can be cloned by<br />
 	<code>
 		&gt; git clone git://github.com/karel-brinda/rnftools
 	</code>
@@ -82,7 +110,7 @@ r<!doctype html>
 		<a href="http://www-igm.univ-mlv.fr/~koutcher/">G. Kucherov</a>.
 	-->
 	<a href="http://brinda.cz/publications/2015_RECOMB_RNF.pdf"><strong>RNF: a method and tools to evaluate NGS read mappers</strong></a>.
-	poster on <a href="http://recomb2015.pl">RECOMB 2015</a>.
+	Poster on <a href="http://www.recomb2015.pl">RECOMB 2015</a>.
 
 </ul>
 
@@ -121,12 +149,22 @@ r<!doctype html>
 <ul>
 <li>Karel Břinda, <a href="mailto:karel.brinda@univ-mlv.fr">karel.brinda@univ-mlv.fr</a></li>
 </ul>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+		</section>
+		<footer>
+			<a href="http://ligm.u-pem.fr/">
+				<img src="http://ligm.u-pem.fr/uploads/RTEmagicC_LIGM-200.png.png" />
+			</a>
+			<a href="http://www.curie.fr">
+				<img src="http://curie.fr/sites/default/files/logo_fr.png" />
+			</a>
+			<!--
+			<p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+			-->
+		</footer>
+	</div>
+	<!--[if !IE]><script>fixScale(document);</script><![endif]-->
 		
-  </body>
+
+	</body>
 </html>
