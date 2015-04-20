@@ -16,6 +16,8 @@ Every RNFtools script consists of three parts:
 
 .. literalinclude:: ../../examples/tutorial/01_first_snakefile/Snakefile
 	:language: python
+	:linenos:
+
 
 As it has been mentioned in comment, all your code must be inserted into part 2. Now save this file with name ``Snakefile`` and run
 
