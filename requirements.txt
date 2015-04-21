@@ -2,6 +2,7 @@ pysam
 pbr
 termcolor
 sphinxcontrib-napoleon
+sphinx_rtd_theme
 snakemake
 smbl
 

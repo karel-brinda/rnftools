@@ -4,8 +4,8 @@ Read simulation
 In this chapter we show how to simulate reads in basic simulation. For this task, component called MIShmash is used.
 
 
-Simple simulation
-"""""""""""""""""
+Basic example
+"""""""""""""
 
 First let us show how to simulate reads from a single genome (saved in a FASTA file) using a single simulator. Then a
 corresponding RNFtools configuration script can look as follows:
@@ -50,8 +50,6 @@ When you are changing the used simulator, be aware of these limitations:
 
 * CuReSim supports only "single-end reads".
 * ART Illumina in "paired-end" mode can simulate only reads of equal lengths.
-
-
 
 
 .. literalinclude:: ../../examples/tutorial/02_simulation/03_different_simulator/Snakefile
