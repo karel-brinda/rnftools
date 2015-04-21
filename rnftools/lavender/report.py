@@ -9,7 +9,18 @@ import os
 ##############
 ##############
 class Report:
-	"""Class for an entire report."""
+	"""Class for an entire report.		
+
+	Args:
+		name (str): Name of the report.
+		bam_dirs (str): Directories with BAM files.
+		allowed_delta (int): Tolerance of difference between positions in assessing correct alignments (very important parameter!).
+		default_x_run ((float,float)): Range for x-axis in GnuPlot plots.
+		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
+		default_pdf_size_cm ((float,float)): Size of PDF page.
+		default_svg_size_px ((int,int)): Size of SVG picture.
+	"""
+
 
 	def __init__(
 		self,
@@ -25,24 +36,6 @@ class Report:
 		default_x_axis="({m}+{w})/({M}+{m}+{w})",
 		default_x_label="FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  ",
 		):
-		"""
-
-		:param name: Name of the report.
-		:type  name: str
-		:param bam_dirs: Directories with BAM files.
-		:type  bam_dirs: list of str
-		:param allowed_delta: Tolerance of difference between positions in assessing correct alignments (very important parameter!).
-		:type  allowed_delta: int
-		:param default_x_run: Range for x-axis in GnuPlot plots.
-		:type  default_x_run: (float,float)
-		:param default_y_run: Range for y-axis in GnuPlot plots.
-		:type  default_y_run: (float,float)
-		:param default_pdf_size_cm: Size of PDF page.
-		:type  default_pdf_size_cm: (float,float)
-		:param default_svg_size_px: Size of SVG picture.
-		:type  default_svg_size_px: (int,int)
-
-		"""
 
 		rnftools.lavender.add_report(self)
 
@@ -118,6 +111,20 @@ class Report:
 				svg_size_px=None,
 				key_position="top left",
 			):
+		"""
+		Add a new graph to the overlap report.
+
+		Args:
+			y (str): Value plotted on y-axis.
+			x_label (str): Label on x-axis.
+			y_label (str): Label on y-axis.
+			title (str): Title of the plot.
+			x_run ((float,float)): x-range.
+			y_run ((int,int)): y-rang.
+			pdf_size_cm ((float,float)): Size of PDF image in cm.
+			svg_size_px ((int,int): Size of SVG image in pixels.
+			key_position (str): GnuPlot position of the legend.
+		"""
 
 		if x_run==None:
 			x_run=self.default_x_run

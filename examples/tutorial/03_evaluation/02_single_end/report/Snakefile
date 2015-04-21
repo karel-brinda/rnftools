@@ -1,0 +1,12 @@
+import rnftools
+
+rnftools.lavender.Report(
+	bam_dirs=["../bams"],
+	name="report_SE",
+	keep_intermediate_files=True,
+	allowed_delta=5,
+)
+
+rule all: input: rnftools.input()
+
+include: rnftools.include()

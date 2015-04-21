@@ -19,10 +19,10 @@ class Sample:
 			self._mode="single-end"
 		elif self._reads_in_tuple==2 and self._pair_end_mode=="bwa":
 			self._fq_fns=[self._name+".1.fq",self._name+".2.fq"]
-			self._mode="pair-end-bwa"
+			self._mode="paired-end-bwa"
 		elif self._reads_in_tuple==2 and self._pair_end_mode=="bfast":
 			self._fq_fns=[self._name+".fq"]
-			self._mode="pair-end-bfast"
+			self._mode="paired-end-bfast"
 
 		rnftools.mishmash.add_sample(self)
 

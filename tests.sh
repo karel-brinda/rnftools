@@ -42,6 +42,30 @@ echo
 				)
 			done
 		)
+	done
 
+	for e in examples/tutorial/03_evaluation; do
+		(
+			cd "$e"
+
+			for d in *; do
+				(
+					echo "--------------------------------------------------------------------"
+					echo
+					echo "                 TEST: $d"
+					echo
+					echo "--------------------------------------------------------------------"
+
+
+					cd "$d"
+					(
+						cd bams && snakemake -p --cores
+					)
+					(
+						cd report && snakemake -p --cores
+					)
+				)
+			done
+		)
 	done
 )

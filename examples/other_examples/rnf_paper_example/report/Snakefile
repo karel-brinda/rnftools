@@ -1,0 +1,50 @@
+import rnftools
+
+
+a=rnftools.lavender.Report(
+	bam_dirs=["../bams"],
+	name="report_paper",
+	default_y_run=(0,100),
+	#default_x_run=(0.0001,1.0),
+	default_x_run=(0.005,.5),
+	keep_intermediate_files=True,
+)
+
+a.add_graph(
+	"{M}/({M}+{m}+{w}+{P}+{x})",
+	title="Correctly mapped reads in all mapped reads",
+	y_label="#correctly mapped reads / #mapped reads",
+	y_run=(85,100),
+	x_run=(0.0001,1.0),
+)
+
+a.add_graph(
+	"{M}/({M}+{w}+{x}+{u}+{t}+{P})",
+	title="Correctly mapped reads in all reads which should be mapped",
+	y_label="#correctly mapped reads / #reads which should be mapped",
+	y_run=(50,100),
+	x_run=(0.0001,1.0),
+)
+
+a.add_graph(
+	"({U}+{T})/({u}+{U}+{t}+{T})",
+	title="Correctly unmapped reads in all unmapped reads",
+	y_label="#correctly unmapped reads / #unmapped reads",
+	y_run=(60,100),
+	x_run=(0.0001,1.0),
+)
+
+a.add_graph(
+	"({U}+{T})/({U}+{T}+{m})",
+	title="Correctly unmapped reads in all reads which should be unmapped",
+	y_label="#correctly unmapped reads / #reads which should be unmapped",
+	y_run=(90,100),
+	x_run=(0.0001,1.0),
+)
+
+
+
+rule all: input: rnftools.input()
+
+include: rnftools.include()
+

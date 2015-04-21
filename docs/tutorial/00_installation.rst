@@ -2,13 +2,35 @@ Installation
 ------------
 
 Requirements
-""""""""""""
+^^^^^^^^^^^^
+
+Requirements for basic installation of RNFtools.
 
 * Unix-like operating system (Linux, MacOS, etc.).
-* `Python`_ 3.2+. If not installed yet, download it from https://www.python.org/downloads/. This minimum version is required by `SnakeMake`_ on which RNFtools are based.
+* `Python`_ 3.2+.
+
+	* If not installed yet, it can be downloaded it from https://www.python.org/downloads/.
+
+Additional requirements
+"""""""""""""""""""""""
+
+RNFtools is installing all required programs on fly when requisted. Some needed libraries are required for successful compilation. If some of the libraries is missing, a problem will not occur during installation of RNFtools but during execution of RNFtools scripts.
+
+**On Linux**
+
+* *GCC 4.7+*
+* *zlib* library.
+
+**On OSX**
+
+* *XCode*.
+* *pdflib* library. It can be installed by ``brew install pdflib-lite``.
+    
+	* RNFtools use PNG and PDF GnuPlot terminals which cannot compiled without this library. 
+
 
 Installation using PIP
-""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^
 
 On most of machines, RNFtools can be installed using `PIP`_ by 
 
@@ -26,7 +48,7 @@ Upgrade to the newest version can be done by `PIP`_, too.
 
 
 Installation using Easy Install
-"""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can install RNFtools also using `Easy Install`_:
 
@@ -36,7 +58,7 @@ You can install RNFtools also using `Easy Install`_:
 
 
 Installation from GIT
-"""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^
 
 If you want to install RNFtools directly from `GIT repository`_, enter these commands:
 
@@ -45,6 +67,7 @@ If you want to install RNFtools directly from `GIT repository`_, enter these com
 	git clone git://github.com/karel-brinda/rnftools
 	cd rnftools
 	./install.sh
+
 
 .. _Python: http://python.org
 .. _Anaconda: http://continuum.io/downloads

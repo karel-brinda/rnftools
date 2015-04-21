@@ -1,0 +1,40 @@
+import smbl
+import rnftools
+
+# CONFIGURATION
+
+reference = smbl.fasta.EXAMPLE_1
+reads = "reads.fq"
+
+# READ SIMULATION
+
+rnftools.mishmash.sample(reads[:-3],reads_in_tuple=1)
+
+rnftools.mishmash.DwgSim(
+	fasta=reference,
+	read_length_1=100,
+	read_length_2=0,
+	number_of_read_tuples=10000
+)
+
+# ALIGNMENTS
+
+alignments = [
+		smbl.prog.BwaMem(
+			fasta=reference,
+			fastq_1=reads,
+			bam="BWA-MEM.bam",
+		),
+
+		smbl.prog.Yara(
+			fasta=reference,
+			fastq_1=reads,
+			bam="YARA.bam",
+		),
+	]
+
+
+# SNAKEMAKE RULES
+
+rule basic:	input: [aln.bam_fn() for aln in alignments]
+include: rnftools.include()

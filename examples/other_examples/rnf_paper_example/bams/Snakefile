@@ -1,0 +1,99 @@
+import smbl
+import rnftools
+
+
+##
+
+reference_basic_1   = smbl.fasta.HUMAN_HG38
+reference_contam_1  = smbl.fasta.MOUSE_MM10
+
+#reference_basic_2   = smbl.fasta.EXAMPLE_1
+#reference_contam_2  = smbl.fasta.EXAMPLE_2
+
+##
+
+reads_1 = "reads_1.fq"
+#reads_2 = "reads_2.fq"
+
+#
+# READS
+#
+
+# sample 1
+
+rnftools.mishmash.sample(reads_1[:-3],reads_in_tuple=1)
+
+rnftools.mishmash.DwgSim(
+	fasta=reference_basic_1,
+	read_length_1=100,
+	read_length_2=0,
+	number_of_read_tuples=100000,
+)
+
+
+rnftools.mishmash.DwgSim(
+	fasta=reference_contam_1,
+	read_length_1=100,
+	read_length_2=0,
+	number_of_read_tuples=100000,
+)
+
+
+# sample 2
+
+#rnftools.mishmash.sample(reads_2[:-3],reads_in_tuple=1)
+#
+#rnftools.mishmash.DwgSim(
+#	fa=reference_basic_2,
+#	read_length_1=100,
+#	read_length_2=0,
+#	number_of_reads=10000
+#)
+#
+#
+#rnftools.mishmash.DwgSim(
+#	fa=reference_contam_2,
+#	read_length_1=100,
+#	read_length_2=0,
+#	number_of_reads=2000
+#)
+
+
+#
+# ALIGNMENT
+#
+
+alignments = [
+		smbl.prog.BwaMem(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="BWA-MEM.bam",
+		),
+		smbl.prog.BwaSw(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="BWA-SW.bam",
+		),
+		smbl.prog.Bowtie2(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="Bowtie2.bam",
+		),
+		smbl.prog.Yara(
+			fasta=reference_basic_1,
+			fastq_1=reads_1,
+			bam="YARA.bam",
+		),
+	]
+
+#
+# RULES
+#
+
+# required final files
+
+rule basic:
+	input:
+		[aln.bam_fn() for aln in alignments]
+
+include: rnftools.include()
