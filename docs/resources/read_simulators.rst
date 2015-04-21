@@ -1,5 +1,7 @@
 List of read simulators
-^^^^^^^^^^^^^^^^^^^^^^^
+=======================
+
+Here we provide list of existing read simulators with additional information. Only several of them are supported by RNFtools.
 
 ART
 ~~~
@@ -41,8 +43,7 @@ DwgSim
 | URL:         | http://github.com/nh13/dwgsim                                           |
 +--------------+-------------------------------------------------------------------------+
 
-Format of read names
-""""""""""""""""""""
+**Format of read names**
 
 .. code-block::
 

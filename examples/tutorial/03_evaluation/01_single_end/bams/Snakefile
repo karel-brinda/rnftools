@@ -84,11 +84,11 @@ alignments = [
 			bam="Bowtie2.bam",
 		),
 
-		smbl.prog.Storm(
-			fasta=reference_basic_2,
-			fastq_1=reads_2,
-			bam="SToRM.bam",
-		),
+		#smbl.prog.Storm(
+		#	fasta=reference_basic_2,
+		#	fastq_1=reads_2,
+		#	bam="SToRM.bam",
+		#),
 
 		smbl.prog.RazerS3(
 			fasta=reference_basic_2,
