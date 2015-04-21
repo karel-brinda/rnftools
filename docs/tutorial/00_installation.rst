@@ -4,27 +4,24 @@ Installation
 Requirements
 ^^^^^^^^^^^^
 
-Basic requirements
-""""""""""""""""""
-
 Requirements for basic installation of RNFtools.
 
 * Unix-like operating system (Linux, MacOS, etc.).
 * `Python`_ 3.2+.
 
-	* If not installed yet, download it from https://www.python.org/downloads/. This minimum version is required by `SnakeMake`_, a heart of RNFtools.
+	* If not installed yet, it can be downloaded it from https://www.python.org/downloads/.
 
 Additional requirements
 """""""""""""""""""""""
 
 RNFtools is installing all required programs on fly when requisted. Some needed libraries are required for successful compilation. If some of the libraries is missing, a problem will not occur during installation of RNFtools but during execution of RNFtools scripts.
 
-**Linux**
+**On Linux**
 
 * *GCC 4.7+*
 * *zlib* library.
 
-**OSX**
+**On OSX**
 
 * *XCode*.
 * *pdflib* library. It can be installed by ``brew install pdflib-lite``.

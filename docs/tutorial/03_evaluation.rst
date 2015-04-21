@@ -55,6 +55,6 @@ First, you can change default values for the basic graphs:
 * label of x-axis (``default_x_label``)
 * values on x-axis (``default_x_axis``).
 
-Then you can add your own graphs using 
+Then you can add your own graphs using ``rnftools.lavender.Report.add_graph`` method.
 
 

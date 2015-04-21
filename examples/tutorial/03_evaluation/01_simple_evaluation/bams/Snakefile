@@ -4,7 +4,7 @@ import rnftools
 # CONFIGURATION
 
 reference = smbl.fasta.EXAMPLE_1
-reads = "reads_1.fq"
+reads = "reads.fq"
 
 # READ SIMULATION
 
@@ -17,7 +17,7 @@ rnftools.mishmash.DwgSim(
 	number_of_read_tuples=10000
 )
 
-# ALIGNMENT
+# ALIGNMENTS
 
 alignments = [
 		smbl.prog.BwaMem(
@@ -29,7 +29,7 @@ alignments = [
 		smbl.prog.Yara(
 			fasta=reference,
 			fastq_1=reads,
-			bam="Yara.bam",
+			bam="YARA.bam",
 		),
 	]
 

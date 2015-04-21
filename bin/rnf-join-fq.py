@@ -10,8 +10,8 @@ READS_IN_GROUP=10
 
 allowed_modes = [
 			"single-end",
-			"pair-end-bwa",
-			"pair-end-bfast",
+			"paired-end-bwa",
+			"paired-end-bfast",
 		]
 
 class Mixer:
@@ -39,10 +39,10 @@ class Mixer:
 		if args.m=="single-end":
 			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=1,read_id_length=read_id_length_est)
 			self._reads_in_tuple=1
-		elif args.m=="pair-end-bwa":
+		elif args.m=="paired-end-bwa":
 			self.output=Output(fn_1="{}.1.fq".format(output_prefix),fn_2="{}.2.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
 			self._reads_in_tuple=2
-		elif args.m=="pair-end-bfast":
+		elif args.m=="paired-end-bfast":
 			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
 			self._reads_in_tuple=2
 		else:
@@ -113,7 +113,13 @@ class Output:
 		self.fs[file_id].write("".join([ln1,os.linesep,ln2,os.linesep,ln3,os.linesep,ln4,os.linesep]))
 
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(
+			description="Join FASTQ files with reads in RNF format.",
+			epilog="Source FASTQ files should satisfy the following conditions:"
+					" 1) Each file contains only reads corresponding to one genome (with the same genome id)."
+					" 2) All files contain reads of the same type (single-end / paired-end)."
+					" 3) Reads with more reads per tuple (e.g., paired-end) have '/1', etc. in suffix (for identification of nb of read)."
+		)
 
 parser.add_argument(
 		'-i',
@@ -129,7 +135,7 @@ parser.add_argument(
 		metavar='mode',
 		choices=allowed_modes,
 		#type=lambda x: is_valid_mode(parser,x),
-		help='mode',
+		help='mode for joining files (single-end / paired-end-bwa / paired-end-bfast)',
 	)
 
 
