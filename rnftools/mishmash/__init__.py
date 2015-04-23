@@ -5,6 +5,7 @@ from .sample import *
 from ._source import *
 
 from .artIllumina import *
+from .masonIllumina import *
 from .cuReSim import *
 from .dwgSim import *
 from .wgSim import *
@@ -15,6 +16,7 @@ __all__=[
 	"ArtIllumina",
 	"CuReSim",
 	"DwgSim",
+	"MasonIllumina",
 	"WgSim",
 ]
 

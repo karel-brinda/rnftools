@@ -36,5 +36,6 @@ alignments = [
 
 # SNAKEMAKE RULES
 
-rule basic:	input: [aln.bam_fn() for aln in alignments]
+rule basic:
+	input: [aln.bam_fn() for aln in alignments]
 include: rnftools.include()
