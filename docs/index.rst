@@ -1,15 +1,12 @@
 RNFtools manual
 ===============
 
-This is the manual of RNFtools, an associate software package for Read Naming Format (RNF).
-RNF specification and other information can be found on http://karel-brinda.github.io/rnftools/.
+This is the manual of RNFtools, an associate software package for **Read Naming Format** (RNF). RNF specification and other information about this format and software package can be found on http://karel-brinda.github.io/rnftools/.
 
-**Contact:** karel.brinda@univ-mlv.fr
+.. admonition:: Publication
+	:class: error
 
-Publication
------------
-
-* \K. Břinda, V. Boeva, G. Kucherov. **RNF: a general framework to evaluate NGS read mappers**. `arXiv:1504.00556`_ [q-bio.GN], 2015.
+	K. Břinda, V. Boeva, G. Kucherov. **RNF: a general framework to evaluate NGS read mappers**. `arXiv:1504.00556`_ [q-bio.GN], 2015.
 
 .. _`arXiv:1504.00556`: http://arxiv.org/pdf/1504.00556.pdf
 
