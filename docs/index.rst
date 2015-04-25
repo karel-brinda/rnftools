@@ -29,7 +29,7 @@ Table of contents
 -----------------
 
 :ref:`introduction`
-	Basic introduction about RNFtools.
+	Introduction to RNFtools.
 
 :ref:`tutorial`
 	Tutorials demonstrating installation and basic usage of RNFtools.
@@ -37,8 +37,8 @@ Table of contents
 :ref:`reference`
 	Automatically generated documentation for RNFtools.
 
-:ref:`resources`
- 	FAQs and other additional resources of information.
+:ref:`other_information`
+ 	FAQs and other information about RNFtools and read simulators in general.
 
 
 .. toctree::
@@ -49,4 +49,4 @@ Table of contents
 	getting_started
 	tutorial
 	reference
-	resources
+	other_information
