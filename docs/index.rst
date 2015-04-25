@@ -15,6 +15,7 @@ Links
 `RNF specification`_ - 
 `GitHub repository`_ -
 `Bug reporting`_ -
+`Mailing list`_ -
 `Contact`_ 
 
 .. _`arXiv:1504.00556`: http://arxiv.org/pdf/1504.00556.pdf
@@ -22,6 +23,7 @@ Links
 .. _`RNF specification`: http://karel-brinda.github.io/rnf-spec/RNF.pdf
 .. _`GitHub repository`: http://github.com/karel-brinda/rnftools
 .. _`Bug reporting`: http://github.com/karel-brinda/rnftools/issues
+.. _`Mailing list`: http://groups.google.com/group/rnftools
 .. _`Contact`: karel.brinda@univ-mlv.fr
 
 

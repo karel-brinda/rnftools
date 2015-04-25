@@ -1,13 +1,18 @@
 .. _list-of-read-simulators:
 
 
-List of read simulators
-=======================
+Exhaustive list of read simulators
+==================================
 
-Here we provide list of existing read simulators with additional information. Only several of them are supported by RNFtools.
+Here we provide an exhaustive list of existing read simulators in alphabetical order with additional information. Only several of them are supported by :ref:`MIShmash`.
 
-ART
+.. contents::
+   :depth: 3
+
+
+Art
 ~~~
+
 
 +--------------+-------------------------------------------------------------------------+
 | Author:      | Weichun Huang                                                           |
@@ -70,7 +75,7 @@ DwgSim
 
 
 
-FASTQSim
+FastqSim
 ~~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -86,7 +91,7 @@ FASTQSim
 
 
 
-FlowSIM
+FlowSim
 ~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -102,7 +107,7 @@ FlowSIM
 
 
 
-GemSIM
+GemSim
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -134,7 +139,7 @@ Mason
 
 
 
-PbSIM
+PbSim
 ~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -149,7 +154,7 @@ PbSIM
 
 
 
-pIRS
+Pirs
 ~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -176,7 +181,7 @@ Sherman
 
 
 
-SimNGS
+SimNgs
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -187,7 +192,7 @@ SimNGS
 
 
 
-SimSEQ
+SimSeq
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+

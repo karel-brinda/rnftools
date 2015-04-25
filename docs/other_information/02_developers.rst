@@ -1,49 +1,36 @@
 Information for developers
 ==========================
 
-Do you develop bioinformatics software? Here you will find how RNF and RNFtools
-can be useful.
+Do you develop bioinformatics software? Here you will find how RNF and RNFtools can be useful for you .
+
+.. contents::
+   :depth: 3
 
 
-\... of mappers of NGS reads
-----------------------------
+Do you develop a **read mapper**?
+---------------------------------
 
-RNFtools can help you to debug your tool. You can simulate reads using MIShmash,
-map them using your mapper, and then evaluate it using LAVEnder.
+RNFtools can help you to debug your mapper. You can: 
 
-Then you can modify parameters for the simulator and also for your mapper and
-observe how these changes affect sensitivity and precision of mapping.
+* Find reads which were not aligned correctly (when tuning your algorithm).
+* Test how successful your mapper is in dependence on parameters of simulation (error rate, etc.).
+* Test if contamination reads are well detected and staying really unaligned.
+* Test which impact have pre- and post-processing tools (such as read clustering tools or re-alignment tools) in combination with you mapper.
 
-Then you can also easily swithc between the supported read simulators. It can be
-contributive since different simulators can simulate different artefacts in data.
-
-In similar way, RNFtools can be used for testing of pre-processing and
-post-processing NGS tools (such as read clustering tools or re-alignment tools).
+First you can start with some simple simulator (e.g., WgSim) for basic tests and later easily switch to more realistic simulations with ART of Mason.
 
 
-\... of simulators of NGS reads
--------------------------------
+Do you develop a **read simulator**?
+------------------------------------
 
-Even though MIShmash currently supports several simulators, it is much better when
-a tool supports the RNF naming convention implicitely. Usually, simulators do not
-save as much information as it is saved by RNF, hence MIShmash must sometimes estimate
-some of these values values. Therefore, direct support in a read simulator implies higher
-precision in the forthcoming analysis. It also increases usability of your software.
+Even though MIShmash currently supports several simulators, implicit support of RNF in simulators is preferable. Usually, simulators do not save as much information as RNF does, hence MIShmash must sometimes estimate some of these unknown values which brings noise into data. Direct support of RNF support in simulators would imply higher precision in the forthcoming analysis as well as better usability of your software.
 
-Adding support for RNF into your simulator is a simple step since the format is easy
-to adopt. For existing software, it is suggested to add an extra parameter which
-switches from the default naming convention to RNF.
+Adding support for RNF into your simulator is a simple step since the format is easy to adopt. For existing software, we recommend to add an extra parameter switching internal naming procedure to RNF.
 
-RNFtools can also help you to debug your simulator. You can easily switch from your
-simulator to another and compare results. When the parameters are similar, also the 
-obtained results should be similar. You can also find many problems using
-mappers -- by comparing if the mappers really do map the reads to the expected
-positions. E.g., many reads are shifted by two positions, there is probably a bug
-inside.
+RNFtools can also help you to debug your simulator. Switching between your simulator and another one, you can check if obtained results are similar as they should be. If not, you might have bugs in your code (such as coordinates of simulation are incorrectly shifted by few positions, etc.).
 
 
-\... of evaluators of read mappers
-----------------------------------
+Do you develop an **evaluation tool for read mappers**?
+-------------------------------------------------------
 
-RNF enables you writing a universal evaluation tool, compatible with any RNF-compatible read
-simulator and any simulator supported by MIShmash.
+RNF enables you writing a universal evaluation tool, compatible with all RNF-compatible read simulators and all simulators supported by MIShmash.
