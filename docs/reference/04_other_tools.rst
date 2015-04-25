@@ -1,3 +1,5 @@
+.. _`other-tools`:
+
 Other tools
 ===========
 

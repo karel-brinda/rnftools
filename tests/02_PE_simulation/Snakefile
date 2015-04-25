@@ -1,0 +1,35 @@
+import rnftools
+import smbl
+
+rnftools.mishmash.sample("test_pe",reads_in_tuple=2)
+
+rnftools.mishmash.ArtIllumina(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=100,
+)
+
+rnftools.mishmash.DwgSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=150,
+)
+
+rnftools.mishmash.MasonIllumina(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=100,
+)
+
+rnftools.mishmash.WgSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=150,
+)
+
+include: rnftools.include()
+rule: input: rnftools.input()

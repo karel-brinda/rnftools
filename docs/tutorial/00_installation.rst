@@ -4,17 +4,15 @@ Installation
 Requirements
 ^^^^^^^^^^^^
 
-Requirements for basic installation of RNFtools.
+Requirements for basic installation of RNFtools are:
 
 * Unix-like operating system (Linux, MacOS, etc.).
 * `Python`_ 3.2+.
 
-	* If not installed yet, it can be downloaded it from https://www.python.org/downloads/.
-
 Additional requirements
 """""""""""""""""""""""
 
-RNFtools is installing all required programs on fly when requisted. Some needed libraries are required for successful compilation. If some of the libraries is missing, a problem will not occur during installation of RNFtools but during execution of RNFtools scripts.
+RNFtools installs all required programs on fly when they are requested. However, some libraries are required for successful compilation and if a required library is missing, a problem will not occur during installation of RNFtools but during execution of RNFtools scripts.
 
 **On Linux**
 
@@ -25,8 +23,6 @@ RNFtools is installing all required programs on fly when requisted. Some needed 
 
 * *XCode*.
 * *pdflib* library. It can be installed by ``brew install pdflib-lite``.
-    
-	* RNFtools use PNG and PDF GnuPlot terminals which cannot compiled without this library. 
 
 
 Installation using PIP
@@ -38,9 +34,9 @@ On most of machines, RNFtools can be installed using `PIP`_ by
 	
 	pip install rnftools
 
-If this command does not work, check if PIP3 is installed in your system (the command may have a slightly different name, e.g., ``pip3``, ``pip-3``, ``pip3.4``, ``pip-3.4``). If not, install PIP by instructions on https://pip.pypa.io/en/latest/installing.html and repeat the previous step.
+If this command does not work, check if PIP3 is installed in your system (the command may have a slightly different name, e.g., ``pip3``, ``pip-3``, ``pip3.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_.
 
-Upgrade to the newest version can be done by `PIP`_, too.
+Upgrade to the newest version can be done also using `PIP`_.
 
 .. code-block:: bash
 
@@ -69,7 +65,8 @@ If you want to install RNFtools directly from `GIT repository`_, enter these com
 	./install.sh
 
 
-.. _Python: http://python.org
+.. _`official instructions`: https://pip.pypa.io/en/latest/installing.html
+.. _Python: https://www.python.org/downloads/
 .. _Anaconda: http://continuum.io/downloads
 .. _SnakeMake: http://bitbucket.org/johanneskoester/snakemake/
 .. _PIP: http://pip.pypa.io/en/latest/installing.html

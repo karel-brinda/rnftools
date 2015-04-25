@@ -46,7 +46,7 @@ For every BAM file, the following files are created.
 Adjusting plotted graphs
 """"""""""""""""""""""""
 
-For details about adjusting graphs, please see Reference/LAVEnder.
+For details about adjusting graphs, please see :ref:`lavender`.
 
 First, you can change default values for the basic graphs:
 

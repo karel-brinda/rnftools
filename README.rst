@@ -8,7 +8,9 @@ RNFtools
 	:target: http://rnftools.rtfd.org
 
 
-All documentation is available on http://rnftools.rtfd.org.
+**Web:** http://karel-brinda.github.io/rnftools/
+
+**Documentation:** http://rnftools.rtfd.org.
 
 
 Installation

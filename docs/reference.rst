@@ -3,7 +3,7 @@
 Reference
 ---------
 
-After reading the Tutorial we recommend to read some of the following HowTos:
+Here you can find an automatically generated reference for all components of RNFtools.
 
 .. toctree::
    :glob:

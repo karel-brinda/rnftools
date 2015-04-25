@@ -1,10 +1,18 @@
-List of read simulators
-=======================
+.. _list-of-read-simulators:
 
-Here we provide list of existing read simulators with additional information. Only several of them are supported by RNFtools.
 
-ART
+Exhaustive list of read simulators
+==================================
+
+Here we provide an exhaustive list of existing read simulators in alphabetical order with additional information. Only several of them are supported by :ref:`MIShmash`.
+
+.. contents::
+   :depth: 3
+
+
+Art
 ~~~
+
 
 +--------------+-------------------------------------------------------------------------+
 | Author:      | Weichun Huang                                                           |
@@ -45,9 +53,9 @@ DwgSim
 
 **Format of read names**
 
-.. code-block::
+	.. code-block:: text
 
-	(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)
+		(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)
 
 
 1)  contig name (chromsome name)
@@ -67,7 +75,7 @@ DwgSim
 
 
 
-FASTQSim
+FastqSim
 ~~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -83,7 +91,7 @@ FASTQSim
 
 
 
-FlowSIM
+FlowSim
 ~~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -99,7 +107,7 @@ FlowSIM
 
 
 
-GemSIM
+GemSim
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -131,7 +139,7 @@ Mason
 
 
 
-PbSIM
+PbSim
 ~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -146,7 +154,7 @@ PbSIM
 
 
 
-pIRS
+Pirs
 ~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -173,7 +181,7 @@ Sherman
 
 
 
-SimNGS
+SimNgs
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+
@@ -184,7 +192,7 @@ SimNGS
 
 
 
-SimSEQ
+SimSeq
 ~~~~~~
 
 +--------------+-------------------------------------------------------------------------+

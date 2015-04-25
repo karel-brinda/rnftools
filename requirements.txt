@@ -3,6 +3,6 @@ pbr
 termcolor
 sphinxcontrib-napoleon
 sphinx_rtd_theme
-snakemake
-smbl
+snakemake>=3.2.2
+smbl>=0.1.1.post20
 
