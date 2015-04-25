@@ -1,0 +1,17 @@
+*.html
+*.fq
+*.fastq
+*.fa
+*.fasta
+*.vcf
+*.gz
+*.mir
+*.mis
+*.bam
+*.sam
+*.png
+*.pdf
+*.svg
+*.roc
+*.gp
+*.txt

@@ -12,6 +12,45 @@ echo "===================================================================="
 echo
 echo
 echo
+echo "                 TESTS: basic tests"
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+
+(
+	set -e -o pipefail; 
+
+	for e in tests/*; do
+		(
+			cd "$e"
+
+			echo "--------------------------------------------------------------------"
+			echo
+			echo "                 TEST: $e"
+			echo
+			echo "--------------------------------------------------------------------"
+
+
+			snakemake -p --cores
+		)
+	done
+)
+
+
+echo
+echo
+echo
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
 echo "                 TESTS: tutorial examples"
 echo
 echo
