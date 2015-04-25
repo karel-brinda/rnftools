@@ -26,7 +26,7 @@ An example of a reference is downloaded. Finally reads are simulated and you obt
 
 All programs were installed into ``~/.smbl/bin/`` and the example of a FASTA file to ``~/.smbl/fa/``. These are default output directories for the SMBL library.
 
-RNFtools can work with more read simulators and usage of all of them is very similar. However there exist some differences between their interfaces. Full documentation of simulators with all parameters is available in Reference/MIShmash.
+RNFtools can work with more read simulators and usage of all of them is very similar. However there exist some differences between their interfaces. Full documentation of simulators with all parameters is available on the page :ref:`mishmash`.
 
 
 Simulation of 'paired-end' reads

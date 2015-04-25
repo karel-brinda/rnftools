@@ -1,29 +1,30 @@
+.. _rnf:
+
 RNF format library
 ==================
 
+Read tuple: ``rnftools.rnfformat.ReadTuple``
+--------------------------------------------
 
-Read tuple
-----------
-
-.. autoclass:: rnftools.rnfformat.ReadTuple
+.. autoclass:: rnftools.rnfformat.readTuple.ReadTuple
         :members:
         :inherited-members:
         :show-inheritance:
 
 
-Segment
--------
+Segment: ``rnftools.rnfformat.Segment``
+---------------------------------------
 
-.. autoclass:: rnftools.rnfformat.Segment
+.. autoclass:: rnftools.rnfformat.segment.Segment
         :members:
         :inherited-members:
         :show-inheritance:
 
 
-Read name formatter
--------------------
+Read name formatter: ``rnftools.rnfformat.RnFormatter``
+-------------------------------------------------------
 
-.. autoclass:: rnftools.rnfformat.RnFormatter
+.. autoclass:: rnftools.rnfformat.formatter.RnFormatter
         :members:
         :inherited-members:
         :show-inheritance:

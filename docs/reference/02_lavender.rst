@@ -1,3 +1,5 @@
+.. _lavender:
+
 LAVEnder
 ========
 
@@ -5,28 +7,28 @@ LAVEnder
    :depth: 2
 
 
-Report class
-------------
+Report class: ``rnftools.lavender.Report``
+------------------------------------------
 
-.. autoclass:: rnftools.lavender.Report
+.. autoclass:: rnftools.lavender.report.Report
 	:members:
 	:inherited-members:
 	:show-inheritance:
 
 
-Panel class
------------
+Panel class: ``rnftools.lavender.Panel``
+----------------------------------------
 
-.. autoclass:: rnftools.lavender.Panel
+.. autoclass:: rnftools.lavender.panel.Panel
 	:members:
 	:inherited-members:
 	:show-inheritance:
 
 
-BAM class
----------
+BAM class: ``rnftools.lavender.Bam``
+------------------------------------
 
-.. autoclass:: rnftools.lavender.Bam
+.. autoclass:: rnftools.lavender.bam.Bam
 	:members:
 	:inherited-members:
 	:show-inheritance:

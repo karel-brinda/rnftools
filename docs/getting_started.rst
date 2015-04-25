@@ -24,7 +24,7 @@ RNFtools have few unique features:
 How to start with RNFtools
 --------------------------
 
-First we recommend to start with `tutorial`_ which demonstrates how to install RNFtools and how to use it. If anything is not clear, please look into `FAQ`_ if the answer already exists. If not, use the RNFtools mailing list. 
+First we recommend to start with :ref:`tutorial` which demonstrates how to install RNFtools and how to use it. If anything is not clear, please look into :ref:`FAQ` if the answer already exists. If not, use the RNFtools mailing list. 
 
 
 Have you found a bug?
