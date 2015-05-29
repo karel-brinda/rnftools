@@ -11,7 +11,22 @@ import glob
 #############
 #############
 class Panel:
-	"""Class for a single panel in a HTML report."""
+	"""Class for a single panel in a HTML report.
+
+	Args:
+		report (rnftools.lavender.Report): The owner report.
+		bam_dir (str): Directory to the BAM files for this panel.
+		panel_dir (str): Directory with auxiliary files for this panel.
+		name (str): Name of the panel.
+		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
+		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
+		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
+		default_x_label (str): Label on x-axis.
+	
+	Raises:
+		ValueError
+
+	"""
 
 	def __init__(self,
 			report,
@@ -25,15 +40,6 @@ class Panel:
 		):
 		"""
 
-		:param report: The owner (report).
-		:type  report: str
-		:param bam_dir: Directory to the BAM files.
-		:type  bam_dir: str
-		:param panel_dir: Directory with panel's auxiliary files.
-		:type  panel_dir: str
-		:param name: Name of the panel.
-		:type  name: str
-		:raises: ValueError
 
 		"""
 		self.report=report

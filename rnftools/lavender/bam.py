@@ -17,7 +17,18 @@ MAXIMAL_MAPPING_QUALITY=255
 ###########
 ###########
 class Bam:
-	"""Class for a single BAM file."""
+	"""Class for a single BAM file.
+
+	Args:
+		panel (rnftools.lavender.Panel): Panel containing this BAM file.
+		bam_fn (str): BAM filename.
+		name (str): Name for this report.
+		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
+		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
+		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
+		default_x_label (str): Label on x-axis.
+
+	"""
 
 	def __init__(self,
 				panel,
@@ -28,16 +39,6 @@ class Bam:
 				default_x_axis,
 				default_x_label,
 			):
-		"""
-
-		:param panel: Panel containing this BAM file.
-		:type  panel: rnftools.lavender.Panel
-		:param bam_fn: BAM filename.
-		:type  bam_fn: str
-		:param name: Name for this report.
-		:type  name: str
-
-		"""
 
 		self.panel=panel
 		self.report=panel.get_report()

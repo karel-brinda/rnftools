@@ -7,6 +7,15 @@ import re
 import os
 
 class Sample:
+	"""Class for a sample to be simulated.
+
+	Args:
+		name (str): Name of the sample.
+		reads_in_tuple (int): Number of subreads in a read tuple.
+		paired_end_mode (str): Mode for output files ("bwa" or "bfast").
+	"""
+
+
 	def __init__(self, name, reads_in_tuple, paired_end_mode="bwa"):
 		self._name=name
 		self._sources=[]

@@ -14,11 +14,15 @@ class Report:
 	Args:
 		name (str): Name of the report.
 		bam_dirs (str): Directories with BAM files.
-		allowed_delta (int): Tolerance of difference between positions in assessing correct alignments (very important parameter!).
+		allowed_delta (int): Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!).
 		default_x_run ((float,float)): Range for x-axis in GnuPlot plots.
 		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
 		default_pdf_size_cm ((float,float)): Size of PDF page.
 		default_svg_size_px ((int,int)): Size of SVG picture.
+		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
+		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
+		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
+		default_x_label (str): Label on x-axis.
 	"""
 
 
