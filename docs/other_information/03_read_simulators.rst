@@ -244,15 +244,16 @@ WgSim
 		(.*)_([0-9]+)_([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9a-f]+)/([12])
 
 
-1)  contig name (chromosome name)
-2)  start end 1 (one-based)
-3)  end end 2 (one-based)
-4)  number of errors end 1
-5)  number of substitutions end 1
-6)  number of indels end 1
-5)  number of errors end 2
-6)  number of substitutions end 2
-7)  number of indels end 2
+
+1) contig name (chromosome name)
+2) start end 1 (one-based)
+3) end end 2 (one-based)
+4) number of errors end 1
+5) number of substitutions end 1 
+6) number of indels end 1
+7) number of errors end 2
+8) number of substitutions end 2
+9) number of indels end 2
 10) id
 11) pair
 
