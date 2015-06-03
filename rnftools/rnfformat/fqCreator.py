@@ -46,6 +46,7 @@ class FqCreator:
 	def flush_read_tuple(self):
 		"""Flush the internal buffer of reads.
 		"""
+		#print("flush")
 		suffix_comment_buffer=[]
 		if self._info_simulator is not None:
 			suffix_comment_buffer.append(self._info_simulator)
@@ -115,49 +116,3 @@ class FqCreator:
 		self.seqs_bases.append(bases)
 		self.seqs_qualities.append(qualities)
 		self.segments.extend(segments)
-
-#
-#	def _fq_buffer(self,read_tuple_id,segments_buffer,sequences_buffer,rn_formatter,simulator_name=""):
-#		"""From local buffers, create FASTQ string.
-#
-#		Args:
-#			read_tuple_id (int): ID of read tuple.
-#			segments_buffer(list of rnftools.rnfformat.Segment): Buffer of segments.
-#			sequences_buffer(list of (bases,qualities)):  Buffer of sequences.
-#			rn_formatter (rnftools.rnfformat.RnFormatter): Read formatter.
-#			simulator_name (str): Name of the simulator. Used for comment in tuple read name.
-#
-#		Returns:
-#			str: Part of FASTQ file.
-#		"""
-#		read_tuple_suffix_comment_buffer=[]
-#		if len(segments_buffer)==1:
-#			read_tuple_suffix_comment_buffer.append("single-end")
-#		elif len(segments_buffer)==2 and set([segments_buffer[i].direction for i in [0,1]])==set(["R","F"]):
-#			read_tuple_suffix_comment_buffer.append("paired-end")
-#
-#		if simulator_name!="":
-#			read_tuple_suffix_comment_buffer.append(simulator_name)
-#
-#		if len(read_tuple_suffix_comment_buffer)!=0:
-#			read_tuple_suffix="[{}]".format(",".join(read_tuple_suffix_comment_buffer))
-#		else:
-#			read_tuple_suffix=""
-#
-#		rnf_read_tuple = rnftools.rnfformat.ReadTuple(segments=segments_buffer,read_tuple_id=read_tuple_id,suffix=read_tuple_suffix)
-#		rnf_read_tuple_name = rn_formatter.process_read_tuple(read_tuple=rnf_read_tuple)
-#		to_return = [
-#			"".
-#				join([
-#					"@",rnf_read_tuple_name,"/{}".format(str(b_i)) if len(sequences_buffer)>1 else "",
-#						os.linesep,
-#					sequences_buffer[b_i-1][0],
-#						os.linesep,
-#					"+",
-#						os.linesep,
-#					sequences_buffer[b_i-1][1],
-#						os.linesep,
-#				])
-#			for b_i in range(1,len(sequences_buffer)+1)
-#		]
-#		return "".join(to_return)

@@ -210,29 +210,25 @@ class DwgSim(Source):
 		"""
 
 		fai_index = FaiIndex(fai)
-		max_seq_len=0
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
-		#one or two ends?
-		single_end=os.stat(dwgsim_prefix+".bwa.read2.fastq").st_size==0
-
 		# parsing FQ file
-		#last_new_read_tuple_name=""
 		read_tuple_id=0
 		last_read_tuple_name=None
 		old_fq="{}.bfast.fastq".format(dwgsim_prefix)
-		with open(old_fq,"r+") as f1:
-			fq_creator=rnftools.rnfformat.FqCreator(
-						fastq=fastq,
-						read_tuple_id_width=read_tuple_id_width,
-						genome_id_width=2,
-						chr_id_width=fai_index.chr_id_width,
-						coor_width=fai_index.coor_width,
-						info_reads_in_tuple=True,
-						info_simulator="dwgsim",
-					)
 
-			i=0
+		fq_creator=rnftools.rnfformat.FqCreator(
+					fastq=fastq,
+					read_tuple_id_width=read_tuple_id_width,
+					genome_id_width=2,
+					chr_id_width=fai_index.chr_id_width,
+					coor_width=fai_index.coor_width,
+					info_reads_in_tuple=True,
+					info_simulator="dwgsim",
+				)
+
+		i=0
+		with open(old_fq,"r+") as f1:
 			for line in f1:
 				if i%4==0:
 					read_tuple_name=line[1:].strip()
