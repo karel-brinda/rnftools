@@ -61,10 +61,12 @@ class Mixer:
 				ln3=self.i_files_weighted[file_id].readline()
 				ln4=self.i_files_weighted[file_id].readline()
 
-				if not ln1:
+				if not ln1 or not ln2 or not ln3 or not ln4:
 					self.i_files_weighted[file_id].close()
 					del self.i_files_weighted[file_id]
 					break
+				assert ln1[0]=="@", ln1
+				assert ln3[0]=="+", ln3
 				self.output.save_read(ln1,ln2,ln3,ln4)
 
 

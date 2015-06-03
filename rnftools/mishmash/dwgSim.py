@@ -191,7 +191,7 @@ class DwgSim(Source):
 		11) number of sequencing errors end 2 (color errors for colorspace)
 		12) number of SNPs end 2
 		13) number of indels end 2
-		14) read number (unique within a given contig/chromsome)
+		14) read number (unique within a given contig/chromosome)
 		"""
 		
 		max_seq_len=0

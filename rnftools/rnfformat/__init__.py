@@ -3,6 +3,7 @@
 from .formatter import *
 from .readTuple import *
 from .segment import *
+from .fqCreator import *
 
 __all__=[
 	"Segment",

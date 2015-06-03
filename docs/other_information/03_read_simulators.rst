@@ -249,7 +249,7 @@ WgSim
 2) start end 1 (one-based)
 3) end end 2 (one-based)
 4) number of errors end 1
-5) number of substitutions end 1 
+5) number of substitutions end 1
 6) number of indels end 1
 7) number of errors end 2
 8) number of substitutions end 2

@@ -20,6 +20,12 @@ class ReadTuple:
 				prefix="",
 				suffix="",
 			):
+
+		assert type(segments) is tuple or type(segments) is list, "Wrong type of segments: '{}'".format(segments)
+		assert type(read_tuple_id) is int, "Wrong type of read_tuple_id: '{}'".format(read_tuple_id)
+		assert type(prefix) is str, "Wrong type of prefix: '{}'".format(prefix)
+		assert type(suffix) is str, "Wrong type of suffix: '{}'".format(suffix)
+
 		self.read_tuple_id=read_tuple_id
 		self.segments=segments
 		self.prefix=prefix

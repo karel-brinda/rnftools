@@ -81,4 +81,4 @@ class Sample:
 					input_fqs=" ".join(['"{}"'.format(source.fq_fn()) for source in self._sources]),
 					mode=self._mode,
 					output_prefix=self._name,
-		))
+			))
