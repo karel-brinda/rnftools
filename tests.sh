@@ -63,7 +63,7 @@ echo
 (
 	set -e -o pipefail; 
 
-	for e in examples/tutorial/02_simulation; do
+	for e in examples/01_tutorial/02_simulation; do
 		(
 			cd "$e"
 
@@ -83,7 +83,7 @@ echo
 		)
 	done
 
-	for e in examples/tutorial/03_evaluation; do
+	for e in examples/01_tutorial/03_evaluation; do
 		(
 			cd "$e"
 
@@ -108,3 +108,4 @@ echo
 		)
 	done
 )
+

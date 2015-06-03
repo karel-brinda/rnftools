@@ -129,5 +129,10 @@ class MasonIllumina(Source):
 
 		self.recode_sam_reads(
 			sam=self._sam_fn,
+			fastq=self._fq_fn,
+			fai=self._fai_fn,
+			genome_id=self.genome_id,
+			number_of_read_tuples=10**9,
 			simulator_name="mason",
+			allow_unmapped=False,
 		)
