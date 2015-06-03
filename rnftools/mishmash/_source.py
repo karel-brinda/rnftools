@@ -137,62 +137,15 @@ class Source(object):
 		"""
 		return
 
-#	def _fq_buffer(self,
-#				read_tuple_id,
-#				segments_buffer,
-#				sequences_buffer,
-#				rn_formatter,
-#				simulator_name=""
-#			):
-#		"""From local buffers, create FASTQ string.
-#
-#		Args:
-#			read_tuple_id (int): ID of read tuple.
-#			segments_buffer(list of rnftools.rnfformat.Segment): Buffer of segments.
-#			sequences_buffer(list of (bases,qualities)):  Buffer of sequences.
-#			rn_formatter (rnftools.rnfformat.RnFormatter): Read formatter.
-#			simulator_name (str): Name of the simulator. Used for comment in tuple read name.
-#
-#		Returns:
-#			str: Part of FASTQ file.
-#		"""
-#		read_tuple_suffix_comment_buffer=[]
-#		if len(segments_buffer)==1:
-#			read_tuple_suffix_comment_buffer.append("single-end")
-#		elif len(segments_buffer)==2 and set([segments_buffer[i].direction for i in [0,1]])==set(["R","F"]):
-#			read_tuple_suffix_comment_buffer.append("paired-end")
-#
-#		if simulator_name!="":
-#			read_tuple_suffix_comment_buffer.append(simulator_name)
-#
-#		if len(read_tuple_suffix_comment_buffer)!=0:
-#			read_tuple_suffix="[{}]".format(",".join(read_tuple_suffix_comment_buffer))
-#		else:
-#			read_tuple_suffix=""
-#
-#		rnf_read_tuple = rnftools.rnfformat.ReadTuple(segments=segments_buffer,read_tuple_id=read_tuple_id,suffix=read_tuple_suffix)
-#		rnf_read_tuple_name = rn_formatter.process_read_tuple(read_tuple=rnf_read_tuple)
-#		to_return = [
-#			"".
-#				join([
-#					"@",rnf_read_tuple_name,"/{}".format(str(b_i)) if len(sequences_buffer)>1 else "",
-#						os.linesep,
-#					sequences_buffer[b_i-1][0],
-#						os.linesep,
-#					"+",
-#						os.linesep,
-#					sequences_buffer[b_i-1][1],
-#						os.linesep,
-#				])
-#			for b_i in range(1,len(sequences_buffer)+1)
-#		]
-#		return "".join(to_return)
-
 	# todo: make this method static
 	# todo: check if it can work with a bam file
 	# todo: can it work as a pipe?
-	def recode_sam_reads(self,
+	@staticmethod
+	def recode_sam_reads(
 				sam,
+				fastq,
+				fai,
+				genome_id,
 				number_of_read_tuples=10**9,
 				simulator_name=None,
 				allow_unmapped=False,
@@ -208,29 +161,18 @@ class Source(object):
 			NotImplementedError
 		"""
 
-		self.load_fai()
+		fai_index = FaiIndex(fai)
 		#last_read_tuple_name=[]
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq=self._fq_fn,
+					fastq=fastq,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
-					chr_id_width=self.chr_id_width,
-					coor_width=self.coor_width,
+					chr_id_width=fai_index.chr_id_width,
+					coor_width=fai_index.coor_width,
 					info_reads_in_tuple=True,
 					info_simulator=simulator_name,					
 				)
-
-		#rn_formatter = rnftools.rnfformat.RnFormatter(
-		#		read_tuple_id_width=read_tuple_id_width,
-		#		genome_id_width=2,
-		#		chr_id_width=self.chr_id_width,
-		#		coor_width=self.coor_width,
-		#	)
-
-		#segments_buffer=[]
-		#sequences_buffer=[]
-		#last_read_tuple_name=""
 
 		#todo: check if clipping corrections is well implemented
 		cigar_reg_shift=re.compile("([0-9]+)([MDNP=X])")
@@ -247,21 +189,9 @@ class Source(object):
 		read_tuple_id=0
 		last_read_tuple_name=None
 		with pysam.AlignmentFile(sam, "rb") as samfile:
-			#with open(self._fq_fn, "w+") as fqfile:
 			for alignment in samfile:
 				if alignment.query_name!=last_read_tuple_name and last_read_tuple_name is not None:
 					read_tuple_id+=1
-				#	fqfile.write(
-				#		self._fq_buffer(
-				#				read_tuple_id=read_tuple_id,
-				#				segments_buffer=segments_buffer,
-				#				sequences_buffer=sequences_buffer,
-				#				rn_formatter=rn_formatter,
-				#				simulator_name=simulator_name,
-				#			)
-				#	)
-				#	segments_buffer = []
-				#	sequences_buffer = []
 				last_read_tuple_name = alignment.query_name
 
 				if alignment.is_unmapped:
@@ -286,8 +216,8 @@ class Source(object):
 					qualities  = alignment.qual[:]
 
 				# todo: are chromosomes in bam sorted correctly (the same order as in FASTA)?
-				if self.dict_chr_ids!={}:
-					chr_id=self.dict_chr_ids[ samfile.getrname(alignment.reference_id) ]
+				if fai_index.dict_chr_ids!={}:
+					chr_id=fai_index.dict_chr_ids[ samfile.getrname(alignment.reference_id) ]
 				else:
 					chr_id="0"
 
@@ -297,7 +227,7 @@ class Source(object):
 					right+=int(steps)
 
 				segment=rnftools.rnfformat.Segment(
-						genome_id=self.genome_id,
+						genome_id=genome_id,
 						chr_id=chr_id,
 						direction=direction,
 						left=left,
@@ -310,21 +240,7 @@ class Source(object):
 						qualities=qualities,
 						segments=[segment],
 					)
-				#segments_buffer.append(segment)
-				#sequences_buffer.append( (bases,qualities) )
-
 		fq_creator.flush_read_tuple()
-
-#				fqfile.write(
-#					self._fq_buffer(
-#							read_tuple_id=read_tuple_id,
-#							segments_buffer=segments_buffer,
-#							sequences_buffer=sequences_buffer,
-#							rn_formatter=rn_formatter,
-#							simulator_name=simulator_name,
-#						)
-#				)
-
 
 	"""Load dictionaries with sizes of chromosomes and with id-name correspondance.
 	"""
@@ -357,3 +273,36 @@ class Source(object):
 		self.number_of_chromosomes=len(self.dict_chr_ids)
 		self.chr_id_width=len(str(self.number_of_chromosomes))
 		self.coor_width=len(str(max(self.dict_chr_lengths.values())))
+
+class FaiIndex:
+	def __init__(self, fai):
+		self.dict_chr_ids = {}
+		self.dict_chr_lengths = {}
+
+		# parsing FAI file
+		with open(fai) as f:
+			"""
+			   FAI format
+
+			1) the name of the sequence
+			2) the length of the sequence
+			3) the offset of the first base in the file
+			4) the number of bases in each fasta line
+			5) the number of bytes in each fasta line
+			"""
+
+			i=1
+			for line in f:
+				if line.strip()!="":
+					parts=line.split("\t")
+					chr=parts[0]
+					chr_len=int(parts[1])
+					self.dict_chr_ids[chr]=i
+					self.dict_chr_lengths[chr]=chr_len
+					i+=1
+
+		self.number_of_chromosomes=len(self.dict_chr_ids)
+		self.chr_id_width=len(str(self.number_of_chromosomes))
+		self.coor_width=len(str(max(self.dict_chr_lengths.values())))
+
+

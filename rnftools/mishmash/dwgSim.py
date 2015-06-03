@@ -27,7 +27,7 @@ class DwgSim(Source):
 	ends can have different lengths.
 
 	Args:
-		fa (str): File name of the genome from which reads are created (FASTA file).
+		fasta (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
 		number_of_read_tuples (int): Number of reads (if coverage specified, then it must be equal to zero).
 		read_length_1 (int): Length of the first read.
