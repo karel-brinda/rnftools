@@ -164,7 +164,7 @@ class WgSim(Source):
 			fai=self._fai_fn,
 			genome_id=self.genome_id,
 			wgsim_fastq_1=self._tmp_fq1_fn,
-			wgsim_fastq_2=self._tmp_fq2_fn if self._reads_in_tuple==1 else None,
+			wgsim_fastq_2=self._tmp_fq2_fn if self._reads_in_tuple==2 else None,
 			number_of_read_tuples=10**9,
 			allow_unmapped=False,
 		)
@@ -229,8 +229,8 @@ class WgSim(Source):
 
 				if i%4==0:
 					segments=[]
-					bases=["",""]
-					qualities=["",""]
+					#bases=[]
+					#qualities=[]
 
 					m = wgsim_pattern.search(lines[0])
 					if m is None:
