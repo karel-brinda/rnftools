@@ -166,7 +166,6 @@ class WgSim(Source):
 			wgsim_fastq_1=self._tmp_fq1_fn,
 			wgsim_fastq_2=self._tmp_fq2_fn if self._reads_in_tuple==2 else None,
 			number_of_read_tuples=10**9,
-			allow_unmapped=False,
 		)
 
 	@staticmethod
@@ -177,7 +176,6 @@ class WgSim(Source):
 				wgsim_fastq_1,
 				wgsim_fastq_2=None,
 				number_of_read_tuples=10**9,
-				allow_unmapped=False,
 			):
 		wgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9a-f]+)/([12])')
 		"""
