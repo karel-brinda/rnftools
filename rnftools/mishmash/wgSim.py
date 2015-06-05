@@ -123,7 +123,7 @@ class WgSim(Source):
 		else:
 			fake_read_length_2=self.read_length_2
 
-		snakemake.shell("""
+		smbl.utils.shell("""
 				{wgsim} \
 				-1 {rlen1} \
 				-2 {rlen2} \

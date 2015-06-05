@@ -73,7 +73,7 @@ class Panel:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
 		for x in ["gp","html","roc","svg","pdf"]:
-			snakemake.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
+			smbl.utils.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
 		""" Get the report. """
@@ -300,4 +300,4 @@ class Panel:
 		"""Create images related to this panel."""
 
 		if len(self._svg_fns)+len(self._pdf_fns)>0:
-			snakemake.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+			smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

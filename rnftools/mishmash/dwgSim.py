@@ -133,7 +133,7 @@ class DwgSim(Source):
 		else:
 			paired_params=""
 
-		snakemake.shell("""
+		smbl.utils.shell("""
 				"{dwgsim}" \
 				-1 {rlen1} \
 				-2 {rlen2} \

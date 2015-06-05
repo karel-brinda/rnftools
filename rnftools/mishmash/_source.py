@@ -85,7 +85,7 @@ class Source(object):
 	def clean(self):
 		"""Clean working directory.
 		"""
-		snakemake.shell('rm -fR "{}"'.format(self.get_dir()))
+		smbl.utils.shell('rm -fR "{}"'.format(self.get_dir()))
 
 	############################################################################
 	############################################################################
@@ -143,19 +143,23 @@ class Source(object):
 	@staticmethod
 	def recode_sam_reads(
 				sam,
-				fastq,
+				fastq_rnf,
 				fai,
 				genome_id,
 				number_of_read_tuples=10**9,
 				simulator_name=None,
 				allow_unmapped=False,
 			):
-		"""Create FASTQ file from SAM file.
+		"""Transform a SAM file to RNF-compatible FASTQ.
 
 		Args:
-			sam (str): Name of SAM file.
+			sam (str): Name of the SAM file.
+			fastq_rnf (str): Name of the output FASTQ file.
+			fai (str): FASTA index (FAI) for the reference genome.
+			genome_id (int): Genome ID for RNF.
 			number_of_read_tuples (int): Expected number of read tuples (to set width of read tuple id).
 			simulator_name (str): Name of the simulator. Used for comment in read tuple name.
+			allow_unmapped
 
 		Raises:
 			NotImplementedError
@@ -165,7 +169,7 @@ class Source(object):
 		#last_read_tuple_name=[]
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq=fastq,
+					fastq=fastq_rnf,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
 					chr_id_width=fai_index.chr_id_width,
@@ -201,7 +205,7 @@ class Source(object):
 						"'{}' in file '{}'.".format(alignment.query_name,sam),
 						program="RNFtools",
 						subprogram="MIShmash",
-						exception=NotImplementedError
+						exception=NotImplementedError,
 					)
 
 
@@ -275,6 +279,19 @@ class Source(object):
 #		self.coor_width=len(str(max(self.dict_chr_lengths.values())))
 
 class FaiIndex:
+	"""Class for loading FASTA indexes.
+
+	Args:
+		fai (str): FASTA index (FAI) file to be loaded.
+
+	Attributes:
+		self.dict_chr_ids (dict):  FASTA IDs of chromosomes (chr -> id).
+		self.dict_chr_lengths (dict): Lengths of chromosomes (chr -> length).
+		number_of_chromosomes (int): Number of chromosomes in the corresponding FASTA file.
+		chr_id_width (int): Length of strings representing chromosome number.
+		coor_width (int): Length of string representing coordinates.
+	"""
+
 	def __init__(self, fai):
 		self.dict_chr_ids = {}
 		self.dict_chr_lengths = {}

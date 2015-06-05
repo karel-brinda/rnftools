@@ -59,7 +59,7 @@ class Sample:
 
 	def clean(self):
 		for x in self._fq_fns+[self._dir]:
-			snakemake.shell('rm -fR "{}"'.format(x))
+			smbl.utils.shell('rm -fR "{}"'.format(x))
 
 	######################################
 	######################################
@@ -72,7 +72,7 @@ class Sample:
 
 	def create_fq(self):
 		# fixme: use absolute path to this file
-		snakemake.shell("""
+		smbl.utils.shell("""
 				rnf-join-fq.py \
 					-i {input_fqs} \
 					-m {mode} \

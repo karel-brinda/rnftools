@@ -164,7 +164,7 @@ class Report:
 	def clean(self):
 		"""Remove all temporary files."""
 
-		snakemake.shell('rm -fR "{}" "{}"'.format(self.report_dir,self._html_fn))
+		smbl.utils.shell('rm -fR "{}" "{}"'.format(self.report_dir,self._html_fn))
 
 	def get_panels(self):
 		"""Get all contained panels."""

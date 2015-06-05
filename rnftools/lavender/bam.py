@@ -278,7 +278,7 @@ class Bam:
 
 		with open(self._html_fn,"w+") as html:
 			program_info=["No information available (PG header is missing)."]
-			for x in snakemake.shell('"{samtools}" view -H "{bam}"'.format(
+			for x in smbl.utils.shell('"{samtools}" view -H "{bam}"'.format(
 							samtools=smbl.prog.SAMTOOLS,
 							bam=self._bam_fn,
 						),iterable=True):
@@ -926,4 +926,4 @@ class Bam:
 	def create_graphics(self):
 		"""Create images related to this BAM file using GnuPlot."""
 
-		snakemake.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+		smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))

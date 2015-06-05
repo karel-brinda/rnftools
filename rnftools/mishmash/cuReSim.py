@@ -69,7 +69,7 @@ class CuReSim(Source):
 			genome_size=os.stat(self._fa_fn).st_size
 			self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
 
-		snakemake.shell("""
+		smbl.utils.shell("""
 				cd "{dir}"
 				java -Xmx8g -jar \
 				{curesim} \
