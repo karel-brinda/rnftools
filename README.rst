@@ -12,12 +12,3 @@ RNFtools
 
 **Documentation:** http://rnftools.rtfd.org.
 
-
-Installation
-------------
-
-.. code-block:: bash
-	
-	pip install rnftools
-
-

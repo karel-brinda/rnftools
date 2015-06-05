@@ -5,7 +5,10 @@ import smbl.messages
 import os
 import pkg_resources
 
-version=pkg_resources.require("rnftools")[0].version
+try:
+	version=pkg_resources.require("rnftools")[0].version
+except:
+	version="unknown"
 
 smbl.messages.message("",program="RNFtools")
 smbl.messages.message("RNFtools",program="RNFtools")
