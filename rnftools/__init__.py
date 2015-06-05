@@ -3,9 +3,9 @@ import rnftools.lavender
 import rnftools.rnfformat
 import smbl.messages
 import os
-import pkg_resources
 
 try:
+	import pkg_resources
 	version=pkg_resources.require("rnftools")[0].version
 except:
 	version="unknown"

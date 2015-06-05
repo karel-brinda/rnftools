@@ -70,12 +70,13 @@ class ArtIllumina(Source):
 		)
 
 		self._sam1_fn = self.art_prefix+".sam"
-		self._sam2_fn = self.art_prefix+".corrected.sam"
+		self._sam2_fn = self.art_prefix+".sam"
+		#self._sam2_fn = self.art_prefix+".corrected.sam"
 
 	def get_input(self):
 		return [
 				smbl.prog.ART_ILLUMINA,
-				smbl.prog.SAMTOOLS,
+				#smbl.prog.SAMTOOLS,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -124,21 +125,21 @@ class ArtIllumina(Source):
 				rng_seed=self._rng_seed,
 			)
 
-		# correction of header (bug in ART)
-		command_2 ="""
-			cat "{sam_1}" | \
-			grep -v ^@ | \
-			"{samtools}" view -h -T "{fa}" - \
-			> "{sam_2}"
-		""".format(
-				samtools=smbl.prog.SAMTOOLS,
-				sam_1=self._sam1_fn,
-				sam_2=self._sam2_fn,
-				fa=self._fa_fn,
-		)
+		## correction of header (bug in ART)
+		#command_2 ="""
+		#	cat "{sam_1}" | \
+		#	grep -v ^@ | \
+		#	"{samtools}" view -h -T "{fa}" - \
+		#	> "{sam_2}"
+		#""".format(
+		#		samtools=smbl.prog.SAMTOOLS,
+		#		sam_1=self._sam1_fn,
+		#		sam_2=self._sam2_fn,
+		#		fa=self._fa_fn,
+		#)
 
 		snakemake.shell(command_1)
-		snakemake.shell(command_2)
+		#snakemake.shell(command_2)
 
 		self.recode_sam_reads(
 			sam=self._sam2_fn,
