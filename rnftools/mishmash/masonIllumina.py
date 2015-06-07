@@ -127,12 +127,14 @@ class MasonIllumina(Source):
 
 		smbl.utils.shell(command)
 
-		self.recode_sam_reads(
-			sam=self._sam_fn,
-			fastq_rnf=self._fq_fn,
-			fai=self._fai_fn,
-			genome_id=self.genome_id,
-			number_of_read_tuples=10**9,
-			simulator_name="mason",
-			allow_unmapped=False,
-		)
+		with open(self._fq_fn,"w+") as fq_fo:
+			with open(self._fai_fn) as fai_fo:
+				self.recode_sam_reads(
+					sam_fn=self._sam_fn,
+					fastq_rnf_fo=fq_fo,
+					fai_fo=fai_fo,
+					genome_id=self.genome_id,
+					number_of_read_tuples=10**9,
+					simulator_name="mason",
+					allow_unmapped=False,
+				)

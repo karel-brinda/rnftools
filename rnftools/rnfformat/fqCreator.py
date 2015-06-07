@@ -7,7 +7,7 @@ class FqCreator:
 	"""Class for writing RNF reads to FASTQ files.
 
 	Args:
-		fastq (str): Output FASTQ file.
+		fastq_fo (str): Output FASTQ file - file object.
 		read_tuple_id_width (int): Maximal expected string length of read tuple ID.
 		genome_id_width (int): Maximal expected string length of genome ID.
 		chr_id_width (int): Maximal expected string length of chromosome ID.
@@ -18,7 +18,7 @@ class FqCreator:
 
 	def __init__(
 				self,
-				fastq,
+				fastq_fo,
 				read_tuple_id_width=16,
 				genome_id_width=2,
 				chr_id_width=2,
@@ -26,7 +26,6 @@ class FqCreator:
 				info_reads_in_tuple=True,
 				info_simulator=None,
 			):
-		self._fq=fastq
 		self._info_simulator=info_simulator
 		self._info_reads_in_tuple=info_reads_in_tuple
 		self._formatter=rnftools.rnfformat.RnFormatter(
@@ -35,13 +34,9 @@ class FqCreator:
 				chr_id_width=chr_id_width,
 				coor_width=coor_width,
 			)
-		self._fq_file=open(self._fq,"w+")
+		self._fq_file=fastq_fo
 		self.current_read_tuple_id=None
 		self.empty()
-
-	def __del__(self):
-		self.flush_read_tuple()
-		self._fq_file.close()
 
 	def flush_read_tuple(self):
 		"""Flush the internal buffer of reads.

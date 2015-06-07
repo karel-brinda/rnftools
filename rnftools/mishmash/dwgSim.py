@@ -1,5 +1,6 @@
 import rnftools
 from ._source import *
+from .faiIndex import *
 
 import os
 import smbl
@@ -169,22 +170,24 @@ class DwgSim(Source):
 				prob_indel_ext=self.prob_indel_ext,
 			)
 		)
-		self.recode_dwgsim_reads(
-			dwgsim_prefix=self.dwg_prefix,
-			fastq=self._fq_fn,
-			fai=self._fai_fn,
-			genome_id=self.genome_id,
-			number_of_read_tuples=10**9,
-			allow_unmapped=False,
-		)
+		with open(self._fq_fn,"w+") as fastq_fo:
+			with open(self._fai_fn) as fai_fo:
+				self.recode_dwgsim_reads(
+					dwgsim_prefix=self.dwg_prefix,
+					fastq_fo=fastq_fo,
+					fai_fo=fai_fo,
+					genome_id=self.genome_id,
+					number_of_read_tuples=10**9,
+					allow_unmapped=False,
+				)
 
 	#todo: param estimate parameters
 
 	@staticmethod
 	def recode_dwgsim_reads(
 				dwgsim_prefix,
-				fastq,
-				fai,
+				fastq_fo,
+				fai_fo,
 				genome_id,
 				number_of_read_tuples=10**9,
 				allow_unmapped=False,
@@ -209,7 +212,7 @@ class DwgSim(Source):
 		14) read number (unique within a given contig/chromosome)
 		"""
 
-		fai_index = FaiIndex(fai)
+		fai_index = FaiIndex(fai_fo=fai_fo)
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		# parsing FQ file
@@ -218,7 +221,7 @@ class DwgSim(Source):
 		old_fq="{}.bfast.fastq".format(dwgsim_prefix)
 
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq=fastq,
+					fastq_fo=fastq_fo,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
 					chr_id_width=fai_index.chr_id_width,

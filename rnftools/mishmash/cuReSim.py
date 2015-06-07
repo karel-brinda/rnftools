@@ -98,19 +98,21 @@ class CuReSim(Source):
 				)
 
 
-		self.recode_curesim_reads(
-				fastq_curesim=fastq_curesim,
-				fastq_rnf=self._fq_fn,
-				fai=self._fai_fn,
-				genome_id=self.genome_id,
-				number_of_read_tuples=10**9,
-			)
+		with open(self._fai_fn) as fai_fo:
+			with open(self._fq_fn,"w+") as fq_fo:
+				self.recode_curesim_reads(
+						fastq_curesim=fastq_curesim,
+						fastq_rnf_fo=fq_fo,
+						fai_fo=fai_fo,
+						genome_id=self.genome_id,
+						number_of_read_tuples=10**9,
+					)
 
 	@staticmethod
 	def recode_curesim_reads(
 				fastq_curesim,
-				fastq_rnf,
-				fai,
+				fastq_rnf_fo,
+				fai_fo,
 				genome_id,
 				number_of_read_tuples=10**9,
 			):
@@ -141,11 +143,11 @@ class CuReSim(Source):
 
 		max_seq_len=0
 
-		fai_index = FaiIndex(fai)
+		fai_index = FaiIndex(fai_fo=fai_fo)
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq=fastq_rnf,
+					fastq_fo=fastq_rnf_fo,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
 					chr_id_width=fai_index.chr_id_width,

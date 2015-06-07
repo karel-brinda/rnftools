@@ -141,12 +141,14 @@ class ArtIllumina(Source):
 		smbl.utils.shell(command_1)
 		smbl.utils.shell(command_2)
 
-		self.recode_sam_reads(
-			sam=self._sam2_fn,
-			fastq_rnf=self._fq_fn,
-			fai=self._fai_fn,
-			genome_id=self.genome_id,
-			number_of_read_tuples=10**9,
-			simulator_name="art-illumina",
-			allow_unmapped=False,
-		)
+		with open(self._fq_fn,"w+") as fq_fo:
+			with open(self._fai_fn) as fai_fo :
+				self.recode_sam_reads(
+					sam_fn=self._sam2_fn,
+					fastq_rnf_fo=fq_fo,
+					fai_fo=fai_fo,
+					genome_id=self.genome_id,
+					number_of_read_tuples=10**9,
+					simulator_name="art-illumina",
+					allow_unmapped=False,
+				)

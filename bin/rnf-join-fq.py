@@ -117,10 +117,17 @@ class Output:
 
 parser = argparse.ArgumentParser(
 			description="Join FASTQ files with reads in RNF format.",
-			epilog="Source FASTQ files should satisfy the following conditions:"
-					" 1) Each file contains only reads corresponding to one genome (with the same genome id)."
-					" 2) All files contain reads of the same type (single-end / paired-end)."
-					" 3) Reads with more reads per tuple (e.g., paired-end) have '/1', etc. in suffix (for identification of nb of read)."
+			epilog=os.linesep.join(
+					[
+						"Source FASTQ files should satisfy the following conditions:",
+						"\t1) Each file contains only reads corresponding to one genome (with the ",
+						"\t\tsame genome id).",
+						"\t2) All files contain reads of the same type (single-end / paired-end).",
+						"\t3) Reads with more reads per tuple (e.g., paired-end) have '/1', etc.",
+						"\t\tin suffix (for identification of nb of read).",
+					]
+				),
+			formatter_class=argparse.RawTextHelpFormatter,
 		)
 
 parser.add_argument(
@@ -139,7 +146,6 @@ parser.add_argument(
 		#type=lambda x: is_valid_mode(parser,x),
 		help='mode for joining files (single-end / paired-end-bwa / paired-end-bfast)',
 	)
-
 
 parser.add_argument(
 		'-o',

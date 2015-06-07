@@ -1,5 +1,6 @@
 import rnftools
 from ._source import *
+from .faiIndex import *
 
 import os
 import smbl
@@ -159,19 +160,21 @@ class WgSim(Source):
 			)
 		)
 
-		self.recode_wgsim_reads(
-			fastq=self._fq_fn,
-			fai=self._fai_fn,
-			genome_id=self.genome_id,
-			wgsim_fastq_1=self._tmp_fq1_fn,
-			wgsim_fastq_2=self._tmp_fq2_fn if self._reads_in_tuple==2 else None,
-			number_of_read_tuples=10**9,
-		)
+		with open(self._fai_fn) as fai_fo:
+			with open(self._fq_fn,"w+") as fq_fo:
+				self.recode_wgsim_reads(
+					fastq_fo=fq_fo,
+					fai_fo=fai_fo,
+					genome_id=self.genome_id,
+					wgsim_fastq_1=self._tmp_fq1_fn,
+					wgsim_fastq_2=self._tmp_fq2_fn if self._reads_in_tuple==2 else None,
+					number_of_read_tuples=10**9,
+				)
 
 	@staticmethod
 	def recode_wgsim_reads(
-				fastq,
-				fai,
+				fastq_fo,
+				fai_fo,
 				genome_id,
 				wgsim_fastq_1,
 				wgsim_fastq_2=None,
@@ -194,14 +197,14 @@ class WgSim(Source):
 		11) pair
 		"""
 		
-		fai_index = FaiIndex(fai)
+		fai_index = FaiIndex(fai_fo)
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		last_read_tuple_name=None
 
 
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq=fastq,
+					fastq_fo=fastq_fo,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
 					chr_id_width=fai_index.chr_id_width,
