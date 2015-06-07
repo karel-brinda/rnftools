@@ -278,10 +278,13 @@ class Bam:
 
 		with open(self._html_fn,"w+") as html:
 			program_info=["No information available (PG header is missing)."]
-			for x in smbl.utils.shell('"{samtools}" view -H "{bam}"'.format(
+			for x in smbl.utils.shell(
+						'"{samtools}" view -H "{bam}"'.format(
 							samtools=smbl.prog.SAMTOOLS,
 							bam=self._bam_fn,
-						),iterable=True):
+						),
+						iterable=True
+					):
 				x=x.strip()
 
 				if x[:3]=="@PG":

@@ -6,7 +6,7 @@ import os
 
 try:
 	import pkg_resources
-	version=pkg_resources.require("rnftools")[0].version
+	version=pkg_resources.get_distribution("rnftools").version
 except:
 	version="unknown"
 
