@@ -174,7 +174,7 @@ class DwgSim(Source):
 			with open(self._fai_fn) as fai_fo:
 				self.recode_dwgsim_reads(
 					dwgsim_prefix=self.dwg_prefix,
-					fastq_fo=fastq_fo,
+					fastq_rnf_fo=fastq_fo,
 					fai_fo=fai_fo,
 					genome_id=self.genome_id,
 					number_of_read_tuples=10**9,
