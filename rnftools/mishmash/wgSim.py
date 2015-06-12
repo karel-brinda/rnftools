@@ -173,11 +173,11 @@ class WgSim(Source):
 
 	@staticmethod
 	def recode_wgsim_reads(
-				fastq_fo,
+				fastq_rnf_fo,
 				fai_fo,
 				genome_id,
-				wgsim_fastq_1,
-				wgsim_fastq_2=None,
+				fastq_wgsim_1,
+				fastq_wgsim_2=None,
 				number_of_read_tuples=10**9,
 			):
 		wgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9a-f]+)/([12])')
@@ -204,7 +204,7 @@ class WgSim(Source):
 
 
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq_fo=fastq_fo,
+					fastq_fo=fastq_rnf_fo,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
 					chr_id_width=fai_index.chr_id_width,
@@ -214,14 +214,14 @@ class WgSim(Source):
 				)
 
 		reads_in_tuple=2
-		if wgsim_fastq_2 is None:
+		if fastq_wgsim_2 is None:
 			reads_in_tuple=1
 
 		i=0
-		with open(wgsim_fastq_1,"r+") as f_inp_1:
+		with open(fastq_wgsim_1,"r+") as f_inp_1:
 			if reads_in_tuple==2:
 				#todo: close file
-				f_inp_2 = open(wgsim_fastq_2)
+				f_inp_2 = open(fastq_wgsim_2)
 
 			for line_a in f_inp_1:
 				lines=[line_a.strip()]

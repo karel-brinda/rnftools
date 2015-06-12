@@ -3,6 +3,17 @@ import argparse
 import os
 import rnftools
 
+################################
+################################
+##
+## Auxiliary functions
+##
+################################
+################################
+
+################################
+# ART, MASON
+################################
 def sam2rnf(args):
 	"""Convert SAM to RNF-based FASTQ with respect to argparse parameters.
 
@@ -31,7 +42,7 @@ def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
 	parser_sam2rnf = subparsers.add_parser(subcommand, help=help)
 	parser_sam2rnf.set_defaults(func=sam2rnf)
 	parser_sam2rnf.add_argument(
-			'-i','--sam',
+			'-s','--sam',
 			type=str,
 			metavar='file',
 			dest='sam_fn',
@@ -47,7 +58,7 @@ def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
 			help='Output FASTQ file.',
 		)
 	parser_sam2rnf.add_argument(
-			'-f','--fai',
+			'-i','--fasta-index',
 			type=argparse.FileType('r'),
 			metavar='file',
 			dest='fai_fo',
@@ -69,13 +80,147 @@ def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
 			help='Allow unmapped reads.',
 		)
 	parser_sam2rnf.add_argument(
-			'-s','--simulator-name',
+			'-n','--simulator-name',
 			type=str,
 			metavar='str',
 			dest='simulator_name',
 			default=simulator_name,
 			help='Name of the simulator (for RNF).' if simulator_name is not None else argparse.SUPPRESS,
 		)
+
+################################
+# DWGSIM
+################################
+
+def dwgsim2rnf(args):
+	rnftools.mishmash.DwgSim.recode_dwgsim_reads(
+		dwgsim_prefix=args.dwgsim_prefix,
+		fastq_rnf_fo=args.fq_fo,
+		fai_fo=args.fai_fo,
+		genome_id=args.genome_id,
+		number_of_read_tuples=10**9,
+		allow_unmapped=args.allow_unmapped,
+	)
+
+def add_dwgsim_parser(subparsers,subcommand):
+	parser_dwgsim2rnf = subparsers.add_parser(subcommand, help=help)
+	parser_dwgsim2rnf.set_defaults(func=dwgsim2rnf)
+	parser_dwgsim2rnf.add_argument(
+			'-p','--dwgsim-prefix',
+			type=str,
+			metavar='str',
+			dest='dwgsim_prefix',
+			help='Prefix for DwgSim.',
+		)
+	parser_dwgsim2rnf.add_argument(
+			'-o','--fastq',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='fq_fo',
+			required=True,
+			help='Output FASTQ file.',
+		)
+	parser_dwgsim2rnf.add_argument(
+			'-i','--fasta-index',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='fai_fo',
+			required=True,
+			help='FAI index of the reference FASTA file.',
+		)
+	parser_dwgsim2rnf.add_argument(
+			'-g','--genome-id',
+			type=int,
+			metavar='int',
+			dest='genome_id',
+			default=1,
+			help='Genome ID in RNF (default: 1).',
+		)
+	parser_dwgsim2rnf.add_argument(
+			'-u','--allow-unmapped',
+			action='store_false',
+			dest='allow_unmapped',
+			help='Allow unmapped reads.',
+		)
+
+################################
+# WGSIM
+################################
+
+
+def wgsim2rnf(args):
+	rnftools.mishmash.WgSim.recode_wgsim_reads(
+		fastq_rnf_fo=args.fq_fo,
+		fastq_wgsim_1=args.wgsim_fastq_1,
+		fastq_wgsim_2=args.wgsim_fastq_2,
+		fai_fo=args.fai_fo,
+		genome_id=args.genome_id,
+		number_of_read_tuples=10**9,
+	)
+
+def add_wgsim_parser(subparsers,subcommand):
+	parser_wgsim2rnf = subparsers.add_parser(subcommand, help=help)
+	parser_wgsim2rnf.set_defaults(func=wgsim2rnf)
+	parser_wgsim2rnf.add_argument(
+			'-1','--wgsim-fastq-1',
+			type=str,
+			metavar='str',
+			dest='wgsim_fastq_1',
+			required=True,
+			help='',
+		)
+	parser_wgsim2rnf.add_argument(
+			'-2','--wgsim-fastq-2',
+			type=str,
+			metavar='str',
+			dest='wgsim_fastq_2',
+			required=False,
+			help='',
+			default=None,
+		)
+	parser_wgsim2rnf.add_argument(
+			'-o','--fastq',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='fq_fo',
+			required=True,
+			help='Output FASTQ file.',
+		)
+	parser_wgsim2rnf.add_argument(
+			'-i','--fasta-index',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='fai_fo',
+			required=True,
+			help='FAI index of the reference FASTA file.',
+		)
+	parser_wgsim2rnf.add_argument(
+			'-g','--genome-id',
+			type=int,
+			metavar='int',
+			dest='genome_id',
+			default=1,
+			help='Genome ID in RNF (default: 1).',
+		)
+	parser_wgsim2rnf.add_argument(
+			'-u','--allow-unmapped',
+			action='store_false',
+			dest='allow_unmapped',
+			help='Allow unmapped reads.',
+		)
+
+################################
+# CURESIMs
+################################
+
+
+################################
+################################
+##
+## RNFTOOLS SCRIPT
+##
+################################
+################################
 
 def rnftools_script():
 	# create the top-level parser
@@ -111,22 +256,30 @@ def rnftools_script():
 			simulator_name="art",
 		)
 
+
+	add_dwgsim_parser(
+			subparsers=subparsers,
+			subcommand="dwgsim2rnf",
+		)
+
+	add_wgsim_parser(
+			subparsers=subparsers,
+			subcommand="wgsim2rnf",
+		)
+
 	args = parser.parse_args()
 	args.func(args)
 
 
 
 	####
-	parser_art2rnf = subparsers.add_parser('art2rnf', help='b help')
 
 	####
 	parser_curesim2rnf = subparsers.add_parser('curesim2rnf', help='b help')
 
 	####
-	parser_dwgsim2rnf = subparsers.add_parser('dwgsim2rnf', help='b help')
 
 	####
-	parser_mason2rnf = subparsers.add_parser('mason2rnf', help='a help')
 
 	####
 	####

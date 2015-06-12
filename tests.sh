@@ -12,7 +12,7 @@ echo "===================================================================="
 echo
 echo
 echo
-echo "                 TESTS: basic tests"
+echo "                 TESTS: basic snakemake tests"
 echo
 echo
 echo
@@ -24,7 +24,7 @@ echo
 (
 	set -e -o pipefail; 
 
-	for e in tests/*; do
+	for e in tests/snakemake/*; do
 		(
 			cd "$e"
 
@@ -108,4 +108,42 @@ echo
 		)
 	done
 )
+
+
+echo
+echo
+echo
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+echo "                 TESTS: command line"
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+
+(
+	set -e -o pipefail; 
+
+	cd tests/command_line
+	for e in *.sh; do
+		(
+			echo "--------------------------------------------------------------------"
+			echo
+			echo "                 TEST: $e"
+			echo
+			echo "--------------------------------------------------------------------"
+
+			bash $e
+		)
+	done
+)
+
 

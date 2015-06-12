@@ -186,7 +186,7 @@ class DwgSim(Source):
 	@staticmethod
 	def recode_dwgsim_reads(
 				dwgsim_prefix,
-				fastq_fo,
+				fastq_rnf_fo,
 				fai_fo,
 				genome_id,
 				number_of_read_tuples=10**9,
@@ -221,7 +221,7 @@ class DwgSim(Source):
 		old_fq="{}.bfast.fastq".format(dwgsim_prefix)
 
 		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq_fo=fastq_fo,
+					fastq_fo=fastq_rnf_fo,
 					read_tuple_id_width=read_tuple_id_width,
 					genome_id_width=2,
 					chr_id_width=fai_index.chr_id_width,
