@@ -163,7 +163,7 @@ class WgSim(Source):
 		with open(self._fai_fn) as fai_fo:
 			with open(self._fq_fn,"w+") as fq_fo:
 				self.recode_wgsim_reads(
-					fastq_rnf_fo=fq_fo,
+					rnf_fastq_fo=fq_fo,
 					fai_fo=fai_fo,
 					genome_id=self.genome_id,
 					wgsim_fastq_1=self._tmp_fq1_fn,
