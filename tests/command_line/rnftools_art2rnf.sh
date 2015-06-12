@@ -17,7 +17,7 @@ $ART_ILLUMINA -sam \
 rnftools art2rnf \
 	--fasta-index ${FA}.fai \
 	--sam art.sam \
-	--fastq _art_rnf_se.fq \
+	--rnf-fastq _art_rnf_se.fq \
 
 # 2) PE test, no contamination
 #rnftools art2rnf --fasta-index ${FA}.fai --fastq reads_in_rnf.fq --wgsim-fastq-1 wgsim_1.fq --wgsim-fastq-2 wgsim_2.fq

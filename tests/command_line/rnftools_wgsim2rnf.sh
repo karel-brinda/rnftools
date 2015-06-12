@@ -18,7 +18,7 @@ $WGSIM \
 rnftools wgsim2rnf \
 	--fasta-index ${FA}.fai \
 	--wgsim-fastq-1 wgsim_1.fq \
-	--fastq _wgsim_rnf_se.fq \
+	--rnf-fastq _wgsim_rnf_se.fq \
 
 
 # 2) PE test, no contamination
@@ -26,4 +26,4 @@ rnftools wgsim2rnf \
 	--fasta-index ${FA}.fai \
 	--wgsim-fastq-1 wgsim_1.fq \
 	--wgsim-fastq-2 wgsim_2.fq \
-	--fastq _wgsim_rnf_pe.fq \
+	--rnf-fastq _wgsim_rnf_pe.fq \

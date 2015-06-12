@@ -19,7 +19,7 @@ $DWGSIM \
 rnftools dwgsim2rnf \
 	--fasta-index ${FA}.fai \
 	--dwgsim-prefix sim_se \
-	--fastq _dwgsim_rnf_se.fq \
+	--rnf-fastq _dwgsim_rnf_se.fq \
 
 
 # 2) PE test, no contamination
@@ -34,4 +34,4 @@ $DWGSIM \
 rnftools dwgsim2rnf \
 	--fasta-index ${FA}.fai \
 	--dwgsim-prefix sim_pe \
-	--fastq _dwgsim_rnf_pe.fq \
+	--rnf-fastq _dwgsim_rnf_pe.fq \

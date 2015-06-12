@@ -11,6 +11,42 @@ import rnftools
 ################################
 ################################
 
+
+def _add_shared_params(parser, unmapped_switcher=False):
+	parser.add_argument(
+			'-o','--rnf-fastq',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='fq_fo',
+			required=True,
+			help='Output FASTQ file.',
+		)
+	
+	parser.add_argument(
+			'-i','--fasta-index',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='fai_fo',
+			required=True,
+			help='FAI index of the reference FASTA file.'
+		)
+	
+	parser.add_argument(
+			'-g','--genome-id',
+			type=int,
+			metavar='int',
+			dest='genome_id',
+			default=1,
+			help='Genome ID in RNF (default: 1).',
+		)
+	if unmapped_switcher:
+		parser.add_argument(
+				'-u','--allow-unmapped',
+				action='store_false',
+				dest='allow_unmapped',
+				help='Allow unmapped reads.',
+			)
+
 ################################
 # ART, MASON
 ################################
@@ -49,36 +85,9 @@ def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
 			required=True,
 			help='Input SAM/BAM with true alignments of the reads.'
 		)
-	parser_sam2rnf.add_argument(
-			'-o','--fastq',
-			type=argparse.FileType('w+'),
-			metavar='file',
-			dest='fq_fo',
-			required=True,
-			help='Output FASTQ file.',
-		)
-	parser_sam2rnf.add_argument(
-			'-i','--fasta-index',
-			type=argparse.FileType('r'),
-			metavar='file',
-			dest='fai_fo',
-			required=True,
-			help='FAI index of the reference FASTA file.'
-		)
-	parser_sam2rnf.add_argument(
-			'-g','--genome-id',
-			type=int,
-			metavar='int',
-			dest='genome_id',
-			default=1,
-			help='Genome ID in RNF (default: 1).',
-		)
-	parser_sam2rnf.add_argument(
-			'-u','--allow-unmapped',
-			action='store_false',
-			dest='allow_unmapped',
-			help='Allow unmapped reads.',
-		)
+	
+	_add_shared_params(parser_sam2rnf,unmapped_switcher=True)
+
 	parser_sam2rnf.add_argument(
 			'-n','--simulator-name',
 			type=str,
@@ -112,36 +121,8 @@ def add_dwgsim_parser(subparsers,subcommand):
 			dest='dwgsim_prefix',
 			help='Prefix for DwgSim.',
 		)
-	parser_dwgsim2rnf.add_argument(
-			'-o','--fastq',
-			type=argparse.FileType('w+'),
-			metavar='file',
-			dest='fq_fo',
-			required=True,
-			help='Output FASTQ file.',
-		)
-	parser_dwgsim2rnf.add_argument(
-			'-i','--fasta-index',
-			type=argparse.FileType('r'),
-			metavar='file',
-			dest='fai_fo',
-			required=True,
-			help='FAI index of the reference FASTA file.',
-		)
-	parser_dwgsim2rnf.add_argument(
-			'-g','--genome-id',
-			type=int,
-			metavar='int',
-			dest='genome_id',
-			default=1,
-			help='Genome ID in RNF (default: 1).',
-		)
-	parser_dwgsim2rnf.add_argument(
-			'-u','--allow-unmapped',
-			action='store_false',
-			dest='allow_unmapped',
-			help='Allow unmapped reads.',
-		)
+	_add_shared_params(parser_dwgsim2rnf,unmapped_switcher=True)
+
 
 ################################
 # WGSIM
@@ -150,9 +131,9 @@ def add_dwgsim_parser(subparsers,subcommand):
 
 def wgsim2rnf(args):
 	rnftools.mishmash.WgSim.recode_wgsim_reads(
-		fastq_rnf_fo=args.fq_fo,
-		fastq_wgsim_1=args.wgsim_fastq_1,
-		fastq_wgsim_2=args.wgsim_fastq_2,
+		rnf_fastq_fo=args.fq_fo,
+		wgsim_fastq_1=args.wgsim_fastq_1,
+		wgsim_fastq_2=args.wgsim_fastq_2,
 		fai_fo=args.fai_fo,
 		genome_id=args.genome_id,
 		number_of_read_tuples=10**9,
@@ -178,36 +159,8 @@ def add_wgsim_parser(subparsers,subcommand):
 			help='',
 			default=None,
 		)
-	parser_wgsim2rnf.add_argument(
-			'-o','--fastq',
-			type=argparse.FileType('w+'),
-			metavar='file',
-			dest='fq_fo',
-			required=True,
-			help='Output FASTQ file.',
-		)
-	parser_wgsim2rnf.add_argument(
-			'-i','--fasta-index',
-			type=argparse.FileType('r'),
-			metavar='file',
-			dest='fai_fo',
-			required=True,
-			help='FAI index of the reference FASTA file.',
-		)
-	parser_wgsim2rnf.add_argument(
-			'-g','--genome-id',
-			type=int,
-			metavar='int',
-			dest='genome_id',
-			default=1,
-			help='Genome ID in RNF (default: 1).',
-		)
-	parser_wgsim2rnf.add_argument(
-			'-u','--allow-unmapped',
-			action='store_false',
-			dest='allow_unmapped',
-			help='Allow unmapped reads.',
-		)
+	_add_shared_params(parser_wgsim2rnf,unmapped_switcher=True)
+
 
 ################################
 # CURESIMs
