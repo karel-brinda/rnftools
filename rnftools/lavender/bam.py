@@ -9,8 +9,6 @@ import sys
 import pysam
 import gzip
 
-MAXIMAL_MAPPING_QUALITY=255
-
 ###########
 ###########
 ### BAM ###
@@ -128,8 +126,8 @@ class Bam:
 		es_fo.write("# Q:    is mapped with quality"+os.linesep)
 		es_fo.write("# Chr:  chr id"+os.linesep)
 		es_fo.write("# D:    direction"+os.linesep)
-		es_fo.write("# L:    the most left nucleotide"+os.linesep)
-		es_fo.write("# R:    the most right nucleotide"+os.linesep)
+		es_fo.write("# L:    leftmost nucleotide"+os.linesep)
+		es_fo.write("# R:    rightmost nucleotide"+os.linesep)
 		es_fo.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
 		es_fo.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
 		es_fo.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
@@ -140,6 +138,7 @@ class Bam:
 		es_fo.write("# "+os.linesep)
 		es_fo.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
+		print(bam_fn)
 		with pysam.AlignmentFile(bam_fn, "rb") as sam:
 			references_dict = {}
 
@@ -221,7 +220,7 @@ class Bam:
 				)
 
 	def create_es(self):
-		"""Create an es (intermediate) file for this BAM file.
+		"""Create an ES (intermediate) file for this BAM file.
 		This is the function which asses if an alignment is correct
 		"""
 
@@ -252,8 +251,8 @@ class Bam:
 		"""
 
 		# default value
-		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
-		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1,srs
+		vec = ["x" for i in range(rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1)]
+		assert len(srs)<=rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1,srs
 
 		should_be_mapped=bool(srs[0]["m"]+srs[0]["U"]==0)
 
@@ -438,7 +437,7 @@ class Bam:
 									"w":0,
 									"T":0,
 									"t":0,
-								} for i in range(MAXIMAL_MAPPING_QUALITY+1)
+								} for i in range(rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1)
 							]
 					last_rname=rname
 
@@ -466,7 +465,7 @@ class Bam:
 
 				else:
 					mapping_quality=int(mapped.replace("mapped_",""))
-					assert 0<=mapping_quality and mapping_quality<=MAXIMAL_MAPPING_QUALITY, mapping_quality
+					assert 0<=mapping_quality and mapping_quality<=rnftools.lavender.MAXIMAL_MAPPING_QUALITY, mapping_quality
 
 					#####
 					# m #
@@ -474,7 +473,7 @@ class Bam:
 					if category=="m":
 						for q in range(mapping_quality+1):
 							single_reads_statistics[q]["m"]+=1
-						for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+						for q in range(mapping_quality+1,rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1):
 							single_reads_statistics[q]["T"]+=1
 
 					#####
@@ -483,7 +482,7 @@ class Bam:
 					elif category=="w":
 						for q in range(mapping_quality+1):
 							single_reads_statistics[q]["w"]+=1
-						for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+						for q in range(mapping_quality+1,rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1):
 							single_reads_statistics[q]["t"]+=1
 
 					#####
@@ -494,7 +493,7 @@ class Bam:
 						segment_id=int(category.replace("M_",""))
 						for q in range(mapping_quality+1):
 							single_reads_statistics[q]["M"].append(segment_id)
-						for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+						for q in range(mapping_quality+1,rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1):
 							single_reads_statistics[q]["t"]+=1
 
 		# last read
@@ -531,7 +530,7 @@ class Bam:
 				et_fo,
 				roc_fo,
 			):
-		"""Create a ROC file for this BAM file.
+		"""Create a ROC file for this ET file.
 
 		:raises: ValueError
 
@@ -550,7 +549,7 @@ class Bam:
 					"t":0,
 					"x":0
 				}
-				for q in range(MAXIMAL_MAPPING_QUALITY+1)
+				for q in range(rnftools.lavender.MAXIMAL_MAPPING_QUALITY+1)
 			]
 
 		for line in et_fo:

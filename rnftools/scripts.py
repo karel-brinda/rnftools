@@ -100,6 +100,33 @@ def add_sam2rnf_parser(subparsers,subcommand,help,description,simulator_name=Non
 			help='Name of the simulator (for RNF).' if simulator_name is not None else argparse.SUPPRESS,
 		)
 
+
+################################
+# CURESIM
+################################
+
+def curesim2rnf(args):
+	rnftools.mishmash.CuReSim.recode_curesim_reads(
+		rnf_fastq_fo=args.fq_fo,
+		curesim_fastq_fo=args.curesim_fastq_fo,
+		fai_fo=args.fai_fo,
+		genome_id=args.genome_id,
+		number_of_read_tuples=10**9,
+	)
+
+def add_curesim_parser(subparsers,subcommand,help,description):
+	parser_curesim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_curesim2rnf.set_defaults(func=curesim2rnf)
+	parser_curesim2rnf.add_argument(
+			'-c','--curesim-fastq',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='curesim_fastq_fo',
+			required=True,
+			help='CuReSim FASTQ file (- for standard input).',
+		)
+	_add_shared_params(parser_curesim2rnf,unmapped_switcher=False)
+
 ################################
 # DWGSIM
 ################################
@@ -165,30 +192,149 @@ def add_wgsim_parser(subparsers,subcommand,help,description):
 
 
 ################################
-# CURESIM
+# SAM=ROC
 ################################
 
-def curesim2rnf(args):
-	rnftools.mishmash.CuReSim.recode_curesim_reads(
-		rnf_fastq_fo=args.fq_fo,
-		curesim_fastq_fo=args.curesim_fastq_fo,
-		fai_fo=args.fai_fo,
-		genome_id=args.genome_id,
-		number_of_read_tuples=10**9,
-	)
+def sam2roc(args):
+	rnftools.lavender.Bam.bam2es(
+			bam_fn=args.sam_fn,
+			roc_fo=args.roc_fo,
+			allowed_delta=args.allowed_delta,
+		)
 
-def add_curesim_parser(subparsers,subcommand,help,description):
-	parser_curesim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
-	parser_curesim2rnf.set_defaults(func=curesim2rnf)
-	parser_curesim2rnf.add_argument(
-			'-c','--curesim-fastq',
+def add_sam2roc_parser(subparsers,subcommand,help,description):
+	parser_sam2roc = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_sam2roc.set_defaults(func=sam2roc)
+	parser_sam2roc.add_argument(
+			'-i','--sam',
+			type=str,
+			metavar='file',
+			dest='sam_fn',
+			required=True,
+			help='SAM/BAM with aligned RNF reads(- for standard input).',
+		)
+	parser_sam2roc.add_argument(
+			'-o','--roc',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='es_fo',
+			required=True,
+			help='Output ROC file (- for standard output).',
+			default=None,
+		)
+	parser_sam2roc.add_argument(
+			'-d','--allowed-delta',
+			type=int,
+			metavar='int',
+			dest='allowed_delta',
+			required=False,
+			help='Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!) (default: {}).'.format(rnftools.lavender.DEFAULT_ALLOWED_DELTA),
+			default=rnftools.lavender.DEFAULT_ALLOWED_DELTA,
+		)
+
+################################
+# ES
+################################
+
+def sam2es(args):
+	rnftools.lavender.Bam.bam2es(
+			bam_fn=args.sam_fn,
+			es_fo=args.es_fo,
+			allowed_delta=args.allowed_delta,
+		)
+
+def add_sam2es_parser(subparsers,subcommand,help,description):
+	parser_sam2es = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_sam2es.set_defaults(func=sam2es)
+	parser_sam2es.add_argument(
+			'-i','--sam',
+			type=str,
+			metavar='file',
+			dest='sam_fn',
+			required=True,
+			help='SAM/BAM with aligned RNF reads(- for standard input).',
+		)
+	parser_sam2es.add_argument(
+			'-o','--es',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='es_fo',
+			required=True,
+			help='Output ES file (evaluated segments, - for standard output).',
+			default=None,
+		)
+	parser_sam2es.add_argument(
+			'-d','--allowed-delta',
+			type=int,
+			metavar='int',
+			dest='allowed_delta',
+			required=False,
+			help='Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!) (default: {}).'.format(rnftools.lavender.DEFAULT_ALLOWED_DELTA),
+			default=rnftools.lavender.DEFAULT_ALLOWED_DELTA,
+		)
+
+
+################################
+# ET
+################################
+
+def es2et(args):
+	rnftools.lavender.Bam.es2et(
+			es_fo=args.es_fo,
+			et_fo=args.et_fo,
+		)
+
+def add_es2et_parser(subparsers,subcommand,help,description):
+	parser_es2et = subparsers.add_parser(subcommand, help=help,description=description)
+	parser_es2et.set_defaults(func=es2et)
+	parser_es2et.add_argument(
+			'-i','--es',
 			type=argparse.FileType('r'),
 			metavar='file',
-			dest='curesim_fastq_fo',
+			dest='es_fo',
 			required=True,
-			help='CuReSim FASTQ file (- for standard input).',
+			help='Input ES file (evaluated segments, - for standard input).',
 		)
-	_add_shared_params(parser_curesim2rnf,unmapped_switcher=False)
+	parser_es2et.add_argument(
+			'-o','--et',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='et_fo',
+			required=True,
+			help='Output ET file (evaluated read tuples, - for standard output).',
+			default=None,
+		)
+
+################################
+# ROC
+################################
+
+def et2roc(args):
+	rnftools.lavender.Bam.et2roc(
+			et_fo=args.et_fo,
+			roc_fo=args.roc_fo,
+		)
+
+def add_et2roc_parser(subparsers,subcommand,help,description):
+	parser_et2roc = subparsers.add_parser(subcommand, help=help,description=description)
+	parser_et2roc.set_defaults(func=et2roc)
+	parser_et2roc.add_argument(
+			'-i','--et',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='et_fo',
+			required=True,
+			help='Input ET file (evaluated read tuples, - for standard input).',
+		)
+	parser_et2roc.add_argument(
+			'-o','--roc',
+			type=argparse.FileType('w+'),
+			metavar='file',
+			dest='roc_fo',
+			required=True,
+			help='Output ROC file (evaluated reads, - for standard output).',
+			default=None,
+		)
 
 ################################
 # PUBLICATION
@@ -259,8 +405,8 @@ def rnftools_script():
 	add_sam2rnf_parser(
 			subparsers=subparsers,
 			subcommand="sam2rnf",
-			help="Convert a SAM file to RNF-FASTQ.",
-			description="Convert a SAM file to RNF-FASTQ.",
+			help="Convert a SAM/BAM file to RNF-FASTQ.",
+			description="Convert a SAM/BAM file to RNF-FASTQ.",
 			simulator_name=None
 		)
 
@@ -330,16 +476,45 @@ def rnftools_script():
 			description="",
 		)
 
+	#
+	# rnftools sam2es
+	#
+	add_sam2es_parser(
+			subparsers=subparsers,
+			subcommand="sam2es",
+			help="todo",
+			description="todo",
+		)
+
+	#
+	# rnftools es2et
+	#
+	add_es2et_parser(
+			subparsers=subparsers,
+			subcommand="es2et",
+			help="todo",
+			description="todo",
+		)
+
+	#
+	# rnftools et2roc
+	#
+	add_et2roc_parser(
+			subparsers=subparsers,
+			subcommand="et2roc",
+			help="todo",
+			description="todo",
+		)
+
+	#
+	# rnftools sam2roc
+	#
+	add_sam2roc_parser(
+			subparsers=subparsers,
+			subcommand="sam2roc",
+			help="todo",
+			description="todo",
+		)
+
 	args = parser.parse_args()
 	args.func(args)
-
-	####
-
-	####
-	parser_sam2mis = subparsers.add_parser('sam2mis', help='b help')
-
-	####
-	parser_mis2mir = subparsers.add_parser('mis2mir', help='b help')
-
-	####
-	parser_mir2roc = subparsers.add_parser('mir2roc', help='b help')

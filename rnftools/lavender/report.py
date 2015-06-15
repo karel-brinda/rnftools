@@ -29,8 +29,8 @@ class Report:
 	def __init__(
 		self,
 		name,
+		allowed_delta,
 		bam_dirs=[],
-		allowed_delta=5,
 		default_x_run=(0.00001,1.0),
 		default_y_run=(60,100),
 		default_pdf_size_cm=(10,10),
