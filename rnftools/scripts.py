@@ -215,6 +215,7 @@ def add_publication_parser(subparsers,subcommand,help,description):
 	parser_curesim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
 	parser_curesim2rnf.set_defaults(func=publication)
 
+
 ################################
 ################################
 ##
@@ -272,7 +273,7 @@ def rnftools_script():
 			help="Convert output of Art to RNF-FASTQ.",
 			description="""Convert an Art SAM file to RNF-FASTQ. Note that Art produces non-standard SAM files
 				and manual editation might be necessary. In particular, when a FASTA file contains comments,
-				Art left them in the sequence name. They must be removed in @SQ headers in the SAM file,
+				Art left them in the sequence name. Comments must be removed in their corresponding @SQ headers in the SAM file,
 				otherwise all reads are considered to be unmapped by this script.
 			""",
 			simulator_name="art",
