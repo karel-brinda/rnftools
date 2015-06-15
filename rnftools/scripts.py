@@ -2,6 +2,9 @@ import sys
 import argparse
 import os
 import rnftools
+import textwrap
+
+# todo: examples of usages for every subcommand (using epilog)
 
 ################################
 ################################
@@ -162,7 +165,7 @@ def add_wgsim_parser(subparsers,subcommand,help,description):
 
 
 ################################
-# CURESIMs
+# CURESIM
 ################################
 
 def curesim2rnf(args):
@@ -188,6 +191,31 @@ def add_curesim_parser(subparsers,subcommand,help,description):
 	_add_shared_params(parser_curesim2rnf,unmapped_switcher=False)
 
 ################################
+# PUBLICATION
+################################
+
+def publication(args):
+	print()
+	print("-------------------------------------------------------------------------------------------")
+	print("  K. Brinda, V. Boeva, G. Kucherov: RNF: a general framework to evaluate NGS read mappers.")
+	print("             arXiv:1504.00556 [q-bio.GN], accepted to Bioinformatics, 2015.")
+	print("-------------------------------------------------------------------------------------------")
+	print()
+	print("@article{rnf,")
+	print("\tauthor  = {B{\\v r}inda, Karel AND Boeva, Valentina AND Kucherov, Gregory},")
+	print("\ttitle   = {RNF: a general framework to evaluate NGS read mappers},")
+	print("\tyear    = {2015},")
+	print("\tvolume  = {abs/1504.00556},")
+	print("\tee      = {http://arxiv.org/abs/1504.00556},")
+	print("}")
+	print()
+
+
+def add_publication_parser(subparsers,subcommand,help,description):
+	parser_curesim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_curesim2rnf.set_defaults(func=publication)
+
+################################
 ################################
 ##
 ## RNFTOOLS SCRIPT
@@ -196,15 +224,33 @@ def add_curesim_parser(subparsers,subcommand,help,description):
 ################################
 
 def default_func(args):
-	#print(args)
 	pass
 
 def rnftools_script():
 	# create the top-level parser
-	parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]))
-	parser.add_argument('--version', action='version', version=rnftools.__version__)
+
+	if len(sys.argv)==1 or (len(sys.argv)==2 and (sys.argv[1]!="publication")):
+		sys.argv.append("-h")
+
+	parser = argparse.ArgumentParser(
+			prog=os.path.basename(sys.argv[0]),
+			formatter_class=argparse.RawDescriptionHelpFormatter,
+			description=textwrap.dedent("""
+					================================================
+					RNFtools -  http://rnftools.rtfd.org
+					------------------------------------
+					version: {}
+					upgrade: pip3 install --upgrade rnftools
+					contact: Karel Brinda (karel.brinda@univ-mlv.fr)
+					================================================
+					""".format(rnftools.__version__),
+				)
+		)
+	#parser.add_argument('--version', action='version', version=rnftools.__version__)
 	parser.set_defaults(func=default_func)
-	subparsers = parser.add_subparsers(help='sub-command help')
+	subparsers = parser.add_subparsers(
+			help='----------------------------------------------------',
+		)
 
 	#
 	# rnftools sam2rnf
@@ -212,8 +258,8 @@ def rnftools_script():
 	add_sam2rnf_parser(
 			subparsers=subparsers,
 			subcommand="sam2rnf",
-			help="Convert SAM file to RNF FASTQ.",
-			description="Convert SAM file to RNF FASTQ.",
+			help="Convert a SAM file to RNF-FASTQ.",
+			description="Convert a SAM file to RNF-FASTQ.",
 			simulator_name=None
 		)
 
@@ -223,8 +269,8 @@ def rnftools_script():
 	add_sam2rnf_parser(
 			subparsers=subparsers,
 			subcommand="art2rnf",
-			help="Convert output of Art to RNF FASTQ.",
-			description="""Convert an Art SAM file to RNF FASTQ. Note that Art produces non-standard SAM files
+			help="Convert output of Art to RNF-FASTQ.",
+			description="""Convert an Art SAM file to RNF-FASTQ. Note that Art produces non-standard SAM files
 				and manual editation might be necessary. In particular, when a FASTA file contains comments,
 				Art left them in the sequence name. They must be removed in @SQ headers in the SAM file,
 				otherwise all reads are considered to be unmapped by this script.
@@ -238,8 +284,8 @@ def rnftools_script():
 	add_curesim_parser(
 			subparsers=subparsers,
 			subcommand="curesim2rnf",
-			help="Convert output of CuReSim to RNF FASTQ.",
-			description="Convert a CuReSim FASTQ file to RNF FASTQ.",
+			help="Convert output of CuReSim to RNF-FASTQ.",
+			description="Convert a CuReSim FASTQ file to RNF-FASTQ.",
 		)
 
 	#
@@ -248,8 +294,8 @@ def rnftools_script():
 	add_dwgsim_parser(
 			subparsers=subparsers,
 			subcommand="dwgsim2rnf",
-			help="Convert output of DwgSim to RNF FASTQ.",
-			description="Convert a DwgSim FASTQ file (dwgsim_prefix.bfast.fastq) to RNF FASTQ. ",
+			help="Convert output of DwgSim to RNF-FASTQ.",
+			description="Convert a DwgSim FASTQ file (dwgsim_prefix.bfast.fastq) to RNF-FASTQ. ",
 		)
 
 	#
@@ -258,8 +304,8 @@ def rnftools_script():
 	add_sam2rnf_parser(
 			subparsers=subparsers,
 			subcommand="mason2rnf",
-			help="Convert output of Mason to RNF FASTQ.",
-			description="Convert a Mason SAM file to RNF FASTQ.",
+			help="Convert output of Mason to RNF-FASTQ.",
+			description="Convert a Mason SAM file to RNF-FASTQ.",
 			simulator_name="mason",
 		)
 
@@ -269,8 +315,18 @@ def rnftools_script():
 	add_wgsim_parser(
 			subparsers=subparsers,
 			subcommand="wgsim2rnf",
-			help="Convert output of WgSim to RNF FASTQ.",
-			description="Convert WgSim FASTQ files to RNF FASTQ.",
+			help="Convert output of WgSim to RNF-FASTQ.",
+			description="Convert WgSim FASTQ files to RNF-FASTQ.",
+		)
+
+	#
+	# rnftools publication
+	#
+	add_publication_parser(
+			subparsers=subparsers,
+			subcommand="publication",
+			help="Print information about the associated publication.",
+			description="",
 		)
 
 	args = parser.parse_args()

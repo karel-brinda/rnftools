@@ -1,4 +1,5 @@
 import builtins
+import sys
 
 # switch off info for smbl
 try:
@@ -20,7 +21,7 @@ except:
 	__version__=""
 
 DEFAULT_RNFTOOLS_CONF = {
-		'print_info': True,
+		'print_info': sys.argv[0]=="snakemake",
 	}
 
 # default configuration
@@ -33,8 +34,6 @@ assert type(RNFTOOLS_CONF) is dict, "builtins.RNFTOOLS_CONF must be a dictionary
 for key in DEFAULT_RNFTOOLS_CONF.keys():
 	if not key in RNFTOOLS_CONF:
 		RNFTOOLS_CONF[key]=DEFAULT_RNFTOOLS_CONF[key]
-
-#print("RNFTOOLS configuration:",RNFTOOLS_CONF)
 
 # print info
 if RNFTOOLS_CONF["print_info"]:
