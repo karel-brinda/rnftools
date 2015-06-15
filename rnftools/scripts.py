@@ -1,8 +1,11 @@
 import sys
+import re
 import argparse
 import os
 import rnftools
 import textwrap
+import snakemake
+import smbl
 
 # todo: examples of usages for every subcommand (using epilog)
 
@@ -196,11 +199,17 @@ def add_wgsim_parser(subparsers,subcommand,help,description):
 ################################
 
 def sam2roc(args):
-	rnftools.lavender.Bam.bam2es(
-			bam_fn=args.sam_fn,
-			roc_fo=args.roc_fo,
-			allowed_delta=args.allowed_delta,
-		)
+	cmd = """
+				rnftools sam2es -d {allowed_delta} -i "{sam_fn}" -o -| \
+				rnftools es2et -i - -o - | \
+				rnftools et2roc -i - -o "{roc_fn}"
+			""".format(
+				allowed_delta=args.allowed_delta,
+				sam_fn=args.sam_fn,
+				roc_fn=args.roc_fn,
+			)
+	print("Called command: ",os.linesep,re.sub(r'[ \t\f\v]+',' ',cmd).strip(),file=sys.stderr)
+	smbl.utils.shell(cmd)
 
 def add_sam2roc_parser(subparsers,subcommand,help,description):
 	parser_sam2roc = subparsers.add_parser(subcommand,help=help,description=description)
@@ -215,9 +224,9 @@ def add_sam2roc_parser(subparsers,subcommand,help,description):
 		)
 	parser_sam2roc.add_argument(
 			'-o','--roc',
-			type=argparse.FileType('w+'),
+			type=str,
 			metavar='file',
-			dest='es_fo',
+			dest='roc_fn',
 			required=True,
 			help='Output ROC file (- for standard output).',
 			default=None,

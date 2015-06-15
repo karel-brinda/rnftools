@@ -138,7 +138,6 @@ class Bam:
 		es_fo.write("# "+os.linesep)
 		es_fo.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
 
-		print(bam_fn)
 		with pysam.AlignmentFile(bam_fn, "rb") as sam:
 			references_dict = {}
 
