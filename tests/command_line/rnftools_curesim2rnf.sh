@@ -11,7 +11,7 @@ $CURESIM \
 	-n 100 \
 	-f $FA \
 	-o curesim.fq \
-> /dev/null
+2> /dev/null
 
 rnftools curesim2rnf \
 	--fasta-index ${FA}.fai \

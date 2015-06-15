@@ -19,7 +19,7 @@ The LAVEnder Next-Generation Sequencing mappers evaluation tool.
 import os
 
 __docformat__ = 'reStructuredText'
-__all__=["Bam","Report","Panel"]
+#__all__=["Bam","Report","Panel"]
 
 DEFAULT_ALLOWED_DELTA=5
 MAXIMAL_MAPPING_QUALITY=255

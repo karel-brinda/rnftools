@@ -3,6 +3,8 @@ import snakemake
 import os
 
 
+from . import DEFAULT_ALLOWED_DELTA
+
 ##############
 ##############
 ### REPORT ###
@@ -29,7 +31,7 @@ class Report:
 	def __init__(
 		self,
 		name,
-		allowed_delta,
+		allowed_delta=DEFAULT_ALLOWED_DELTA,
 		bam_dirs=[],
 		default_x_run=(0.00001,1.0),
 		default_y_run=(60,100),
