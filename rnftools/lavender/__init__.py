@@ -88,5 +88,3 @@ def _default_gp_style(i,count=0):
 	colors=["#ff0000","#00ff00","#888888","#0000ff","#daa520","#000000"]
 	color=colors[i % len(colors)]
 	return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
-
-

@@ -108,8 +108,508 @@ class Bam:
 		"""Get name of the PDF file."""
 		return self._pdf_fn
 
-	######################################
-	######################################
+
+	############################
+	############################
+	##
+	## ES
+	##
+	############################
+	############################
+
+	@staticmethod
+	def bam2es(
+				bam_fn,
+				es_fo,
+				allowed_delta,
+			):
+
+		es_fo.write("# RN:   read name"+os.linesep)
+		es_fo.write("# Q:    is mapped with quality"+os.linesep)
+		es_fo.write("# Chr:  chr id"+os.linesep)
+		es_fo.write("# D:    direction"+os.linesep)
+		es_fo.write("# L:    the most left nucleotide"+os.linesep)
+		es_fo.write("# R:    the most right nucleotide"+os.linesep)
+		es_fo.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
+		es_fo.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
+		es_fo.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
+		es_fo.write("#         w      segment is mapped to a wrong location"+os.linesep)
+		es_fo.write("#         U      segment is unmapped and should be unmapped"+os.linesep)
+		es_fo.write("#         u      segment is unmapped and should be mapped"+os.linesep)
+		es_fo.write("# Segs: number of segments"+os.linesep)
+		es_fo.write("# "+os.linesep)
+		es_fo.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
+
+		with pysam.AlignmentFile(bam_fn, "rb") as sam:
+			references_dict = {}
+
+			for i in range(len(sam.references)):
+				references_dict[ sam.references[i] ] = i+1
+
+			for read in sam:
+				rnf_read_tuple = rnftools.rnfformat.ReadTuple()
+				rnf_read_tuple.destringize(read.query_name)
+
+				left = read.reference_start+1
+				right = read.reference_end
+				chrom_id=references_dict[ sam.references[read.reference_id] ]
+
+				nb_of_segments=len(rnf_read_tuple.segments)
+
+				if rnf_read_tuple.segments[0].genome_id==1:
+					should_be_mapped=True
+				else:
+					should_be_mapped=False
+
+				# read is unmapped
+				if read.is_unmapped:
+					# read should be mapped
+					if should_be_mapped:
+						category="u"			
+					# read should be unmapped
+					else:
+						category="U"
+				# read is mapped
+				else:
+					# read should be mapped
+					if should_be_mapped:
+						exists_corresponding_segment=False
+
+						for j in range(len(rnf_read_tuple.segments)):
+							segment=rnf_read_tuple.segments[j]
+							if (
+								(segment.left==0 or abs(segment.left - left) <= allowed_delta) and
+								(segment.right==0 or abs(segment.right - right) <= allowed_delta) and
+								(segment.left!=0 or segment.right==0) and
+								(chrom_id==0 or chrom_id==segment.chr_id)
+							):
+								exists_corresponding_segment=True
+								segment=str(j+1)
+								break
+
+						# read was mapped to correct location
+						if exists_corresponding_segment: # exists ok location?
+							category="M_"+segment
+						# read was mapped to incorrect location
+						else:
+							category="w"
+					# read should be unmapped
+					else:
+						category="m"
+
+				es_fo.write(
+					"\t".join(
+						map(str,[
+							# read name
+							read.query_name,
+							# aligned?
+							"unmapped" if read.is_unmapped else "mapped_"+str(read.mapping_quality),
+							# reference id
+							chrom_id,
+							# direction
+							"R" if read.is_reverse else "F",
+							# left
+							left,
+							# right
+							right,
+							# assigned category
+							category,
+							# count of segments
+							nb_of_segments
+						])
+					) + os.linesep
+				)
+
+	def create_es(self):
+		"""Create an es (intermediate) file for this BAM file.
+		This is the function which asses if an alignment is correct
+		"""
+
+		with (gzip.open(self._es_fn,"tw+") if self.compress_intermediate_files else open(self._es_fn,"w+")) as es_fo:
+			self.bam2es(
+					bam_fn=self._bam_fn,
+					es_fo=es_fo,
+					allowed_delta=self.report.allowed_delta,
+				)
+
+
+	############################
+	############################
+	##
+	## ET
+	##
+	############################
+	############################
+
+
+	@staticmethod
+	def _vector_of_categories(srs,read_name,parts):
+		"""Create vector of categories (voc[q] ... assigned category for given quality level)
+
+		srs ... single read statistics ... for every q ... dictionary
+		read_name ... read name
+		parts ... number of segments
+		"""
+
+		# default value
+		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
+		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1,srs
+
+		should_be_mapped=bool(srs[0]["m"]+srs[0]["U"]==0)
+
+		for q in range(len(srs)):
+
+			#####
+			# M # - all parts correctly aligned
+			#####
+			if (
+				len(srs[q]["M"])==parts and
+				srs[q]["w"]==0 and
+				srs[q]["m"]==0 and
+				srs[q]["U"]==0 and
+				srs[q]["u"]==0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="M"
+
+			#####
+			# w # - at least one segment is incorrectly aligned
+			#####
+			if (
+				srs[q]["w"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="w"
+
+			#####
+			# m # - at least one segment was aligned but should not be aligned
+			#####
+			if(
+				srs[q]["w"]==0 and
+				srs[q]["m"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="m"
+
+			#####
+			# U # - all segments should be unaligned but are unaligned
+			#####
+			if (
+				srs[q]["U"]>0 and
+				srs[q]["u"]==0 and
+				srs[q]["m"]==0 and
+				srs[q]["w"]==0 and
+				len(srs[q]["M"])==0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="U"
+
+			#####
+			# u # - at least one segment was unaligned but should be aligned
+			#####
+			if (
+				srs[q]["w"]==0 and
+				srs[q]["u"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="u"
+
+			#####
+			# t # - at least one segment was thresholded
+			#####
+			if (
+				len(srs[q]["M"])!=parts and
+				srs[q]["w"]==0 and
+				srs[q]["m"]==0 and
+				srs[q]["U"]==0 and
+				srs[q]["u"]==0 and
+				srs[q]["t"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="t"
+
+			#####
+			# T # - at least one segment was thresholded
+			#####
+			if (
+				len(srs[q]["M"])!=parts and
+				srs[q]["w"]==0 and
+				srs[q]["m"]==0 and
+				srs[q]["U"]==0 and
+				srs[q]["u"]==0 and
+				srs[q]["T"]>0
+			):
+				assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="T"
+
+			#####
+			# P # - multimapped, M + w + m > parts
+			#####
+
+			# this only can rewrite some older
+			if (
+				#len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts+srs[q]["m"]==0 and
+				len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts and
+				srs[q]["U"]==0 and
+				srs[q]["u"]==0
+			):
+				#assert vec[q]=="x",str((q,srs[q]))
+				vec[q]="P"
+
+
+			######
+			## x # - unrecognized - print details
+			######
+			#if vec[q]=="x":
+			#	smbl.messages.message(
+			#		" ".join(
+			#			[
+			#				"Unrecognized category for alignment of read '{}'.".format(read_name),
+			#				"Quality level: {}.".format(q),
+			#				"Debug info: '{}'.".format(str(
+			#						[
+			#							srs[q]["M"],
+			#							srs[q]["m"],
+			#							srs[q]["w"],
+			#							srs[q]["U"],
+			#							srs[q]["u"],
+			#							srs[q]["T"],
+			#							srs[q]["t"],
+			#						]
+			#					)),
+			#			]
+			#		),
+			#		program="RNFtools",
+			#		subprogram="bam=>roc",
+			#	)
+
+		return vec
+
+	@staticmethod
+	def _et_line(readname,vector_of_categories):
+		i=0
+		intervals=[]
+		for j in range(len(vector_of_categories)):
+			if vector_of_categories[i]!=vector_of_categories[j]:
+				intervals.append("{}:{}-{}".format(vector_of_categories[i],i,j-1))
+				i=j
+		intervals.append("{}:{}-{}".format(vector_of_categories[i],i,len(vector_of_categories)-1))
+
+		return "{}\t{}".format(readname,",".join(intervals))
+
+	@staticmethod
+	def es2et(
+				es_fo,
+				et_fo,
+			):
+
+		et_fo.write("# Mapping information for read tuples"+os.linesep)
+		et_fo.write("#"+os.linesep)
+		et_fo.write("# RN:   read name"+os.linesep)
+		et_fo.write("# I:    intervals with asigned categories"+os.linesep)
+		et_fo.write("#"+os.linesep)
+		et_fo.write("# RN	I"+os.linesep)
+
+		last_rname=""
+		for line in es_fo:
+			line=line.strip()
+			if line=="" or line[0]=="#":
+				continue
+			else:
+				(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
+				nb_of_segments=int(nb_of_segments)
+
+				#print(rname,last_rname,mapped)
+				# new read
+				if rname!=last_rname:
+					# update
+					if last_rname!="":
+						voc = Bam._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
+						et_fo.write(Bam._et_line(readname=rname,vector_of_categories=voc))
+						et_fo.write(os.linesep)
+
+					# nulling
+					single_reads_statistics= [
+								{
+									"U":0,
+									"u":0,
+									"M":[],
+									"m":0,
+									"w":0,
+									"T":0,
+									"t":0,
+								} for i in range(MAXIMAL_MAPPING_QUALITY+1)
+							]
+					last_rname=rname
+
+				####################
+				# Unmapped segment #
+				####################
+
+				#####
+				# U #
+				#####
+				if category=="U":
+					for q in range(len(single_reads_statistics)):
+						single_reads_statistics[q]["U"]+=1
+
+				#####
+				# u #
+				#####
+				elif category=="u":
+					for q in range(len(single_reads_statistics)):
+						single_reads_statistics[q]["u"]+=1
+
+				##################
+				# Mapped segment #
+				##################
+
+				else:
+					mapping_quality=int(mapped.replace("mapped_",""))
+					assert 0<=mapping_quality and mapping_quality<=MAXIMAL_MAPPING_QUALITY, mapping_quality
+
+					#####
+					# m #
+					#####
+					if category=="m":
+						for q in range(mapping_quality+1):
+							single_reads_statistics[q]["m"]+=1
+						for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+							single_reads_statistics[q]["T"]+=1
+
+					#####
+					# w #
+					#####
+					elif category=="w":
+						for q in range(mapping_quality+1):
+							single_reads_statistics[q]["w"]+=1
+						for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+							single_reads_statistics[q]["t"]+=1
+
+					#####
+					# M #
+					#####
+					else:
+						assert category[0]=="M", category
+						segment_id=int(category.replace("M_",""))
+						for q in range(mapping_quality+1):
+							single_reads_statistics[q]["M"].append(segment_id)
+						for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
+							single_reads_statistics[q]["t"]+=1
+
+		# last read
+		voc = Bam._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
+		et_fo.write(Bam._et_line(readname=rname,vector_of_categories=voc))
+		et_fo.write(os.linesep)
+
+
+	def create_et(self):
+		"""Create a et file for this BAM file (mapping information about read tuples).
+
+		:raises: ValueError
+
+		"""
+
+		with (gzip.open(self._es_fn,"tr") if self.compress_intermediate_files else open(self._es_fn,"r")) as es_fo:
+			with (gzip.open(self._et_fn,"tw+") if self.compress_intermediate_files else open(self._et_fn,"w+")) as et_fo:
+
+				self.es2et(
+						es_fo=es_fo,
+						et_fo=et_fo,
+					)
+
+	############################
+	############################
+	##
+	## ROC
+	##
+	############################
+	############################
+
+	@staticmethod
+	def et2roc(
+				et_fo,
+				roc_fo,
+			):
+		"""Create a ROC file for this BAM file.
+
+		:raises: ValueError
+
+		"""
+
+		stats_dicts = [
+				{
+					"q":q,
+					"M":0,
+					"w":0,
+					"m":0,
+					"P":0,
+					"U":0,
+					"u":0,
+					"T":0,
+					"t":0,
+					"x":0
+				}
+				for q in range(MAXIMAL_MAPPING_QUALITY+1)
+			]
+
+		for line in et_fo:
+			line=line.strip()
+			if line!="" and line[0]!="#":
+				(read_name,tab,info_categories)=line.partition("\t")
+				intervals=info_categories.split(",")
+				for interval in intervals:
+					category=interval[0]
+					(left,colon,right)=interval[2:].partition("-")
+					for q in range(int(left),int(right)+1):
+						stats_dicts[q][category]+=1
+
+		roc_fo.write("# Numbers of reads in several categories in dependence"+os.linesep)
+		roc_fo.write("# on the applied threshold on mapping quality q"+os.linesep)
+		roc_fo.write("# "+os.linesep)
+		roc_fo.write("# Categories:"+os.linesep)
+		roc_fo.write("#        M: Mapped correctly."+os.linesep)
+		roc_fo.write("#        w: Mapped to a wrong position."+os.linesep)
+		roc_fo.write("#        m: Mapped but should be unmapped."+os.linesep)
+		roc_fo.write("#        P: Multimapped."+os.linesep)
+		roc_fo.write("#        U: Unmapped and should be unmapped."+os.linesep)
+		roc_fo.write("#        u: Unmapped but should be mapped."+os.linesep)
+		roc_fo.write("#        T: Thresholded correctly."+os.linesep)
+		roc_fo.write("#        t: Thresholded incorrectly."+os.linesep)
+		roc_fo.write("#        x: Unknown."+os.linesep)
+		roc_fo.write("#"+os.linesep)
+		roc_fo.write("# q\tM\tw\tm\tP\tU\tu\tT\tt\tx\tall"+os.linesep)
+
+		l_numbers = []
+		for line in stats_dicts:
+			numbers = [line["M"],line["w"],line["m"],line["P"],line["U"],line["u"],line["T"],line["t"],line["x"]]
+			if numbers != l_numbers:
+				roc_fo.write("\t".join(
+						[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
+					)+os.linesep)
+			l_numbers=numbers
+
+	def create_roc(self):
+		"""Create a ROC file for this BAM file.
+
+		:raises: ValueError
+
+		"""
+
+		with (gzip.open(self._et_fn,"tr") if self.compress_intermediate_files else open(self._et_fn,"r")) as et_fo:
+			with open(self._roc_fn, "w+") as roc_fo:
+				self.et2roc(
+						et_fo=et_fo,
+						roc_fo=roc_fo,
+					)
+
+	############################
+	############################
+	##
+	## GRAPHICS
+	##
+	############################
+	############################
 
 	def create_gp(self):
 		"""Create a GnuPlot file for this BAM file."""
@@ -192,6 +692,21 @@ class Bam:
 				x_lab=self.default_x_label,
 			)
 			gp.write(gp_content)
+
+
+	def create_graphics(self):
+		"""Create images related to this BAM file using GnuPlot."""
+
+		smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+
+
+	############################
+	############################
+	##
+	## HTML
+	##
+	############################
+	############################
 
 	def create_html(self):
 		"""Create a HTML page for this BAM file."""
@@ -297,7 +812,6 @@ class Bam:
 						program_info.append('<tr><td style="font-weight:bold">{}:</td><td style="text-align:left">{}</td></tr>'.format(lvalue,rvalue))
 
 					program_info.append("</table>")
-
 
 			html_src="""<!DOCTYPE html>
 			<html>
@@ -488,456 +1002,3 @@ class Bam:
 				)
 
 			html.write(html_src)
-
-	def create_es(self):
-		"""Create an es (intermediate) file for this BAM file.
-		This is the function which asses if an alignment is correct
-		"""
-
-		diff_thr=self.report.allowed_delta
-
-		with (gzip.open(self._es_fn,"tw+") if self.compress_intermediate_files else open(self._es_fn,"w+")) as es:
-			with pysam.AlignmentFile(self._bam_fn, "rb") as sam:
-				references_dict = {}
-
-				for i in range(len(sam.references)):
-					references_dict[ sam.references[i] ] = i+1
-
-				es.write("# RN:   read name"+os.linesep)
-				es.write("# Q:    is mapped with quality"+os.linesep)
-				es.write("# Chr:  chr id"+os.linesep)
-				es.write("# D:    direction"+os.linesep)
-				es.write("# L:    the most left nucleotide"+os.linesep)
-				es.write("# R:    the most right nucleotide"+os.linesep)
-				es.write("# Cat:  category of alignment assigned by LAVEnder"+os.linesep)
-				es.write("#         M_i    i-th segment is correctly mapped"+os.linesep)
-				es.write("#         m      segment should be unmapped but it is mapped"+os.linesep)
-				es.write("#         w      segment is mapped to a wrong location"+os.linesep)
-				es.write("#         U      segment is unmapped and should be unmapped"+os.linesep)
-				es.write("#         u      segment is unmapped and should be mapped"+os.linesep)
-				es.write("# Segs: number of segments"+os.linesep)
-				es.write("# "+os.linesep)
-				es.write("# RN\tQ\tChr\tD\tL\tR\tCat\tSegs"+os.linesep)
-
-				for read in sam:
-					rnf_read_tuple = rnftools.rnfformat.ReadTuple()
-					rnf_read_tuple.destringize(read.query_name)
-
-					left = read.reference_start+1
-					right = read.reference_end
-					chrom_id=references_dict[ sam.references[read.reference_id] ]
-
-					nb_of_segments=len(rnf_read_tuple.segments)
-
-					if rnf_read_tuple.segments[0].genome_id==1:
-						should_be_mapped=True
-					else:
-						should_be_mapped=False
-
-					# read is unmapped
-					if read.is_unmapped:
-						# read should be mapped
-						if should_be_mapped:
-							category="u"			
-						# read should be unmapped
-						else:
-							category="U"
-					# read is mapped
-					else:
-						# read should be mapped
-						if should_be_mapped:
-							exists_corresponding_segment=False
-
-							for j in range(len(rnf_read_tuple.segments)):
-								segment=rnf_read_tuple.segments[j]
-								if (
-									(segment.left==0 or abs(segment.left - left) <= diff_thr) and
-									(segment.right==0 or abs(segment.right - right) <= diff_thr) and
-									(segment.left!=0 or segment.right==0) and
-									(chrom_id==0 or chrom_id==segment.chr_id)
-								):
-									exists_corresponding_segment=True
-									segment=str(j+1)
-									break
-
-							# read was mapped to correct location
-							if exists_corresponding_segment: # exists ok location?
-								category="M_"+segment
-							# read was mapped to incorrect location
-							else:
-								category="w"
-						# read should be unmapped
-						else:
-							category="m"
-
-					es.write(
-						"\t".join(
-							map(str,[
-								# read name
-								read.query_name,
-								# aligned?
-								"unmapped" if read.is_unmapped else "mapped_"+str(read.mapping_quality),
-								# reference id
-								chrom_id,
-								# direction
-								"R" if read.is_reverse else "F",
-								# left
-								left,
-								# right
-								right,
-								# assigned category
-								category,
-								# count of segments
-								nb_of_segments
-							])
-						) + os.linesep
-					)
-
-	@staticmethod
-	def _vector_of_categories(srs,read_name,parts):
-		"""Create vector of categories (voc[q] ... assigned category for given quality level)
-
-		srs ... single read statistics ... for every q ... dictionary
-		read_name ... read name
-		parts ... number of segments
-		"""
-
-		# default value
-		vec = ["x" for i in range(MAXIMAL_MAPPING_QUALITY+1)]
-		assert len(srs)<=MAXIMAL_MAPPING_QUALITY+1,srs
-
-		should_be_mapped=bool(srs[0]["m"]+srs[0]["U"]==0)
-
-		for q in range(len(srs)):
-
-			#####
-			# M # - all parts correctly aligned
-			#####
-			if (
-				len(srs[q]["M"])==parts and
-				srs[q]["w"]==0 and
-				srs[q]["m"]==0 and
-				srs[q]["U"]==0 and
-				srs[q]["u"]==0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="M"
-
-			#####
-			# w # - at least one segment is incorrectly aligned
-			#####
-			if (
-				srs[q]["w"]>0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="w"
-
-			#####
-			# m # - at least one segment was aligned but should not be aligned
-			#####
-			if(
-				srs[q]["w"]==0 and
-				srs[q]["m"]>0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="m"
-
-			#####
-			# U # - all segments should be unaligned but are unaligned
-			#####
-			if (
-				srs[q]["U"]>0 and
-				srs[q]["u"]==0 and
-				srs[q]["m"]==0 and
-				srs[q]["w"]==0 and
-				len(srs[q]["M"])==0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="U"
-
-			#####
-			# u # - at least one segment was unaligned but should be aligned
-			#####
-			if (
-				srs[q]["w"]==0 and
-				srs[q]["u"]>0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="u"
-
-			#####
-			# t # - at least one segment was thresholded
-			#####
-			if (
-				len(srs[q]["M"])!=parts and
-				srs[q]["w"]==0 and
-				srs[q]["m"]==0 and
-				srs[q]["U"]==0 and
-				srs[q]["u"]==0 and
-				srs[q]["t"]>0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="t"
-
-			#####
-			# T # - at least one segment was thresholded
-			#####
-			if (
-				len(srs[q]["M"])!=parts and
-				srs[q]["w"]==0 and
-				srs[q]["m"]==0 and
-				srs[q]["U"]==0 and
-				srs[q]["u"]==0 and
-				srs[q]["T"]>0
-			):
-				assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="T"
-
-			#####
-			# P # - multimapped, M + w + m > parts
-			#####
-
-			# this only can rewrite some older
-			if (
-				#len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts+srs[q]["m"]==0 and
-				len(srs[q]["M"])+srs[q]["w"]+srs[q]["m"]>parts and
-				srs[q]["U"]==0 and
-				srs[q]["u"]==0
-			):
-				#assert vec[q]=="x",str((q,srs[q]))
-				vec[q]="P"
-
-
-			######
-			## x # - unrecognized - print details
-			######
-			#if vec[q]=="x":
-			#	smbl.messages.message(
-			#		" ".join(
-			#			[
-			#				"Unrecognized category for alignment of read '{}'.".format(read_name),
-			#				"Quality level: {}.".format(q),
-			#				"Debug info: '{}'.".format(str(
-			#						[
-			#							srs[q]["M"],
-			#							srs[q]["m"],
-			#							srs[q]["w"],
-			#							srs[q]["U"],
-			#							srs[q]["u"],
-			#							srs[q]["T"],
-			#							srs[q]["t"],
-			#						]
-			#					)),
-			#			]
-			#		),
-			#		program="RNFtools",
-			#		subprogram="bam=>roc",
-			#	)
-
-		return vec
-
-
-	@staticmethod
-	def _et_line(readname,vector_of_categories):
-		i=0
-		intervals=[]
-		for j in range(len(vector_of_categories)):
-			if vector_of_categories[i]!=vector_of_categories[j]:
-				intervals.append("{}:{}-{}".format(vector_of_categories[i],i,j-1))
-				i=j
-		intervals.append("{}:{}-{}".format(vector_of_categories[i],i,len(vector_of_categories)-1))
-
-		return "{}\t{}".format(readname,",".join(intervals))
-
-
-	def create_et(self):
-		"""Create a et file for this BAM file (mapping information about read tuples).
-
-		:raises: ValueError
-
-		"""
-
-		with (gzip.open(self._es_fn,"tr") if self.compress_intermediate_files else open(self._es_fn,"r")) as es:
-			with (gzip.open(self._et_fn,"tw+") if self.compress_intermediate_files else open(self._et_fn,"w+")) as et:
-
-				et.write("# Mapping information for read tuples"+os.linesep)
-				et.write("#"+os.linesep)
-				et.write("# RN:   read name"+os.linesep)
-				et.write("# I:    intervals with asigned categories"+os.linesep)
-				et.write("#"+os.linesep)
-				et.write("# RN	I"+os.linesep)
-
-
-				last_rname=""
-				for line in es:
-					line=line.strip()
-					if line=="" or line[0]=="#":
-						continue
-					else:
-						(rname,mapped,ref,direction,left,right,category,nb_of_segments)=line.split("\t")
-						nb_of_segments=int(nb_of_segments)
-
-						#print(rname,last_rname,mapped)
-						# new read
-						if rname!=last_rname:
-							# update
-							if last_rname!="":
-								voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
-								et.write(self._et_line(readname=rname,vector_of_categories=voc))
-								et.write(os.linesep)
-
-							# nulling
-							single_reads_statistics= [
-										{
-											"U":0,
-											"u":0,
-											"M":[],
-											"m":0,
-											"w":0,
-											"T":0,
-											"t":0,
-										} for i in range(MAXIMAL_MAPPING_QUALITY+1)
-									]
-							last_rname=rname
-
-						####################
-						# Unmapped segment #
-						####################
-
-						#####
-						# U #
-						#####
-						if category=="U":
-							for q in range(len(single_reads_statistics)):
-								single_reads_statistics[q]["U"]+=1
-
-						#####
-						# u #
-						#####
-						elif category=="u":
-							for q in range(len(single_reads_statistics)):
-								single_reads_statistics[q]["u"]+=1
-
-						##################
-						# Mapped segment #
-						##################
-
-						else:
-							mapping_quality=int(mapped.replace("mapped_",""))
-							assert 0<=mapping_quality and mapping_quality<=MAXIMAL_MAPPING_QUALITY, mapping_quality
-
-							#####
-							# m #
-							#####
-							if category=="m":
-								for q in range(mapping_quality+1):
-									single_reads_statistics[q]["m"]+=1
-								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
-									single_reads_statistics[q]["T"]+=1
-
-							#####
-							# w #
-							#####
-							elif category=="w":
-								for q in range(mapping_quality+1):
-									single_reads_statistics[q]["w"]+=1
-								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
-									single_reads_statistics[q]["t"]+=1
-
-							#####
-							# M #
-							#####
-							else:
-								assert category[0]=="M", category
-								segment_id=int(category.replace("M_",""))
-								for q in range(mapping_quality+1):
-									single_reads_statistics[q]["M"].append(segment_id)
-								for q in range(mapping_quality+1,MAXIMAL_MAPPING_QUALITY+1):
-									single_reads_statistics[q]["t"]+=1
-
-				# last read
-				voc = self._vector_of_categories(single_reads_statistics,rname,nb_of_segments)
-				et.write(self._et_line(readname=rname,vector_of_categories=voc))
-				et.write(os.linesep)
-
-	@staticmethod
-	def et2roc(
-				et_fo,
-				roc_fo,
-			):
-		"""Create a ROC file for this BAM file.
-
-		:raises: ValueError
-
-		"""
-
-		stats_dicts = [
-				{
-					"q":q,
-					"M":0,
-					"w":0,
-					"m":0,
-					"P":0,
-					"U":0,
-					"u":0,
-					"T":0,
-					"t":0,
-					"x":0
-				}
-				for q in range(MAXIMAL_MAPPING_QUALITY+1)
-			]
-
-		for line in et_fo:
-			line=line.strip()
-			if line!="" and line[0]!="#":
-				(read_name,tab,info_categories)=line.partition("\t")
-				intervals=info_categories.split(",")
-				for interval in intervals:
-					category=interval[0]
-					(left,colon,right)=interval[2:].partition("-")
-					for q in range(int(left),int(right)+1):
-						stats_dicts[q][category]+=1
-
-		roc_fo.write("# Numbers of reads in several categories in dependence"+os.linesep)
-		roc_fo.write("# on the applied threshold on mapping quality q"+os.linesep)
-		roc_fo.write("# "+os.linesep)
-		roc_fo.write("# Categories:"+os.linesep)
-		roc_fo.write("#        M: Mapped correctly."+os.linesep)
-		roc_fo.write("#        w: Mapped to a wrong position."+os.linesep)
-		roc_fo.write("#        m: Mapped but should be unmapped."+os.linesep)
-		roc_fo.write("#        P: Multimapped."+os.linesep)
-		roc_fo.write("#        U: Unmapped and should be unmapped."+os.linesep)
-		roc_fo.write("#        u: Unmapped but should be mapped."+os.linesep)
-		roc_fo.write("#        T: Thresholded correctly."+os.linesep)
-		roc_fo.write("#        t: Thresholded incorrectly."+os.linesep)
-		roc_fo.write("#        x: Unknown."+os.linesep)
-		roc_fo.write("#"+os.linesep)
-		roc_fo.write("# q\tM\tw\tm\tP\tU\tu\tT\tt\tx\tall"+os.linesep)
-
-		l_numbers = []
-		for line in stats_dicts:
-			numbers = [line["M"],line["w"],line["m"],line["P"],line["U"],line["u"],line["T"],line["t"],line["x"]]
-			if numbers != l_numbers:
-				roc_fo.write("\t".join(
-						[str(line["q"])] + list(map(str,numbers)) + [str(sum(numbers))]
-					)+os.linesep)
-			l_numbers=numbers
-
-	def create_roc(self):
-		"""Create a ROC file for this BAM file.
-
-		:raises: ValueError
-
-		"""
-
-		with (gzip.open(self._et_fn,"tr") if self.compress_intermediate_files else open(self._et_fn,"r")) as et_fo:
-			with open(self._roc_fn, "w+") as roc_fo:
-				self.et2roc(
-						et_fo=et_fo,
-						roc_fo=roc_fo,
-					)
-
-	def create_graphics(self):
-		"""Create images related to this BAM file using GnuPlot."""
-
-		smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
