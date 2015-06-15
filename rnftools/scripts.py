@@ -19,7 +19,7 @@ def _add_shared_params(parser, unmapped_switcher=False):
 			metavar='file',
 			dest='fq_fo',
 			required=True,
-			help='Output FASTQ file.',
+			help='Output FASTQ file (- for standard output).',
 		)
 	
 	parser.add_argument(
@@ -28,7 +28,7 @@ def _add_shared_params(parser, unmapped_switcher=False):
 			metavar='file',
 			dest='fai_fo',
 			required=True,
-			help='FAI index of the reference FASTA file.'
+			help="FAI index of the reference FASTA file (- for standard input). It can be created using 'samtools faidx'."
 		)
 	
 	parser.add_argument(
@@ -67,7 +67,7 @@ def sam2rnf(args):
 		allow_unmapped=args.allow_unmapped,
 	)
 
-def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
+def add_sam2rnf_parser(subparsers,subcommand,help,description,simulator_name=None):
 	"""Add another parser for a SAM2RNF-like command.
 
 	Args:
@@ -75,7 +75,7 @@ def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
 		simulator_name (str): Name of the simulator used in comments.
 	"""
 
-	parser_sam2rnf = subparsers.add_parser(subcommand, help=help)
+	parser_sam2rnf = subparsers.add_parser(subcommand,help=help,description=description)
 	parser_sam2rnf.set_defaults(func=sam2rnf)
 	parser_sam2rnf.add_argument(
 			'-s','--sam',
@@ -83,7 +83,7 @@ def add_sam2rnf_parser(subparsers,subcommand,help,simulator_name=None):
 			metavar='file',
 			dest='sam_fn',
 			required=True,
-			help='Input SAM/BAM with true alignments of the reads.'
+			help='Input SAM/BAM with true (expected) alignments of the reads  (- for standard input).'
 		)
 	
 	_add_shared_params(parser_sam2rnf,unmapped_switcher=True)
@@ -111,8 +111,8 @@ def dwgsim2rnf(args):
 		allow_unmapped=args.allow_unmapped,
 	)
 
-def add_dwgsim_parser(subparsers,subcommand):
-	parser_dwgsim2rnf = subparsers.add_parser(subcommand, help=help)
+def add_dwgsim_parser(subparsers,subcommand,help,description):
+	parser_dwgsim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
 	parser_dwgsim2rnf.set_defaults(func=dwgsim2rnf)
 	parser_dwgsim2rnf.add_argument(
 			'-p','--dwgsim-prefix',
@@ -138,8 +138,8 @@ def wgsim2rnf(args):
 		number_of_read_tuples=10**9,
 	)
 
-def add_wgsim_parser(subparsers,subcommand):
-	parser_wgsim2rnf = subparsers.add_parser(subcommand, help=help)
+def add_wgsim_parser(subparsers,subcommand,help,description):
+	parser_wgsim2rnf = subparsers.add_parser(subcommand, help=help,description=description)
 	parser_wgsim2rnf.set_defaults(func=wgsim2rnf)
 	parser_wgsim2rnf.add_argument(
 			'-1','--wgsim-fastq-1',
@@ -147,7 +147,7 @@ def add_wgsim_parser(subparsers,subcommand):
 			metavar='file',
 			dest='wgsim_fastq_1',
 			required=True,
-			help='',
+			help='First WgSim FASTQ file (- for standard input)',
 		)
 	parser_wgsim2rnf.add_argument(
 			'-2','--wgsim-fastq-2',
@@ -155,7 +155,7 @@ def add_wgsim_parser(subparsers,subcommand):
 			metavar='file',
 			dest='wgsim_fastq_2',
 			required=False,
-			help='',
+			help='Second WgSim FASTQ file (in case of paired-end reads, default: none).',
 			default=None,
 		)
 	_add_shared_params(parser_wgsim2rnf,unmapped_switcher=True)
@@ -174,8 +174,8 @@ def curesim2rnf(args):
 		number_of_read_tuples=10**9,
 	)
 
-def add_curesim_parser(subparsers,subcommand):
-	parser_curesim2rnf = subparsers.add_parser(subcommand, help=help)
+def add_curesim_parser(subparsers,subcommand,help,description):
+	parser_curesim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
 	parser_curesim2rnf.set_defaults(func=curesim2rnf)
 	parser_curesim2rnf.add_argument(
 			'-c','--curesim-fastq',
@@ -183,7 +183,7 @@ def add_curesim_parser(subparsers,subcommand):
 			metavar='file',
 			dest='curesim_fastq_fo',
 			required=True,
-			help='',
+			help='CuReSim FASTQ file (- for standard input).',
 		)
 	_add_shared_params(parser_curesim2rnf,unmapped_switcher=False)
 
@@ -195,11 +195,16 @@ def add_curesim_parser(subparsers,subcommand):
 ################################
 ################################
 
+def default_func(args):
+	#print(args)
+	pass
+
 def rnftools_script():
 	# create the top-level parser
 	parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]))
 	parser.add_argument('--version', action='version', version=rnftools.__version__)
-	subparsers = parser.add_subparsers()
+	parser.set_defaults(func=default_func)
+	subparsers = parser.add_subparsers(help='sub-command help')
 
 	#
 	# rnftools sam2rnf
@@ -207,41 +212,65 @@ def rnftools_script():
 	add_sam2rnf_parser(
 			subparsers=subparsers,
 			subcommand="sam2rnf",
-			help="Help message",
+			help="Convert SAM file to RNF FASTQ.",
+			description="Convert SAM file to RNF FASTQ.",
 			simulator_name=None
 		)
-	#
-	# rnftools mason2rnf
-	#
-	add_sam2rnf_parser(
-			subparsers=subparsers,
-			subcommand="mason2rnf",
-			help="Help message",
-			simulator_name="mason",
-		)
+
 	#
 	# rnftools art2rnf
 	#
 	add_sam2rnf_parser(
 			subparsers=subparsers,
 			subcommand="art2rnf",
-			help="Help message",
+			help="Convert output of Art to RNF FASTQ.",
+			description="""Convert an Art SAM file to RNF FASTQ. Note that Art produces non-standard SAM files
+				and manual editation might be necessary. In particular, when a FASTA file contains comments,
+				Art left them in the sequence name. They must be removed in @SQ headers in the SAM file,
+				otherwise all reads are considered to be unmapped by this script.
+			""",
 			simulator_name="art",
 		)
 
-	add_dwgsim_parser(
-			subparsers=subparsers,
-			subcommand="dwgsim2rnf",
-		)
-
+	#
+	# rnftools curesim2rnf
+	#
 	add_curesim_parser(
 			subparsers=subparsers,
 			subcommand="curesim2rnf",
+			help="Convert output of CuReSim to RNF FASTQ.",
+			description="Convert a CuReSim FASTQ file to RNF FASTQ.",
 		)
 
+	#
+	# rnftools dwgsim2rnf
+	#
+	add_dwgsim_parser(
+			subparsers=subparsers,
+			subcommand="dwgsim2rnf",
+			help="Convert output of DwgSim to RNF FASTQ.",
+			description="Convert a DwgSim FASTQ file (dwgsim_prefix.bfast.fastq) to RNF FASTQ. ",
+		)
+
+	#
+	# rnftools mason2rnf
+	#
+	add_sam2rnf_parser(
+			subparsers=subparsers,
+			subcommand="mason2rnf",
+			help="Convert output of Mason to RNF FASTQ.",
+			description="Convert a Mason SAM file to RNF FASTQ.",
+			simulator_name="mason",
+		)
+
+	#
+	# rnftools wgsim2rnf
+	#
 	add_wgsim_parser(
 			subparsers=subparsers,
 			subcommand="wgsim2rnf",
+			help="Convert output of WgSim to RNF FASTQ.",
+			description="Convert WgSim FASTQ files to RNF FASTQ.",
 		)
 
 	args = parser.parse_args()
@@ -257,8 +286,3 @@ def rnftools_script():
 
 	####
 	parser_mir2roc = subparsers.add_parser('mir2roc', help='b help')
-
-
-
-
-

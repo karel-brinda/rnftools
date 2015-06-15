@@ -28,7 +28,7 @@ echo
 	set -e -o pipefail; 
 
 	cd tests/command_line
-	snakemake -p -s _ensure_programs.snake --cores
+	snakemake -p -s __ensure_programs.snake --cores
 	for e in *.sh; do
 		(
 			echo "--------------------------------------------------------------------"

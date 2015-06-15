@@ -3,7 +3,7 @@
 set -eux
 set -o pipefail
 
-eval FA="~/.smbl/fa/Mycobacterium_tuberculosis.fa"
+eval FA="humanmito.fa"
 eval DWGSIM="~/.smbl/bin/dwgsim"
 
 
