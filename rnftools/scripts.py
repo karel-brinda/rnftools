@@ -128,7 +128,6 @@ def add_dwgsim_parser(subparsers,subcommand):
 # WGSIM
 ################################
 
-
 def wgsim2rnf(args):
 	rnftools.mishmash.WgSim.recode_wgsim_reads(
 		rnf_fastq_fo=args.fq_fo,
@@ -145,7 +144,7 @@ def add_wgsim_parser(subparsers,subcommand):
 	parser_wgsim2rnf.add_argument(
 			'-1','--wgsim-fastq-1',
 			type=str,
-			metavar='str',
+			metavar='file',
 			dest='wgsim_fastq_1',
 			required=True,
 			help='',
@@ -153,7 +152,7 @@ def add_wgsim_parser(subparsers,subcommand):
 	parser_wgsim2rnf.add_argument(
 			'-2','--wgsim-fastq-2',
 			type=str,
-			metavar='str',
+			metavar='file',
 			dest='wgsim_fastq_2',
 			required=False,
 			help='',
@@ -166,6 +165,27 @@ def add_wgsim_parser(subparsers,subcommand):
 # CURESIMs
 ################################
 
+def curesim2rnf(args):
+	rnftools.mishmash.CuReSim.recode_curesim_reads(
+		rnf_fastq_fo=args.fq_fo,
+		curesim_fastq_fo=args.curesim_fastq_fo,
+		fai_fo=args.fai_fo,
+		genome_id=args.genome_id,
+		number_of_read_tuples=10**9,
+	)
+
+def add_curesim_parser(subparsers,subcommand):
+	parser_curesim2rnf = subparsers.add_parser(subcommand, help=help)
+	parser_curesim2rnf.set_defaults(func=curesim2rnf)
+	parser_curesim2rnf.add_argument(
+			'-c','--curesim-fastq',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='curesim_fastq_fo',
+			required=True,
+			help='',
+		)
+	_add_shared_params(parser_curesim2rnf,unmapped_switcher=False)
 
 ################################
 ################################
@@ -209,10 +229,14 @@ def rnftools_script():
 			simulator_name="art",
 		)
 
-
 	add_dwgsim_parser(
 			subparsers=subparsers,
 			subcommand="dwgsim2rnf",
+		)
+
+	add_curesim_parser(
+			subparsers=subparsers,
+			subcommand="curesim2rnf",
 		)
 
 	add_wgsim_parser(
@@ -223,18 +247,6 @@ def rnftools_script():
 	args = parser.parse_args()
 	args.func(args)
 
-
-
-	####
-
-	####
-	parser_curesim2rnf = subparsers.add_parser('curesim2rnf', help='b help')
-
-	####
-
-	####
-
-	####
 	####
 
 	####

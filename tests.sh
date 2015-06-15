@@ -2,6 +2,49 @@
 
 set -e
 
+
+
+
+echo
+echo
+echo
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+echo "                 TESTS: command line"
+echo
+echo
+echo
+echo "===================================================================="
+echo
+echo
+echo
+
+(
+	set -e -o pipefail; 
+
+	cd tests/command_line
+	snakemake -p -s _ensure_programs.snake --cores
+	for e in *.sh; do
+		(
+			echo "--------------------------------------------------------------------"
+			echo
+			echo "                 TEST: $e"
+			echo
+			echo "--------------------------------------------------------------------"
+
+			bash $e
+		)
+	done
+)
+
+
+
+
 echo
 echo
 echo
@@ -108,42 +151,3 @@ echo
 		)
 	done
 )
-
-
-echo
-echo
-echo
-echo
-echo
-echo
-echo "===================================================================="
-echo
-echo
-echo
-echo "                 TESTS: command line"
-echo
-echo
-echo
-echo "===================================================================="
-echo
-echo
-echo
-
-(
-	set -e -o pipefail; 
-
-	cd tests/command_line
-	for e in *.sh; do
-		(
-			echo "--------------------------------------------------------------------"
-			echo
-			echo "                 TEST: $e"
-			echo
-			echo "--------------------------------------------------------------------"
-
-			bash $e
-		)
-	done
-)
-
-
