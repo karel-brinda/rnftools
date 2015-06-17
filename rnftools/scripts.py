@@ -2,6 +2,7 @@ import sys
 import re
 import argparse
 import os
+import sys
 import rnftools
 import textwrap
 import snakemake
@@ -12,7 +13,7 @@ import smbl
 ################################
 ################################
 ##
-## Auxiliary functions
+## RNFTOOLS SUBCOMMANDS
 ##
 ################################
 ################################
@@ -199,6 +200,7 @@ def add_wgsim_parser(subparsers,subcommand,help,description):
 ################################
 
 def sam2roc(args):
+	assert args.allowed_delta>=0
 	cmd = """
 				rnftools sam2es -d {allowed_delta} -i "{sam_fn}" -o -| \
 				rnftools es2et -i - -o - | \
@@ -246,6 +248,7 @@ def add_sam2roc_parser(subparsers,subcommand,help,description):
 ################################
 
 def sam2es(args):
+	assert args.allowed_delta>=0
 	rnftools.lavender.Bam.bam2es(
 			bam_fn=args.sam_fn,
 			es_fo=args.es_fo,
@@ -346,6 +349,76 @@ def add_et2roc_parser(subparsers,subcommand,help,description):
 		)
 
 ################################
+# CHECK
+################################
+
+def check(args):
+
+	print("Checking the latest version.")
+	print()
+
+	import xmlrpc
+	import pip
+	from distutils.version import LooseVersion as V
+
+	update=False
+	ok=True
+	try:
+		pypi = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
+		print ('{pkg_info:20} {msg:20} {msg2:20}'.format(pkg_info="package", msg="installed",msg2="available"))
+		print ("="*70)
+		for dist in pip.get_installed_distributions():
+			if dist.project_name.lower() in ["rnftools","smbl"]:
+				ver1=V(dist.version)
+				comparison=" "
+				available = pypi.package_releases(dist.project_name)
+				if not available:
+					# Try to capitalize pkg name
+					available = pypi.package_releases(dist.project_name.capitalize())
+				    #
+				if available:
+					ver2=V(available[0])
+					if ver1>ver2:
+						comparison=">"
+					elif ver1==ver2:
+						comparison="="
+					else:
+						comparison="<"
+						update=True
+				else:
+					ver2 = 'no releases at pypi'
+
+				pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
+				print ('{pkg:20} {installed:15} {comp:4} {available:20}'.format(
+							pkg=dist.project_name,
+							installed=str(ver1),
+							comp=comparison,
+							available=str(ver2)
+						)
+					)
+	except:
+		ok=False
+	print()
+	if update and ok:
+		print("An update is available. You can install the latest version using by")
+		print("   pip3 install --upgrade rnftools smbl")
+		print()
+		print("Note that pip3 may be available under a different name (pip-3, pip-3.4, etc.).")
+		print("Root account might be required for this operation.")
+	elif ok:
+		print("Your installation is up-to-date.")
+	else:
+		print("Some problem with connection to the PyPI server occurred.")
+		sys.exit(1)
+
+
+def add_check_parser(subparsers,subcommand,help,description):
+	parser_check = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_check.set_defaults(func=check)
+
+
+
+################################
 # PUBLICATION
 ################################
 
@@ -367,8 +440,8 @@ def publication(args):
 
 
 def add_publication_parser(subparsers,subcommand,help,description):
-	parser_curesim2rnf = subparsers.add_parser(subcommand,help=help,description=description)
-	parser_curesim2rnf.set_defaults(func=publication)
+	parser_publication = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_publication.set_defaults(func=publication)
 
 
 ################################
@@ -385,7 +458,8 @@ def default_func(args):
 def rnftools_script():
 	# create the top-level parser
 
-	if len(sys.argv)==1 or (len(sys.argv)==2 and (sys.argv[1]!="publication")):
+	# !!! all command without parameters must be listed here!
+	if len(sys.argv)==1 or (len(sys.argv)==2 and (sys.argv[1]!="publication") and (sys.argv[1]!="check")):
 		sys.argv.append("-h")
 
 	parser = argparse.ArgumentParser(
@@ -396,7 +470,6 @@ def rnftools_script():
 					RNFtools -  http://rnftools.rtfd.org
 					------------------------------------
 					version: {}
-					upgrade: pip3 install --upgrade rnftools
 					contact: Karel Brinda (karel.brinda@univ-mlv.fr)
 					================================================
 					""".format(rnftools.__version__),
@@ -407,6 +480,32 @@ def rnftools_script():
 	subparsers = parser.add_subparsers(
 			help='----------------------------------------------------',
 		)
+
+
+
+	#
+	# rnftools check
+	#
+	add_check_parser(
+			subparsers=subparsers,
+			subcommand="check",
+			help="Check for the latest version.",
+			description="a",
+		)
+
+	#
+	# rnftools publication
+	#
+	add_publication_parser(
+			subparsers=subparsers,
+			subcommand="publication",
+			help="Print information about the associated publication.",
+			description="",
+		)
+
+	subparsers.add_parser("",help="",description="")
+	subparsers.add_parser("",help="---------------------[MIShmash]---------------------",description="")
+
 
 	#
 	# rnftools sam2rnf
@@ -475,15 +574,8 @@ def rnftools_script():
 			description="Convert WgSim FASTQ files to RNF-FASTQ.",
 		)
 
-	#
-	# rnftools publication
-	#
-	add_publication_parser(
-			subparsers=subparsers,
-			subcommand="publication",
-			help="Print information about the associated publication.",
-			description="",
-		)
+	subparsers.add_parser("",help="",description="")
+	subparsers.add_parser("",help="---------------------[LAVEnder]---------------------",description="")
 
 	#
 	# rnftools sam2es
@@ -491,7 +583,7 @@ def rnftools_script():
 	add_sam2es_parser(
 			subparsers=subparsers,
 			subcommand="sam2es",
-			help="todo",
+			help="Convert SAM/BAM with reads in RNF to ES (evaluation of segments).",
 			description="todo",
 		)
 
@@ -501,7 +593,7 @@ def rnftools_script():
 	add_es2et_parser(
 			subparsers=subparsers,
 			subcommand="es2et",
-			help="todo",
+			help="Convert ES to ET (evaluation of read tuples).",
 			description="todo",
 		)
 
@@ -511,7 +603,7 @@ def rnftools_script():
 	add_et2roc_parser(
 			subparsers=subparsers,
 			subcommand="et2roc",
-			help="todo",
+			help="Convert ET to ROC (final statistics).",
 			description="todo",
 		)
 
@@ -521,7 +613,7 @@ def rnftools_script():
 	add_sam2roc_parser(
 			subparsers=subparsers,
 			subcommand="sam2roc",
-			help="todo",
+			help="Previous three steps in a single command.",
 			description="todo",
 		)
 
