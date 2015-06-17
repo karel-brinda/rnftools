@@ -71,8 +71,7 @@ class CuReSim(Source):
 
 		smbl.utils.shell("""
 				cd "{dir}"
-				java -Xmx8g -jar \
-				{curesim} \
+				java -Xmx8g -jar "{curesim}" \
 				-f "{fa}" \
 				-n {nb} \
 				-m {rlen1} \
@@ -80,8 +79,7 @@ class CuReSim(Source):
 				-sd 0 \
 				-y 0 \
 				{other_params} \
-				> /dev/null \
-				2>1 | tr '\n' ' '
+				> /dev/null
 			""".format(
 				dir=self.get_dir(),
 				curesim=smbl.prog.CURESIM,
@@ -211,7 +209,6 @@ class CuReSim(Source):
 				read_tuple_id+=1
 
 			i+=1
-			print(i)
 
 		fq_creator.flush_read_tuple()
 

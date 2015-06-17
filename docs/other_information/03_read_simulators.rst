@@ -41,6 +41,23 @@ CuReSim
 +--------------+-------------------------------------------------------------------------+
 
 
+**Format of read names**
+
+	.. code-block:: text
+
+		@(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)
+
+
+1) contig name
+2) original position
+3) strand (0=forward;1=reverse)
+4) random read (0=non-random;1=random)
+5) number of insertions
+6) number of deletions
+7) number of substitution
+8) read number (unique within a genome)
+
+
 
 DwgSim
 ~~~~~~~
