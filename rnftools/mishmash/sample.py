@@ -73,7 +73,7 @@ class Sample:
 	def create_fq(self):
 		# fixme: use absolute path to this file
 		smbl.utils.shell("""
-				rnf-join-fq.py \
+				rnftools merge \
 					-i {input_fqs} \
 					-m {mode} \
 					-o "{output_prefix}"\
