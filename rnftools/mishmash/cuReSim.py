@@ -80,7 +80,8 @@ class CuReSim(Source):
 				-sd 0 \
 				-y 0 \
 				{other_params} \
-				> /dev/null
+				> /dev/null \
+				2>1 | tr '\n' ' '
 			""".format(
 				dir=self.get_dir(),
 				curesim=smbl.prog.CURESIM,
