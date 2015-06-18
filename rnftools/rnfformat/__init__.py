@@ -4,6 +4,7 @@ from .formatter import *
 from .readTuple import *
 from .segment import *
 from .fqCreator import *
+from .FqMerger import *
 
 
 #

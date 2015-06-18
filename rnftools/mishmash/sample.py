@@ -71,14 +71,10 @@ class Sample:
 	######################################
 
 	def create_fq(self):
-		# fixme: use absolute path to this file
-		smbl.utils.shell("""
-				rnftools merge \
-					-i {input_fqs} \
-					-m {mode} \
-					-o "{output_prefix}"\
-			""".format(
-					input_fqs=" ".join(['"{}"'.format(source.fq_fn()) for source in self._sources]),
-					mode=self._mode,
-					output_prefix=self._name,
-			))
+		fq_merger=rnftools.rnfformat.FqMerger(
+				mode=self._mode,
+				input_files=[source.fq_fn() for source in self._sources],
+				output_prefix=self._name,
+			)
+		fq_merger.run()
+
