@@ -54,16 +54,34 @@ class Mixer:
 				)
 
 		if mode=="single-end":
-			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=1,read_id_length=read_id_length_est)
+			output_files=[
+				"{}.fq".format(output_prefix)
+			]
+			self.output=Output(fn_1=output_files[0],reads_in_tuple=1,read_id_length=read_id_length_est)
 			self._reads_in_tuple=1
 		elif mode=="paired-end-bwa":
-			self.output=Output(fn_1="{}.1.fq".format(output_prefix),fn_2="{}.2.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
+			output_files=[
+				"{}.1.fq".format(output_prefix),
+				"{}.2.fq".format(output_prefix),
+			]
+			self.output=Output(fn_1=output_files[0],fn_2=output_files[1],reads_in_tuple=2,read_id_length=read_id_length_est)
 			self._reads_in_tuple=2
 		elif mode=="paired-end-bfast":
-			self.output=Output(fn_1="{}.fq".format(output_prefix),reads_in_tuple=2,read_id_length=read_id_length_est)
+			output_files=[
+				"{}.fq".format(output_prefix)
+			]
+			self.output=Output(fn_1=output_files[0],reads_in_tuple=2,read_id_length=read_id_length_est)
 			self._reads_in_tuple=2
 		else:
 			raise ValueError("Unknown mode '{}'".format(mode))
+
+		print("",file=sys.stderr)
+		print("Going to merge/convert RNF-FASTQ files.",file=sys.stderr)
+		print("",file=sys.stderr)
+		print("   input files:   ", ", ".join(input_files),file=sys.stderr)
+		print("   output files:  ", ", ".join(output_files),file=sys.stderr)
+		print("",file=sys.stderr)
+
 
 	def run(self):
 		while len(self.i_files_weighted)>0:
