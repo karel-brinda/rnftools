@@ -58,6 +58,22 @@ CuReSim
 8) read number (unique within a genome)
 
 
+DNemulator
+~~~~~~~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Author:      | Martin C. Frith                                                         |
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://cbrc3.cbrc.jp/~martin/dnemulator/                                |
++--------------+-------------------------------------------------------------------------+
+| Publication: | Frith, M. C. *et al.*                                                   |
+|              | A mostly traditional approach improves alignment of bisulfite-converted |
+|              | DNA                                                                     |
+|              | *Nucleic Acids Research* **40**\(13): e100, 2012.                       |
++--------------+-------------------------------------------------------------------------+
+
+
+
 
 DwgSim
 ~~~~~~~
