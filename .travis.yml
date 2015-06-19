@@ -30,7 +30,7 @@ install:
 - pip install .
 #- sudo ./tests/tests_install_bats.sh
 script:
-- cd tests && ./tests_run.sh
+- cd tests && bats --tap ./tests_run.sh
 deploy:
   provider: pypi
   user: karel.brinda
