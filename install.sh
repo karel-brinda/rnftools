@@ -2,6 +2,10 @@
 
 set -eu -o pipefail
 
+cd "$(dirname "$0")"
+
+rm -fR build dist RNFtools.egg-info
+
 echo
 echo
 echo "   TEST"

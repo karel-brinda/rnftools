@@ -29,6 +29,7 @@ install:
 #- pip install -r requirements.txt
 - pip install .
 #- sudo ./tests/tests_install_bats.sh
+- snakemake -p -s tests/command_line/__ensure_programs.snake --cores
 script:
 - cd tests && bats --pretty ./tests_run.sh
 deploy:

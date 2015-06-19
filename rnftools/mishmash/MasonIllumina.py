@@ -1,5 +1,5 @@
 import rnftools
-from ._source import Source
+from .Source import Source
 
 import smbl
 import snakemake

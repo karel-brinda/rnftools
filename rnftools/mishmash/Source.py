@@ -7,7 +7,7 @@ import os
 import pysam
 
 import rnftools
-from .faiIndex import *
+from .FaiIndex import *
 
 class Source(object):
 	"""	Abstract class for a genome from which read tuples are simulated.

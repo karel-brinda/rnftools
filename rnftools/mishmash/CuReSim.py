@@ -1,5 +1,5 @@
 import rnftools
-from ._source import *
+from .Source import *
 
 import os
 import smbl

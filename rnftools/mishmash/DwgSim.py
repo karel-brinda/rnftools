@@ -1,6 +1,6 @@
 import rnftools
-from ._source import *
-from .faiIndex import *
+from .Source import *
+from .FaiIndex import *
 
 import os
 import smbl
