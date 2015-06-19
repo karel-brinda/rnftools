@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 
-from .formatter import *
-from .readTuple import *
-from .segment import *
-from .fqCreator import *
+from .Formatter import *
+from .ReadTuple import *
+from .Segment import *
+from .FqCreator import *
 from .FqMerger import *
 
 

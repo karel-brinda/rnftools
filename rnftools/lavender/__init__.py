@@ -68,9 +68,9 @@ def add_report(report):
 	__REPORTS__.append(report)
 
 
-from .report import *
-from .panel import *
-from .bam import *
+from .Report import *
+from .Panel import *
+from .Bam import *
 
 ##########################
 
