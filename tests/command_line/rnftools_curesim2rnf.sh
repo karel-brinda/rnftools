@@ -3,6 +3,8 @@
 set -eux
 set -o pipefail
 
+cd "$(dirname "$0")"
+
 eval FA="humanmito.fa"
 eval CURESIM_JAR="~/.smbl/bin/CuReSim.jar"
 CURESIM="java -jar $CURESIM_JAR"

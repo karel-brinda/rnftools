@@ -3,6 +3,8 @@
 set -eux
 set -o pipefail
 
+cd "$(dirname "$0")"
+
 # single end
 rnftools merge \
 	-i rnf_fq_se_1.fq rnf_fq_se_2.fq \

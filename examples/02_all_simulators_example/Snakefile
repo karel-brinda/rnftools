@@ -1,0 +1,9 @@
+# 1) importing rnftools Python package
+import rnftools
+
+# 2) your Python code will be located here
+print("Hello world!")
+
+# 3) including Snakemake rules created by RNFtools and defining the main Snakemake rule (declaring which files are requested)
+include: rnftools.include()
+rule: input: rnftools.input()

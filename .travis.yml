@@ -26,8 +26,9 @@ install:
 - pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
 #- pip install -r requirements.txt
 - pip install .
+- ./tests/tests_install_bats.sh
 script:
-- ./tests.sh
+- cd tests && ./tests_run.sh
 deploy:
   provider: pypi
   user: karel.brinda

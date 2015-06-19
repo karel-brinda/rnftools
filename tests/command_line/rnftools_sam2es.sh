@@ -3,6 +3,8 @@
 set -eux
 set -o pipefail
 
+cd "$(dirname "$0")"
+
 # SAM
 rnftools sam2es \
 	-i rnf_alignment.sam \
