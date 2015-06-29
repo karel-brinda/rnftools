@@ -1,0 +1,38 @@
+$ rnftools  -h
+
+usage: rnftools [-h]
+                {,check,publication,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
+                ...
+
+================================================
+RNFtools -  http://rnftools.rtfd.org
+------------------------------------
+version: 0.1.1.dev105
+contact: Karel Brinda (karel.brinda@univ-mlv.fr)
+================================================
+
+positional arguments:
+  {,check,publication,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
+    
+    check               Check for the latest version.
+    publication         Print information about the associated publication.
+    
+                        ---------------------[MIShmash]---------------------
+    sam2rnf             Convert a SAM/BAM file to RNF-FASTQ.
+    art2rnf             Convert output of Art to RNF-FASTQ.
+    curesim2rnf         Convert output of CuReSim to RNF-FASTQ.
+    dwgsim2rnf          Convert output of DwgSim to RNF-FASTQ.
+    mason2rnf           Convert output of Mason to RNF-FASTQ.
+    wgsim2rnf           Convert output of WgSim to RNF-FASTQ.
+    merge               Merge RNF-FASTQ files and convert the output to
+                        'traditional' FASTQ.
+    
+                        ---------------------[LAVEnder]---------------------
+    sam2es              Convert SAM/BAM with reads in RNF to ES (evaluation of
+                        segments).
+    es2et               Convert ES to ET (evaluation of read tuples).
+    et2roc              Convert ET to ROC (final statistics).
+    sam2roc             Previous three steps in a single command.
+
+optional arguments:
+  -h, --help            show this help message and exit
