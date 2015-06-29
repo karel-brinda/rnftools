@@ -553,7 +553,7 @@ def rnftools_script():
 			subparsers=subparsers,
 			subcommand="check",
 			help="Check for the latest version.",
-			description="a",
+			description="Check if RNFtools and SMBL are up-to-date.",
 		)
 
 	#
@@ -563,7 +563,7 @@ def rnftools_script():
 			subparsers=subparsers,
 			subcommand="publication",
 			help="Print information about the associated publication.",
-			description="",
+			description="Print information about the associated publication.",
 		)
 
 	subparsers.add_parser("",help="",description="")

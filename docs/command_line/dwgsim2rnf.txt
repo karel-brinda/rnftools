@@ -1,0 +1,18 @@
+$ rnftools dwgsim2rnf -h
+
+usage: rnftools dwgsim2rnf [-h] [-p str] -o file -i file [-g int] [-u]
+
+Convert a DwgSim FASTQ file (dwgsim_prefix.bfast.fastq) to RNF-FASTQ.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p str, --dwgsim-prefix str
+                        Prefix for DwgSim.
+  -o file, --rnf-fastq file
+                        Output FASTQ file (- for standard output).
+  -i file, --fasta-index file
+                        FAI index of the reference FASTA file (- for standard
+                        input). It can be created using 'samtools faidx'.
+  -g int, --genome-id int
+                        Genome ID in RNF (default: 1).
+  -u, --allow-unmapped  Allow unmapped reads.

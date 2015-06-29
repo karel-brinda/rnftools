@@ -1,0 +1,15 @@
+$ rnftools sam2es -h
+
+usage: rnftools sam2es [-h] -i file -o file [-d int]
+
+todo
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i file, --sam file   SAM/BAM with aligned RNF reads(- for standard input).
+  -o file, --es file    Output ES file (evaluated segments, - for standard
+                        output).
+  -d int, --allowed-delta int
+                        Tolerance of difference of coordinates between true
+                        (i.e., expected) alignment and real alignment (very
+                        important parameter!) (default: 5).
