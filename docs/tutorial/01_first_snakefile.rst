@@ -14,7 +14,7 @@ you configuration script).
 
 Every RNFtools script consists of three parts:
 
-.. literalinclude:: ../../examples/tutorial/01_first_snakefile/Snakefile
+.. literalinclude:: ../../examples/01_tutorial/01_first_snakefile/Snakefile
 	:language: python
 	:linenos:
 
