@@ -4,15 +4,18 @@ Command-line tool
 =================
 
 Even though SnakeMake-based approach is the prefered way how to use RNFtools, we provide also a command-line tool
-``rnftools`` with most of functionality.
+``rnftools`` with most of functionality. Here you can find help messages for its subcommands.
+
+.. contents::
+   :depth: 3
 
 
 General
 -------
 
 
-``rnftools`` 
-^^^^^^^^^^^^^^^^^^
+``rnftools`` (list of subcommands) 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	.. include:: command_line/main.txt
 		:code: text

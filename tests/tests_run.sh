@@ -2,6 +2,15 @@
 
 #################################################
 
+@test "DOCUMENTATION" {
+	cd ../docs
+	make clean
+	mkdir _static
+	sphinx-build -W -b html -d _build/doctrees . _build/html
+}
+
+#################################################
+
 #@test "TESTS: ensure programs" {
 #	cd command_line
 #	snakemake -p -s __ensure_programs.snake --cores
@@ -105,3 +114,4 @@
 @test "EXAMPLES: 02" {
 	../examples/02_*/run.sh -p --cores
 }
+
