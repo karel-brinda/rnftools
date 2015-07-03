@@ -5,7 +5,7 @@
 @test "DOCUMENTATION" {
 	cd ../docs
 	make clean
-	mkdir _static
+	mkdir -p _static
 	sphinx-build -W -b html -d _build/doctrees . _build/html
 }
 
