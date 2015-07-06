@@ -50,7 +50,7 @@ On most of machines, RNFtools can be installed using `PIP`_ from `PyPI`_ by
 	pip3 install rnftools
 
 
-If this command does not work, check if PIP3 is installed in your system (the command may have a slightly different name, e.g., ``pip``, ``pip-3``, ``pip3.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_ (or try `easy_install3 pip`).
+If this command does not work, check if PIP3 is installed in your system (the command may have a slightly different name, e.g., ``pip``, ``pip-3``, ``pip3.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_ (or try ``easy_install3 pip``).
 
 Upgrade to the newest version can be done also using `PIP`_.
 
@@ -83,10 +83,7 @@ If you want to install RNFtools directly from `GIT repository`_, enter these com
 Installation without root account
 ---------------------------------
 
-Own Python distribution
-^^^^^^^^^^^^^^^^^^^^^^^
-
-If you do not have root permissions, the easiest way is to install some Python distribution
+If you do not have root permissions, the simplest solution is to install some Python distribution
 into your home directory. Our recommendation is `Anaconda`_. Then you can install RNFtools exactly
 in the same way as described in previous section.
 
@@ -94,10 +91,7 @@ If you insist on your main Python installation, you have to use update few varia
 the same procedure as in the previous section.
 
 
-Python distribution in your system
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-First create a directory where rnftools will be installed.
+First create a directory where RNFtools will be installed.
 
 .. code-block:: bash
 	
@@ -111,7 +105,7 @@ Then save this directory into variable ``PYTHONUSERBASE``
 	export PYTHONUSERBASE=~/rnftools
 
 
-Now you can install the RNFtools, parameter ``--user`` implies installation into the defined directory. 
+Now you can install RNFtools. The parameter ``--user`` implies installation into the predefined directory. 
 
 .. code-block:: bash
 	
