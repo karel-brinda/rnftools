@@ -1,8 +1,8 @@
 .. _`other_information`:
 
 
-Other information
------------------
+Additional information
+----------------------
 
 .. toctree::
    :glob:

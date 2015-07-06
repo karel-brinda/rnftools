@@ -23,14 +23,18 @@ Sometimes developers change the way how their software is compiled. Such change 
 If the problem still appears, please send us an e-mail to karel.brinda@gmail.com.
 
 
-Upgrade a program to the last version
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LAVEnder  
+^^^^^^^^
+
+
+How to upgrade a used program to the last version
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to upgrade some of used programs to the latest version support by `SMBL`_, remove the program from ``~/.smbl/bin``, then it will be downloaded and installed again. When you remove the whole directory, all programs will be re-installed.
 
 
-Use specific version of a program
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+How to use a specific version of a program
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Replace the program in ``~/.smbl/bin`` by your desired version.
 

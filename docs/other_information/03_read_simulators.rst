@@ -7,7 +7,7 @@ Exhaustive list of read simulators
 Here we provide an exhaustive list of existing read simulators in alphabetical order with additional information. Only several of them are supported by :ref:`MIShmash`.
 
 .. contents::
-   :depth: 3
+	:depth: 3
 
 
 Art

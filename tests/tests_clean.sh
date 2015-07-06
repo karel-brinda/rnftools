@@ -4,11 +4,9 @@ set -e
 
 for d in . ../examples;
 do
-
-	cd $d
-	
-	git clean -fx
-	git clean -fd
-	git clean -f
+	(
+		cd $d
+		git clean -fdx
+	)
 done;
 
