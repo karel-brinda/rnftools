@@ -20,6 +20,8 @@ software package of RNF-compatible programs.
 
 **Web of the project:** http://karel-brinda.github.io/rnftools/
 
+**RNF specification:** http://karel-brinda.github.io/rnf-spec/
+
 **Documentation:** http://rnftools.rtfd.org
 
 **Installation:** http://rnftools.readthedocs.org/en/latest/tutorial/00_installation.html
