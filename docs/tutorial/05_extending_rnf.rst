@@ -12,16 +12,16 @@ A new simulator
 To add support for another read simulator, you have to make the following four changes in source codes of RNFtools and SMBL. 
 
 
-A. Plugin for installation in SMBL
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 1: SMBL plugin for installation of your simulator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First you should write a plugin for SMBL (https://github.com/karel-brinda/smbl) for automatic installation
 of the simulator (plugins are located in this directory: https://github.com/karel-brinda/smbl/blob/master/smbl/prog/plugins/). You should get inspired from existing plugins such as https://github.com/karel-brinda/smbl/blob/master/smbl/prog/plugins/wgsim.py.
 When the plugin is written, it should be added to https://github.com/karel-brinda/smbl/blob/master/smbl/prog/plugins/__init__.py.
 
 
-B. Wrapper of the simulator in RNFtools
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 2: Wrapper of the simulator in RNFtools
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All wrappers of read simulators are located in this directory: https://github.com/karel-brinda/rnftools/blob/master/rnftools/mishmash/. To create a
 new wrapper, copy some existing one and modify the code inside.
@@ -39,14 +39,14 @@ When all these functions are created/adjusted, the class should be imported in `
 At this point, it should be tested if the simulator works well in 
 
 
-C. Support in the ``rnftools`` program
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 3: Support in the ``rnftools`` program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The last step is pluging your converting static function into ``rnftools`` console program, which is contained in this file: https://github.com/karel-brinda/rnftools/blob/master/rnftools/scripts.py. You will  have to add a new subcommand (which will call the static function) and create a parser for it. Again, follow existing code.
 
 
-D. Tests
-~~~~~~~~
+Step 4: Tests
+~~~~~~~~~~~~~
 
 Add corresponding tests (see the test directory).
 

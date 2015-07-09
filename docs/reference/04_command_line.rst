@@ -3,7 +3,7 @@
 Command-line tool
 =================
 
-Even though SnakeMake-based approach is the prefered way how to use RNFtools, we provide also a command-line tool
+Even though SnakeMake-based approach is the prefered way to use RNFtools, we provide also a command-line tool
 ``rnftools`` with most of functionality. Here you can find help messages for its subcommands.
 
 .. contents::

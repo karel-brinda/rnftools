@@ -39,9 +39,6 @@ Table of contents
 :ref:`reference`
 	Automatically generated documentation for RNFtools.
 
-:ref:`command_line`
-	Command-line tool for RNFtools.
-
 :ref:`other_information`
  	FAQs and other information about RNFtools and read simulators in general.
 
@@ -54,5 +51,4 @@ Table of contents
 	getting_started
 	tutorial
 	reference
-	command_line
 	other_information

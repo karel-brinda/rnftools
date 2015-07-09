@@ -18,6 +18,7 @@ Technically, the entire RNFtools package is based on `SnakeMake`_, a `Make`_-lik
 	* All required software and data files are installed **fully automatically** (using the `SMBL`_ library).
 	* Created pipelines are fully reproducible and they can be distributed as **single SnakeMake files**.
 
+There exists also a console variant of RNFtools with a basic functionality (see :ref:`command_line`).
 
 How to start with RNFtools
 --------------------------
