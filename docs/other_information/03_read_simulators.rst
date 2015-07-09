@@ -7,7 +7,7 @@ Exhaustive list of read simulators
 Here we provide an exhaustive list of existing read simulators in alphabetical order with additional information. Only several of them are supported by :ref:`MIShmash`.
 
 .. contents::
-   :depth: 3
+	:depth: 3
 
 
 Art
@@ -39,6 +39,39 @@ CuReSim
 |              | application to Ion Torrent data.                                        |
 |              | *BMC Genomics* **15**\:264, 2014.                                       |
 +--------------+-------------------------------------------------------------------------+
+
+
+**Format of read names**
+
+	.. code-block:: text
+
+		@(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)
+
+
+1) contig name
+2) original position
+3) strand (0=forward;1=reverse)
+4) random read (0=non-random;1=random)
+5) number of insertions
+6) number of deletions
+7) number of substitution
+8) read number (unique within a genome)
+
+
+DNemulator
+~~~~~~~~~~
+
++--------------+-------------------------------------------------------------------------+
+| Author:      | Martin C. Frith                                                         |
++--------------+-------------------------------------------------------------------------+
+| URL:         | http://cbrc3.cbrc.jp/~martin/dnemulator/                                |
++--------------+-------------------------------------------------------------------------+
+| Publication: | Frith, M. C. *et al.*                                                   |
+|              | A mostly traditional approach improves alignment of bisulfite-converted |
+|              | DNA                                                                     |
+|              | *Nucleic Acids Research* **40**\(13): e100, 2012.                       |
++--------------+-------------------------------------------------------------------------+
+
 
 
 
@@ -235,6 +268,27 @@ WgSim
 +--------------+-------------------------------------------------------------------------+
 | URL:         | http://github.com/lh3/wgsim                                             |
 +--------------+-------------------------------------------------------------------------+
+
+
+**Format of read names**
+
+	.. code-block:: text
+
+		(.*)_([0-9]+)_([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9a-f]+)/([12])
+
+
+
+1) contig name (chromosome name)
+2) start end 1 (one-based)
+3) end end 2 (one-based)
+4) number of errors end 1
+5) number of substitutions end 1
+6) number of indels end 1
+7) number of errors end 2
+8) number of substitutions end 2
+9) number of indels end 2
+10) id
+11) pair
 
 
 

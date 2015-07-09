@@ -1,0 +1,18 @@
+$ rnftools merge -h
+
+usage: rnftools merge [-h] -i inp [inp ...] -m mode -o out
+
+todo
+
+optional arguments:
+  -h, --help        show this help message and exit
+  -i inp [inp ...]  input FASTQ files
+  -m mode           mode for mergeing files (single-end / paired-end-bwa / paired-end-bfast)
+  -o out            output prefix
+
+Source RNF-FASTQ files should satisfy the following conditions:
+   1) Each file contains only reads corresponding to one genome (with the 
+      same genome id).
+   2) All files contain reads of the same type (single-end / paired-end).
+   3) Reads with more reads per tuple (e.g., paired-end) have '/1', etc.
+      in suffix (for identification of nb of read).

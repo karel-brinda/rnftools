@@ -15,7 +15,7 @@ Classes for individual simulators
 Art-Illumina: ``rnftools.mishmash.ArtIllumina``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: rnftools.mishmash.artIllumina.ArtIllumina
+.. autoclass:: rnftools.mishmash.ArtIllumina.ArtIllumina
         :members:
         :show-inheritance:
 
@@ -23,7 +23,7 @@ Art-Illumina: ``rnftools.mishmash.ArtIllumina``
 CuReSim: ``rnftools.mishmash.CuReSim``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: rnftools.mishmash.cuReSim.CuReSim
+.. autoclass:: rnftools.mishmash.CuReSim.CuReSim
         :members:
         :show-inheritance:
 
@@ -31,7 +31,7 @@ CuReSim: ``rnftools.mishmash.CuReSim``
 DwgSim: ``rnftools.mishmash.DwgSim``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: rnftools.mishmash.dwgSim.DwgSim
+.. autoclass:: rnftools.mishmash.DwgSim.DwgSim
         :members:
         :show-inheritance:
 
@@ -39,7 +39,7 @@ DwgSim: ``rnftools.mishmash.DwgSim``
 Mason (Illumina mode): ``rnftools.mishmash.MasonIllumina``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: rnftools.mishmash.masonIllumina.MasonIllumina
+.. autoclass:: rnftools.mishmash.MasonIllumina.MasonIllumina
         :members:
         :show-inheritance:
 
@@ -47,15 +47,17 @@ Mason (Illumina mode): ``rnftools.mishmash.MasonIllumina``
 WgSim: ``rnftools.mishmash.WgSim``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: rnftools.mishmash.wgSim.WgSim
+.. autoclass:: rnftools.mishmash.WgSim.WgSim
         :members:
         :show-inheritance:
+
+
 
 
 Abstract class for a simulator: ``rnftools.mishmash.Source``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: rnftools.mishmash._source.Source
+.. autoclass:: rnftools.mishmash.Source.Source
         :members:
         :show-inheritance:
 

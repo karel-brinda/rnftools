@@ -6,7 +6,7 @@ RNF format library
 Read tuple: ``rnftools.rnfformat.ReadTuple``
 --------------------------------------------
 
-.. autoclass:: rnftools.rnfformat.readTuple.ReadTuple
+.. autoclass:: rnftools.rnfformat.ReadTuple.ReadTuple
         :members:
         :inherited-members:
         :show-inheritance:
@@ -15,7 +15,7 @@ Read tuple: ``rnftools.rnfformat.ReadTuple``
 Segment: ``rnftools.rnfformat.Segment``
 ---------------------------------------
 
-.. autoclass:: rnftools.rnfformat.segment.Segment
+.. autoclass:: rnftools.rnfformat.Segment.Segment
         :members:
         :inherited-members:
         :show-inheritance:
@@ -24,7 +24,23 @@ Segment: ``rnftools.rnfformat.Segment``
 Read name formatter: ``rnftools.rnfformat.RnFormatter``
 -------------------------------------------------------
 
-.. autoclass:: rnftools.rnfformat.formatter.RnFormatter
+.. autoclass:: rnftools.rnfformat.Formatter.RnFormatter
+        :members:
+        :inherited-members:
+        :show-inheritance:
+
+Read name formatter: ``rnftools.rnfformat.RnFormatter``
+-------------------------------------------------------
+
+.. autoclass:: rnftools.rnfformat.Formatter.RnFormatter
+        :members:
+        :inherited-members:
+        :show-inheritance:
+
+Read name formatter: ``rnftools.rnfformat.FqCreator``
+-------------------------------------------------------
+
+.. autoclass:: rnftools.rnfformat.FqCreator.FqCreator
         :members:
         :inherited-members:
         :show-inheritance:

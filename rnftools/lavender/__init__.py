@@ -19,7 +19,11 @@ The LAVEnder Next-Generation Sequencing mappers evaluation tool.
 import os
 
 __docformat__ = 'reStructuredText'
-__all__=["Bam","Report","Panel"]
+#__all__=["Bam","Report","Panel"]
+
+DEFAULT_ALLOWED_DELTA=5
+MAXIMAL_MAPPING_QUALITY=255
+
 
 # todo:
 #  - left-right: cigar correction
@@ -64,9 +68,9 @@ def add_report(report):
 	__REPORTS__.append(report)
 
 
-from .report import *
-from .panel import *
-from .bam import *
+from .Report import *
+from .Panel import *
+from .Bam import *
 
 ##########################
 
@@ -88,5 +92,3 @@ def _default_gp_style(i,count=0):
 	colors=["#ff0000","#00ff00","#888888","#0000ff","#daa520","#000000"]
 	color=colors[i % len(colors)]
 	return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
-
-

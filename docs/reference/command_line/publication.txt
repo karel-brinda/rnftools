@@ -1,0 +1,8 @@
+$ rnftools publication -h
+
+usage: rnftools publication [-h]
+
+Print information about the associated publication.
+
+optional arguments:
+  -h, --help  show this help message and exit

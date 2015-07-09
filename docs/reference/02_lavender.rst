@@ -10,7 +10,7 @@ LAVEnder
 Report class: ``rnftools.lavender.Report``
 ------------------------------------------
 
-.. autoclass:: rnftools.lavender.report.Report
+.. autoclass:: rnftools.lavender.Report.Report
 	:members:
 	:inherited-members:
 	:show-inheritance:
@@ -19,7 +19,7 @@ Report class: ``rnftools.lavender.Report``
 Panel class: ``rnftools.lavender.Panel``
 ----------------------------------------
 
-.. autoclass:: rnftools.lavender.panel.Panel
+.. autoclass:: rnftools.lavender.Panel.Panel
 	:members:
 	:inherited-members:
 	:show-inheritance:
@@ -28,7 +28,7 @@ Panel class: ``rnftools.lavender.Panel``
 BAM class: ``rnftools.lavender.Bam``
 ------------------------------------
 
-.. autoclass:: rnftools.lavender.bam.Bam
+.. autoclass:: rnftools.lavender.Bam.Bam
 	:members:
 	:inherited-members:
 	:show-inheritance:

@@ -1,0 +1,24 @@
+$ rnftools art2rnf -h
+
+usage: rnftools art2rnf [-h] -s file -o file -i file [-g int] [-u] [-n str]
+
+Convert an Art SAM file to RNF-FASTQ. Note that Art produces non-standard SAM
+files and manual editation might be necessary. In particular, when a FASTA
+file contains comments, Art left them in the sequence name. Comments must be
+removed in their corresponding @SQ headers in the SAM file, otherwise all
+reads are considered to be unmapped by this script.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s file, --sam file   Input SAM/BAM with true (expected) alignments of the
+                        reads (- for standard input).
+  -o file, --rnf-fastq file
+                        Output FASTQ file (- for standard output).
+  -i file, --fasta-index file
+                        FAI index of the reference FASTA file (- for standard
+                        input). It can be created using 'samtools faidx'.
+  -g int, --genome-id int
+                        Genome ID in RNF (default: 1).
+  -u, --allow-unmapped  Allow unmapped reads.
+  -n str, --simulator-name str
+                        Name of the simulator (for RNF).

@@ -3,8 +3,8 @@ os:
 - linux
 python:
 #- '3.2'
-#- '3.3'
-- '3.4'
+- '3.3'
+#- '3.4'
 #- 'nightly'
 cache:
   apt: true
@@ -17,17 +17,21 @@ before_install:
 - pip install --upgrade pip
 install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+- sudo add-apt-repository ppa:duggan/bats --yes
 - sudo apt-get update
 - sudo apt-get install g++-4.8
 - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
 - sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
 - sudo apt-get install git-svn
+- sudo apt-get install -qq bats
 - pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
 #- pip install -r requirements.txt
 - pip install .
+#- sudo ./tests/tests_install_bats.sh
+- snakemake -p -s tests/command_line/__ensure_programs.snake --cores
 script:
-- ./tests.sh
+- cd tests && bats ${CI:+--tap} ./tests_run.sh
 deploy:
   provider: pypi
   user: karel.brinda

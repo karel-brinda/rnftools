@@ -1,25 +1,16 @@
 import smbl
 
-from .sample import *
+from .Sample import *
 
-from ._source import *
+from .Source import *
 
-from .artIllumina import *
-from .masonIllumina import *
-from .cuReSim import *
-from .dwgSim import *
-from .wgSim import *
+from .ArtIllumina import *
+from .MasonIllumina import *
+from .CuReSim import *
+from .DwgSim import *
+from .WgSim import *
 
 import os
-
-__all__=[
-	"ArtIllumina",
-	"CuReSim",
-	"DwgSim",
-	"MasonIllumina",
-	"WgSim",
-]
-
 
 __INCLUDE__=os.path.join( os.path.dirname(__file__), "mishmash.snake")
 

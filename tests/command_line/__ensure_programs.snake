@@ -1,0 +1,13 @@
+import smbl
+
+rule:
+	input:
+		smbl.prog.SAMTOOLS,
+		smbl.prog.DWGSIM,
+		smbl.prog.WGSIM,
+		smbl.prog.CURESIM,
+		smbl.prog.ART_ILLUMINA,
+		smbl.prog.MASON_SIMULATOR,
+
+include: smbl.include()
+

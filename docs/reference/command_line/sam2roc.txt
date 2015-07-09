@@ -1,0 +1,14 @@
+$ rnftools sam2roc -h
+
+usage: rnftools sam2roc [-h] -i file -o file [-d int]
+
+todo
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i file, --sam file   SAM/BAM with aligned RNF reads(- for standard input).
+  -o file, --roc file   Output ROC file (- for standard output).
+  -d int, --allowed-delta int
+                        Tolerance of difference of coordinates between true
+                        (i.e., expected) alignment and real alignment (very
+                        important parameter!) (default: 5).

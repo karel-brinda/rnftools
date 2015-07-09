@@ -1,0 +1,12 @@
+$ rnftools et2roc -h
+
+usage: rnftools et2roc [-h] -i file -o file
+
+todo
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -i file, --et file   Input ET file (evaluated read tuples, - for standard
+                       input).
+  -o file, --roc file  Output ROC file (evaluated reads, - for standard
+                       output).

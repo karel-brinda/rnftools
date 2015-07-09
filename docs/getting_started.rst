@@ -9,8 +9,8 @@ on the used read simulators.
 
 RNFtools consist of three principal parts:
 
-1. :ref:`mishmash` - a tool for simulating NGS reads in RNF format using existing simulators.
-2. :ref:`LAVEnder` - a tool for evaluation of NGS read mappers using simulated reads in RNF format.
+1. :ref:`MIShmash` (MIS => SIM => simulation) - a tool for simulating NGS reads in RNF format using existing simulators.
+2. :ref:`LAVEnder` (LAVE => EVAL => evaluation) - a tool for evaluation of NGS read mappers using simulated reads in RNF format.
 3. :ref:`RNF` - a Python library for handling the RNF format.
 
 Technically, the entire RNFtools package is based on `SnakeMake`_, a `Make`_-like `Python`_-based software developed for creating bioinformatics pipelines. It has few unique features:
@@ -18,6 +18,7 @@ Technically, the entire RNFtools package is based on `SnakeMake`_, a `Make`_-lik
 	* All required software and data files are installed **fully automatically** (using the `SMBL`_ library).
 	* Created pipelines are fully reproducible and they can be distributed as **single SnakeMake files**.
 
+There exists also a console variant of RNFtools with a basic functionality (see :ref:`command_line`).
 
 How to start with RNFtools
 --------------------------

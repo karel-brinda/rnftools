@@ -14,7 +14,7 @@ The basic approach of mapper evaluation consists of the following steps:
 
 First you need to simulate RNF reads and map them to a reference genome. If you don't have any own BAM file, please use the following toy Snakefile which performs first two steps:
 
-.. literalinclude:: ../../examples/tutorial/03_evaluation/01_simple_evaluation/bams/Snakefile
+.. literalinclude:: ../../examples/01_tutorial/03_evaluation/01_simple_evaluation/bams/Snakefile
 	:language: python
 	:linenos:
 
@@ -22,7 +22,7 @@ In a directory for this experiment, create a directory ``bams`` and place there 
 
 Now let us create a directory ``report`` with the following ``Snakefile``:
 
-.. literalinclude:: ../../examples/tutorial/03_evaluation/01_simple_evaluation/report/Snakefile
+.. literalinclude:: ../../examples/01_tutorial/03_evaluation/01_simple_evaluation/report/Snakefile
 	:language: python
 	:linenos:
 
