@@ -75,25 +75,60 @@
 	../examples/01_tutorial/02_*/01_*/run.sh -p --cores
 }
 
+@test "EXAMPLES: 01_tutorial/02/01 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/02_*/01_*/
+}
+
+###
+
 @test "EXAMPLES: 01_tutorial/02/02" {
 	../examples/01_tutorial/02_*/02_*/run.sh -p --cores
 }
+
+@test "EXAMPLES: 01_tutorial/02/02 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/02_*/02_*/
+}
+
+###
 
 @test "EXAMPLES: 01_tutorial/02/03" {
 	../examples/01_tutorial/02_*/03_*/run.sh -p --cores
 }
 
+@test "EXAMPLES: 01_tutorial/02/03 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/02_*/03_*/
+}
+
+###
+
 @test "EXAMPLES: 01_tutorial/02/04" {
 	../examples/01_tutorial/02_*/04_*/run.sh -p --cores
 }
+
+@test "EXAMPLES: 01_tutorial/02/04 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/02_*/04_*/
+}
+
+###
 
 @test "EXAMPLES: 01_tutorial/02/05" {
 	../examples/01_tutorial/02_*/05_*/run.sh -p --cores
 }
 
+@test "EXAMPLES: 01_tutorial/02/05 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/02_*/05_*/
+}
+
+###
+
 @test "EXAMPLES: 01_tutorial/02/06" {
 	../examples/01_tutorial/02_*/06_*/run.sh -p --cores
 }
+
+@test "EXAMPLES: 01_tutorial/02/06 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/02_*/06_*/
+}
+
 
 #################################################
 
@@ -101,17 +136,40 @@
 	../examples/01_tutorial/03_*/01_*/run.sh -p --cores
 }
 
+@test "EXAMPLES: 01_tutorial/03/01 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/03_*/01_*/bams/
+}
+
+###
+
 @test "EXAMPLES: 01_tutorial/03/02" {
 	../examples/01_tutorial/03_*/02_*/run.sh -p --cores
 }
+
+@test "EXAMPLES: 01_tutorial/03/02 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/03_*/02_*/bams/
+}
+
+###
 
 @test "EXAMPLES: 01_tutorial/03/03" {
 	../examples/01_tutorial/03_*/03_*/run.sh -p --cores
 }
 
+@test "EXAMPLES: 01_tutorial/03/03 RNF" {
+	./_test_rnf.sh ../examples/01_tutorial/03_*/03_*/bams/
+}
+
+
 #################################################
 
 @test "EXAMPLES: 02" {
 	../examples/02_*/run.sh -p --cores
+}
+
+###
+
+@test "EXAMPLES: 02 RNF" {
+	./_test_rnf.sh ../examples/02_*/
 }
 
