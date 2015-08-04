@@ -1,4 +1,5 @@
 import rnftools.rnfformat
+from .RnfProfile import RnfProfile
 import re
 
 read_tuple_destr_pattern = re.compile(r'(.*)__([0-9abcdef]+)__(\([0-9abcdefFRN,]*\))(,\([0-9abcdefFRN,]*\))*__(.*)')
@@ -33,10 +34,7 @@ class ReadTuple:
 
 	def stringize(
 				self,
-				read_tuple_id_width=1,
-				genome_id_width=1,
-				chr_id_width=1,
-				coor_width=1
+				rnf_profile=RnfProfile(),
 			):
 		"""Create RNF representation of this read.
 
@@ -58,23 +56,19 @@ class ReadTuple:
 							)
 
 		segments_strings=[
-				x.stringize(
-					genome_id_width=genome_id_width,
-					chr_id_width=chr_id_width,
-					coor_width=coor_width
-				) for x in sorted_segments
+				x.stringize(rnf_profile) for x in sorted_segments
 			]
 
-		read_name="__".join(
+		read_tuple_name="__".join(
 			[
 				self.prefix,
-				format(self.read_tuple_id,'x').zfill(read_tuple_id_width),
+				format(self.read_tuple_id,'x').zfill(rnf_profile.read_tuple_id_width),
 				",".join(segments_strings),
 				self.suffix,
 			]
 		)
 
-		return read_name
+		return read_tuple_name
 
 	def destringize(self, string):
 		"""Get RNF values for this read from its textual representation and save them 

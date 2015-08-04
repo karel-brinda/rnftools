@@ -14,9 +14,11 @@ class CuReSim(Source):
 	Args:
 		fasta (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome.
+		number_of_read_tuples (int): Number of read tuples.
 		read_length_1 (int): Length of the first end of a read.
 		read_length_2 (int): Length of the second end of a read. It must be equal to zero.
 		other_params (str): Other parameters which are used on commandline.
+		rng_seed (int): Seed for simulator's random number generator (fake, it is not supported by CuReSim).
 
 	Raises:
 		ValueError
@@ -119,12 +121,16 @@ class CuReSim(Source):
 		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
 
 		Args:
-			old_fq (str): Od FASTQ file name.
+			curesim_fastq_fo (file): File object of CuReSim FASTQ file.
+			fastq_rnf_fo (file): File object of RNF FASTQ.
+			fai_fo (file): File object for FAI file of the reference genome.
+			genome_id (int): RNF genome ID to be used.
 			number_of_read_tuples (int): Expected number of read tuples (to estimate number of digits in RNF).
 
 		Raises:
 			ValueError
 		"""
+
 		curesim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)')
 		"""
 			CuReSim read name format

@@ -28,7 +28,7 @@ class FqCreator:
 			):
 		self._info_simulator=info_simulator
 		self._info_reads_in_tuple=info_reads_in_tuple
-		self._formatter=rnftools.rnfformat.RnFormatter(
+		self._rnf_profile=rnftools.rnfformat.RnfProfile(
 				read_tuple_id_width=read_tuple_id_width,
 				genome_id_width=genome_id_width,
 				chr_id_width=chr_id_width,
@@ -54,7 +54,7 @@ class FqCreator:
 		else:
 			suffix_comment=""
 
-		rnf_name=self._formatter.get_rnf_name(
+		rnf_name=self._rnf_profile.get_rnf_name(
 					rnftools.rnfformat.ReadTuple(
 							segments=self.segments,
 							read_tuple_id=self.current_read_tuple_id,

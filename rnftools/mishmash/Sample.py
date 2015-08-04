@@ -16,7 +16,11 @@ class Sample:
 	"""
 
 
-	def __init__(self, name, reads_in_tuple, paired_end_mode="bwa"):
+	def __init__(self,
+				name,
+				reads_in_tuple,
+				paired_end_mode="bwa",
+			):
 		self._name=name
 		self._sources=[]
 		self._dir=name
@@ -73,7 +77,7 @@ class Sample:
 	def create_fq(self):
 		fq_merger=rnftools.rnfformat.FqMerger(
 				mode=self._mode,
-				input_files=[source.fq_fn() for source in self._sources],
+				input_files_fn=[source.fq_fn() for source in self._sources],
 				output_prefix=self._name,
 			)
 		fq_merger.run()

@@ -192,6 +192,17 @@ class DwgSim(Source):
 				number_of_read_tuples=10**9,
 				allow_unmapped=False,
 			):
+		"""Convert DwgSim FASTQ file to RNF FASTQ file.
+
+		Args:
+			dwgsim_prefix (str): DwgSim prefix of the simulation (see its commandline parameters).
+			fastq_rnf_fo (file): File object of RNF FASTQ.
+			fai_fo (file): File object for FAI file of the reference genome.
+			genome_id (int): RNF genome ID to be used.
+			number_of_read_tuples (int): Estimate of number of simulated read tuples (to set width).
+			allow_unmapped (bool): Allow unmapped reads in the original FASTQ.
+		"""
+
 		dwgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)')
 		"""
 			DWGSIM read name format

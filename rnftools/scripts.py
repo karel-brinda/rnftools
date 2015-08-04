@@ -167,8 +167,8 @@ def add_dwgsim_parser(subparsers,subcommand,help,description):
 def wgsim2rnf(args):
 	rnftools.mishmash.WgSim.recode_wgsim_reads(
 		rnf_fastq_fo=args.fq_fo,
-		wgsim_fastq_1=args.wgsim_fastq_1,
-		wgsim_fastq_2=args.wgsim_fastq_2,
+		wgsim_fastq_1_fn=args.wgsim_fastq_1,
+		wgsim_fastq_2_fn=args.wgsim_fastq_2,
 		fai_fo=args.fai_fo,
 		genome_id=args.genome_id,
 		number_of_read_tuples=10**9,
@@ -207,7 +207,7 @@ def merge(args):
 
 	mixer=rnftools.rnfformat.FqMerger(
 			mode=args.m,
-			input_files=args.i,
+			input_files_fn=args.i,
 			output_prefix=args.o,
 		)
 	mixer.run()
@@ -515,14 +515,14 @@ def validate(args):
 	i=0
 	for x in args.fastq_fn:
 		if i%4==0:
-			read_name=x.partition("/")[0][1:]
+			read_tuple_name=x.partition("/")[0][1:]
 			if i==0:
 				validator=rnftools.rnfformat.Validator(
-						initial_read_name=read_name,
+						initial_read_tuple_name=read_tuple_name,
 						report_only_first=args.report_only_first,
 						warnings_as_errors=args.warnings_as_errors,
 					)
-			validator.validate(read_name=read_name)
+			validator.validate(read_tuple_name=read_tuple_name)
 		i+=1
 	sys.exit(validator.get_return_code())
 
