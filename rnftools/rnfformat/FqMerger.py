@@ -3,6 +3,9 @@ import sys
 import random
 import math
 
+import rnftools.rnfformat
+
+
 # number of reads taken in a single run
 READS_IN_GROUP=10
 
@@ -108,7 +111,7 @@ class FqMergerOutput:
 		if fn_2 is not None:
 			self.fs.append(open(fn_2,"w+"))
 		self.read_tuple_counter=1
-		self.rnf_profile=RnfProfile(
+		self.rnf_profile=rnftools.rnfformat.RnfProfile(
 				read_id_width=read_id_width
 			)
 
@@ -119,7 +122,7 @@ class FqMergerOutput:
 	def save_read(self,ln1,ln2,ln3,ln4):
 		[ln1,ln2,ln3,ln4]=[ln1.strip(),ln2.strip(),ln3.strip(),ln4.strip()]
 
-		ln1=self.rnf_profile.apply_profile(
+		ln1=self.rnf_profile.apply(
 				read_name=ln1,
 				read_tuple_id=self.read_tuple_counter
 			)
@@ -147,47 +150,3 @@ class FqMergerOutput:
 					raise ValueError("Wrong read name '{}'.".format(ln1[1:]))
 
 		self.fs[file_id].write("".join([ln1,os.linesep,ln2,os.linesep,ln3,os.linesep,ln4,os.linesep]))
-
-
-class RnfProfile:
-	def __init__(self,
-				prefix_width=0,
-				read_id_width=8,
-				genome_id_width=1,
-				chr_id_width=2,
-				coor_width=9,
-			):
-		self.prefix_width=prefix_width
-		self.read_id_width=read_id_width
-		self.genome_id_width=genome_id_width
-		self.chr_id_width=chr_id_width
-		self.coor_width=coor_width
-
-	def combine_profiles(rnf_profile):
-		self.prefix_width=max(self.prefix_width,rnf_profile.prefix_width)
-		self.read_id_width=max(self.read_id_width,rnf_profile.read_id_width)
-		self.genome_id_width=max(self.genome_id_width,rnf_profile.genome_id_width)
-		self.chr_id_width=max(self.chr_id_width,rnf_profile.chr_id_width)
-		self.coor_width=max(self.coor_width,rnf_profile.coor_width)
-
-	def load(self,read_name):
-		pass
-
-	def apply_profile(self,read_name,read_tuple_id=None):
-		parts=read_name.split("__")
-		parts[0]=self._fill_right(parts[0],"-",self.prefix_width)
-		if read_tuple_id is not None:
-			parts[1]="{:x}".format(read_tuple_id)
-		parts[1]=self._fill_left(parts[1],"0",self.read_id_width)
-		return "__".join(parts)
-
-	#def verify(self,read_name):
-	#	pass
-
-	@staticmethod
-	def _fill_left(string,character,length):
-		return (length-len(string))*character + string
-
-	@staticmethod
-	def _fill_right(string,character,length):
-		return string + (length-len(string))*character

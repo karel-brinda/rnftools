@@ -5,6 +5,8 @@ from .ReadTuple import *
 from .Segment import *
 from .FqCreator import *
 from .FqMerger import *
+from .Validator import *
+from .RnfProfile import *
 
 
 #
