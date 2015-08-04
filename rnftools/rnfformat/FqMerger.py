@@ -38,20 +38,33 @@ class FqMerger:
 			self.output_files=[
 				"{}.fq".format(output_prefix)
 			]
-			self.output=FqMergerOutput(fn_1=self.output_files[0],reads_in_tuple=1,read_id_length=read_id_length_est)
+			self.output=FqMergerOutput(
+					fn_1=self.output_files[0],
+					reads_in_tuple=1,
+					read_id_width=read_id_length_est
+				)
 			self._reads_in_tuple=1
 		elif mode=="paired-end-bwa":
 			self.output_files=[
 				"{}.1.fq".format(output_prefix),
 				"{}.2.fq".format(output_prefix),
 			]
-			self.output=FqMergerOutput(fn_1=self.output_files[0],fn_2=self.output_files[1],reads_in_tuple=2,read_id_length=read_id_length_est)
+			self.output=FqMergerOutput(
+					fn_1=self.output_files[0],
+					fn_2=self.output_files[1],
+					reads_in_tuple=2,
+					read_id_width=read_id_length_est
+				)
 			self._reads_in_tuple=2
 		elif mode=="paired-end-bfast":
 			self.output_files=[
 				"{}.fq".format(output_prefix)
 			]
-			self.output=FqMergerOutput(fn_1=self.output_files[0],reads_in_tuple=2,read_id_length=read_id_length_est)
+			self.output=FqMergerOutput(
+					fn_1=self.output_files[0],
+					reads_in_tuple=2,
+					read_id_width=read_id_length_est
+				)
 			self._reads_in_tuple=2
 		else:
 			raise ValueError("Unknown mode '{}'".format(mode))
@@ -89,13 +102,15 @@ class FqMerger:
 
 
 class FqMergerOutput:
-	def __init__(self,reads_in_tuple,fn_1,fn_2=None,read_id_length=6):
+	def __init__(self,reads_in_tuple,fn_1,fn_2=None,read_id_width=6):
 		self.reads_in_tuple=reads_in_tuple
-		self.read_id_length=read_id_length
 		self.fs=[open(fn_1,"w+")]
 		if fn_2 is not None:
 			self.fs.append(open(fn_2,"w+"))
-		self.read_tuple_counter=0
+		self.read_tuple_counter=1
+		self.rnf_profile=RnfProfile(
+				read_id_width=read_id_width
+			)
 
 	def close(self):
 		for f in self.fs:
@@ -104,9 +119,10 @@ class FqMergerOutput:
 	def save_read(self,ln1,ln2,ln3,ln4):
 		[ln1,ln2,ln3,ln4]=[ln1.strip(),ln2.strip(),ln3.strip(),ln4.strip()]
 
-		ln1_parts=ln1.split("__")
-		ln1_parts[1]="{:x}".format(self.read_tuple_counter).zfill(self.read_id_length)
-		ln1="__".join(ln1_parts)
+		ln1=self.rnf_profile.apply_profile(
+				read_name=ln1,
+				read_tuple_id=self.read_tuple_counter
+			)
 	
 		if self.reads_in_tuple==1:
 			file_id=0
@@ -131,3 +147,47 @@ class FqMergerOutput:
 					raise ValueError("Wrong read name '{}'.".format(ln1[1:]))
 
 		self.fs[file_id].write("".join([ln1,os.linesep,ln2,os.linesep,ln3,os.linesep,ln4,os.linesep]))
+
+
+class RnfProfile:
+	def __init__(self,
+				prefix_width=0,
+				read_id_width=8,
+				genome_id_width=1,
+				chr_id_width=2,
+				coor_width=9,
+			):
+		self.prefix_width=prefix_width
+		self.read_id_width=read_id_width
+		self.genome_id_width=genome_id_width
+		self.chr_id_width=chr_id_width
+		self.coor_width=coor_width
+
+	def combine_profiles(rnf_profile):
+		self.prefix_width=max(self.prefix_width,rnf_profile.prefix_width)
+		self.read_id_width=max(self.read_id_width,rnf_profile.read_id_width)
+		self.genome_id_width=max(self.genome_id_width,rnf_profile.genome_id_width)
+		self.chr_id_width=max(self.chr_id_width,rnf_profile.chr_id_width)
+		self.coor_width=max(self.coor_width,rnf_profile.coor_width)
+
+	def load(self,read_name):
+		pass
+
+	def apply_profile(self,read_name,read_tuple_id=None):
+		parts=read_name.split("__")
+		parts[0]=self._fill_right(parts[0],"-",self.prefix_width)
+		if read_tuple_id is not None:
+			parts[1]="{:x}".format(read_tuple_id)
+		parts[1]=self._fill_left(parts[1],"0",self.read_id_width)
+		return "__".join(parts)
+
+	#def verify(self,read_name):
+	#	pass
+
+	@staticmethod
+	def _fill_left(string,character,length):
+		return (length-len(string))*character + string
+
+	@staticmethod
+	def _fill_right(string,character,length):
+		return string + (length-len(string))*character
