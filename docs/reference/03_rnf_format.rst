@@ -21,7 +21,7 @@ Segment: ``rnftools.rnfformat.Segment``
         :show-inheritance:
 
 
-Read name formatter: ``rnftools.rnfformat.RnfProfile``
+RNF profile: ``rnftools.rnfformat.RnfProfile``
 -------------------------------------------------------
 
 .. autoclass:: rnftools.rnfformat.RnfProfile.RnfProfile
@@ -29,7 +29,7 @@ Read name formatter: ``rnftools.rnfformat.RnfProfile``
         :inherited-members:
         :show-inheritance:
 
-Read name formatter: ``rnftools.rnfformat.FqCreator``
+FASTQ creator: ``rnftools.rnfformat.FqCreator``
 -------------------------------------------------------
 
 .. autoclass:: rnftools.rnfformat.FqCreator.FqCreator
@@ -37,7 +37,7 @@ Read name formatter: ``rnftools.rnfformat.FqCreator``
         :inherited-members:
         :show-inheritance:
 
-Read name formatter: ``rnftools.rnfformat.FqMerger``
+FASTQ merger: ``rnftools.rnfformat.FqMerger``
 -------------------------------------------------------
 
 .. autoclass:: rnftools.rnfformat.FqMerger.FqMerger
@@ -46,7 +46,7 @@ Read name formatter: ``rnftools.rnfformat.FqMerger``
         :show-inheritance:
 
 
-Read name formatter: ``rnftools.rnfformat.Validator``
+RNF validator: ``rnftools.rnfformat.Validator``
 -------------------------------------------------------
 
 .. autoclass:: rnftools.rnfformat.Validator.Validator
