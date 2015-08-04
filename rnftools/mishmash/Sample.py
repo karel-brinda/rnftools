@@ -52,7 +52,7 @@ class Sample:
 
 	def add_source(self,source):
 		if self._reads_in_tuple!=source.get_reads_in_tuple():
-			smbl.messages.error("It is not possible to combine reads with different number of ends in a single sample. "
+			smbl.messages.error("It is not possible to combine read tuples with different number of reads in a single sample. "
 				"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(self._name,self._reads_in_tuple,source.get_reads_in_tuple(),source),
 				program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		self._sources.append(source)
