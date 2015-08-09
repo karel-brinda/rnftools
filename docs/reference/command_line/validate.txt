@@ -1,0 +1,14 @@
+$ rnftools validate -h
+
+usage: rnftools validate [-h] -i file [-w] [-a]
+
+Validate RNF names in a FASTQ file.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i file, --fastq file
+                        FASTQ file to be validated.
+  -w, --warnings-as-errors
+                        Treat warnings as errors.
+  -a, --all-occurrences
+                        Report all occurrences of warnings and errors.

@@ -1,4 +1,5 @@
 import re
+from .RnfProfile import RnfProfile
 
 segment_destr_pattern = re.compile(r'^\(([0-9]+),([0-9]+),([FRN]),([0-9]+),([0-9]+)\)$')
 
@@ -37,22 +38,18 @@ class Segment:
 
 	def stringize(
 				self,
-				genome_id_width=1,
-				chr_id_width=1,
-				coor_width=1
+				rnf_profile=RnfProfile(),
 			):
 		"""Create RNF representation of this segment.
 
 		Args:
-			genome_id_width (int): Maximal expected string length of ID of genome.
-			chr_id_width (int): Maximal expected string length of ID of chromosome.
-			coor_width (int): Maximal expected string length of maximal coordinate.
+			rnf_profile (rnftools.rnfformat.RnfProfile): RNF profile (with widths).
 		"""
 
-		coor_width=max(coor_width,len(str(self.left)),len(str(self.right)))
+		coor_width=max(rnf_profile.coor_width,len(str(self.left)),len(str(self.right)))
 		return "({},{},{},{},{})".format(
-				str(self.genome_id).zfill(genome_id_width),
-				str(self.chr_id).zfill(chr_id_width),
+				str(self.genome_id).zfill(rnf_profile.genome_id_width),
+				str(self.chr_id).zfill(rnf_profile.chr_id_width),
 				self.direction,
 				str(self.left).zfill(coor_width),
 				str(self.right).zfill(coor_width)
@@ -72,6 +69,3 @@ class Segment:
 		self.direction=m.group(3)
 		self.left=int(m.group(4))
 		self.right=int(m.group(5))
-		#TODO: checks:
-		#   1. if reg match ok
-		#   2. if variables ok left <= right, etc.

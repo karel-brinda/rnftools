@@ -35,6 +35,13 @@ General
 		:code: text
 
 
+``rnftools validate`` 
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+	.. include:: command_line/validate.txt
+		:code: text
+
+
 MIShmash
 --------
 

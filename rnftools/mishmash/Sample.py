@@ -16,7 +16,11 @@ class Sample:
 	"""
 
 
-	def __init__(self, name, reads_in_tuple, paired_end_mode="bwa"):
+	def __init__(self,
+				name,
+				reads_in_tuple,
+				paired_end_mode="bwa",
+			):
 		self._name=name
 		self._sources=[]
 		self._dir=name
@@ -52,7 +56,7 @@ class Sample:
 
 	def add_source(self,source):
 		if self._reads_in_tuple!=source.get_reads_in_tuple():
-			smbl.messages.error("It is not possible to combine reads with different number of ends in a single sample. "
+			smbl.messages.error("It is not possible to combine read tuples with different number of reads in a single sample. "
 				"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(self._name,self._reads_in_tuple,source.get_reads_in_tuple(),source),
 				program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		self._sources.append(source)
@@ -73,7 +77,7 @@ class Sample:
 	def create_fq(self):
 		fq_merger=rnftools.rnfformat.FqMerger(
 				mode=self._mode,
-				input_files=[source.fq_fn() for source in self._sources],
+				input_files_fn=[source.fq_fn() for source in self._sources],
 				output_prefix=self._name,
 			)
 		fq_merger.run()

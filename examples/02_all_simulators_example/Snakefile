@@ -1,9 +1,73 @@
-# 1) importing rnftools Python package
 import rnftools
+import smbl
 
-# 2) your Python code will be located here
-print("Hello world!")
+rnftools.mishmash.sample("se_example",reads_in_tuple=1)
 
-# 3) including Snakemake rules created by RNFtools and defining the main Snakemake rule (declaring which files are requested)
+rnftools.mishmash.ArtIllumina(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=0,
+)
+
+rnftools.mishmash.MasonIllumina(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=0,
+)
+
+rnftools.mishmash.DwgSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=0,
+)
+
+rnftools.mishmash.WgSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=0,
+)
+
+rnftools.mishmash.CuReSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=0,
+)
+
+
+rnftools.mishmash.sample("pe_example",reads_in_tuple=2)
+
+rnftools.mishmash.ArtIllumina(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=100,
+)
+
+rnftools.mishmash.MasonIllumina(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=100,
+)
+
+rnftools.mishmash.DwgSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=100,
+)
+
+rnftools.mishmash.WgSim(
+	fasta=smbl.fasta.EXAMPLE_1,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=100,
+)
+
 include: rnftools.include()
 rule: input: rnftools.input()

@@ -166,8 +166,8 @@ class WgSim(Source):
 					rnf_fastq_fo=fq_fo,
 					fai_fo=fai_fo,
 					genome_id=self.genome_id,
-					wgsim_fastq_1=self._tmp_fq1_fn,
-					wgsim_fastq_2=self._tmp_fq2_fn if self._reads_in_tuple==2 else None,
+					wgsim_fastq_1_fn=self._tmp_fq1_fn,
+					wgsim_fastq_2_fn=self._tmp_fq2_fn if self._reads_in_tuple==2 else None,
 					number_of_read_tuples=10**9,
 				)
 
@@ -176,10 +176,21 @@ class WgSim(Source):
 				rnf_fastq_fo,
 				fai_fo,
 				genome_id,
-				wgsim_fastq_1,
-				wgsim_fastq_2=None,
+				wgsim_fastq_1_fn,
+				wgsim_fastq_2_fn=None,
 				number_of_read_tuples=10**9,
 			):
+		"""Convert WgSim FASTQ files to RNF FASTQ files.
+
+		Args:
+			rnf_fastq_fo (file): File object of the target RNF file.
+			fai_fo (file): File object of FAI index of the reference genome.
+			genome_id (int): RNF genome ID.
+			wgsim_fastq_1_fn (str): File name of the first WgSim FASTQ file.
+			wgsim_fastq_2_fn (str): File name of the second WgSim FASTQ file.
+			number_of_read_tuples (int): Expected number of read tuples (to estimate widths).
+		"""
+
 		wgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_([0-9a-f]+)/([12])')
 		"""
 			WGSIM read name format
@@ -214,14 +225,14 @@ class WgSim(Source):
 				)
 
 		reads_in_tuple=2
-		if wgsim_fastq_2 is None:
+		if wgsim_fastq_2_fn is None:
 			reads_in_tuple=1
 
 		i=0
-		with open(wgsim_fastq_1,"r+") as f_inp_1:
+		with open(wgsim_fastq_1_fn,"r+") as f_inp_1:
 			if reads_in_tuple==2:
 				#todo: close file
-				f_inp_2 = open(wgsim_fastq_2)
+				f_inp_2 = open(wgsim_fastq_2_fn)
 
 			for line_a in f_inp_1:
 				lines=[line_a.strip()]

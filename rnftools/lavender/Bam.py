@@ -15,7 +15,7 @@ import gzip
 ###########
 ###########
 class Bam:
-	"""Class for a single BAM file.
+	"""Class for a BAM file.
 
 	Args:
 		panel (rnftools.lavender.Panel): Panel containing this BAM file.
@@ -121,6 +121,13 @@ class Bam:
 				es_fo,
 				allowed_delta,
 			):
+		"""Convert BAM file to ES file.
+
+		Args:
+			bam_fn (str): File name of the BAM file.
+			bam_fo (file): File object of the ES file.
+			allowed_delta (int): Maximal allowed coordinates difference for correct reads.
+		"""
 
 		es_fo.write("# RN:   read name"+os.linesep)
 		es_fo.write("# Q:    is mapped with quality"+os.linesep)
@@ -241,11 +248,11 @@ class Bam:
 
 
 	@staticmethod
-	def _vector_of_categories(srs,read_name,parts):
+	def _vector_of_categories(srs,read_tuple_name,parts):
 		"""Create vector of categories (voc[q] ... assigned category for given quality level)
 
 		srs ... single read statistics ... for every q ... dictionary
-		read_name ... read name
+		read_tuple_name ... read name
 		parts ... number of segments
 		"""
 
@@ -362,7 +369,7 @@ class Bam:
 			#	smbl.messages.message(
 			#		" ".join(
 			#			[
-			#				"Unrecognized category for alignment of read '{}'.".format(read_name),
+			#				"Unrecognized category for alignment of read '{}'.".format(read_tuple_name),
 			#				"Quality level: {}.".format(q),
 			#				"Debug info: '{}'.".format(str(
 			#						[
@@ -400,6 +407,12 @@ class Bam:
 				es_fo,
 				et_fo,
 			):
+		"""Convert ES to ET.
+
+		Args:
+			es_fo (file): File object for the ES file.
+			et_fo (file): File object for the ET file.
+		"""
 
 		et_fo.write("# Mapping information for read tuples"+os.linesep)
 		et_fo.write("#"+os.linesep)
@@ -529,7 +542,11 @@ class Bam:
 				et_fo,
 				roc_fo,
 			):
-		"""Create a ROC file for this ET file.
+		"""ET to ROC conversion.
+
+		Args:
+			et_fo (file): File object for the ET file.
+			roc_fo (file): File object for the ROC file.
 
 		:raises: ValueError
 
@@ -554,7 +571,7 @@ class Bam:
 		for line in et_fo:
 			line=line.strip()
 			if line!="" and line[0]!="#":
-				(read_name,tab,info_categories)=line.partition("\t")
+				(read_tuple_name,tab,info_categories)=line.partition("\t")
 				intervals=info_categories.split(",")
 				for interval in intervals:
 					category=interval[0]

@@ -167,8 +167,8 @@ def add_dwgsim_parser(subparsers,subcommand,help,description):
 def wgsim2rnf(args):
 	rnftools.mishmash.WgSim.recode_wgsim_reads(
 		rnf_fastq_fo=args.fq_fo,
-		wgsim_fastq_1=args.wgsim_fastq_1,
-		wgsim_fastq_2=args.wgsim_fastq_2,
+		wgsim_fastq_1_fn=args.wgsim_fastq_1,
+		wgsim_fastq_2_fn=args.wgsim_fastq_2,
 		fai_fo=args.fai_fo,
 		genome_id=args.genome_id,
 		number_of_read_tuples=10**9,
@@ -207,7 +207,7 @@ def merge(args):
 
 	mixer=rnftools.rnfformat.FqMerger(
 			mode=args.m,
-			input_files=args.i,
+			input_files_fn=args.i,
 			output_prefix=args.o,
 		)
 	mixer.run()
@@ -508,6 +508,51 @@ def add_publication_parser(subparsers,subcommand,help,description):
 
 
 ################################
+# VALIDATE
+################################
+
+def validate(args):
+	i=0
+	for x in args.fastq_fn:
+		if i%4==0:
+			read_tuple_name=x.partition("/")[0][1:]
+			if i==0:
+				validator=rnftools.rnfformat.Validator(
+						initial_read_tuple_name=read_tuple_name,
+						report_only_first=args.report_only_first,
+						warnings_as_errors=args.warnings_as_errors,
+					)
+			validator.validate(read_tuple_name=read_tuple_name)
+		i+=1
+	sys.exit(validator.get_return_code())
+
+
+def add_validate_parser(subparsers,subcommand,help,description):
+	parser_validate = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_validate.add_argument(
+			'-i','--fastq',
+			type=argparse.FileType('r'),
+			metavar='file',
+			dest='fastq_fn',
+			required=True,
+			help='FASTQ file to be validated.',
+		)
+	parser_validate.add_argument(
+			'-w','--warnings-as-errors',
+			action='store_true',
+			dest='warnings_as_errors',
+			help='Treat warnings as errors.',
+		)
+	parser_validate.add_argument(
+			'-a','--all-occurrences',
+			action='store_false',
+			dest='report_only_first',
+			help='Report all occurrences of warnings and errors.',
+		)
+	parser_validate.set_defaults(func=validate)
+
+
+################################
 ################################
 ##
 ## RNFTOOLS SCRIPT
@@ -564,6 +609,16 @@ def rnftools_script():
 			subcommand="publication",
 			help="Print information about the associated publication.",
 			description="Print information about the associated publication.",
+		)
+
+	#
+	# rnftools validate
+	#
+	add_validate_parser(
+			subparsers=subparsers,
+			subcommand="validate",
+			help="Validate RNF names in a FASTQ file.",
+			description="Validate RNF names in a FASTQ file.",
 		)
 
 	subparsers.add_parser("",help="",description="")

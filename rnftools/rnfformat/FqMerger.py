@@ -3,6 +3,9 @@ import sys
 import random
 import math
 
+import rnftools.rnfformat
+
+
 # number of reads taken in a single run
 READS_IN_GROUP=10
 
@@ -13,21 +16,32 @@ ALLOWED_MODES = [
 		]
 
 class FqMerger:
-	def __init__(self,mode,input_files,output_prefix):
+	"""Class for merging several RNF FASTQ files.
+
+	Args:
+		mode (str): Output mode (single-end / paired-end-bwa / paired-end-bfast).
+		input_files_fn (list): List of file names of input FASTQ files.
+		output_prefix (str): Prefix for output FASTQ files.
+	"""
+	def __init__(self,
+				mode,
+				input_files_fn,
+				output_prefix
+			):
 		self.mode=mode
-		self.input_files=input_files
+		self.input_files_fn=input_files_fn
 		self.output_prefix=output_prefix
 		self.rng=random.Random()
 		self.rng.seed(1)
 
-		self.i_files=[open(fn) for fn in input_files]
-		self.i_files_sizes=[os.path.getsize(fn) for fn in input_files]
+		self.i_files=[open(fn) for fn in input_files_fn]
+		self.i_files_sizes=[os.path.getsize(fn) for fn in input_files_fn]
 		self.i_files_proc=[int((100.0*x)/sum(self.i_files_sizes)) for x in self.i_files_sizes]
 		self.i_files_weighted=[]
 		for i in range(len(self.i_files)):
 			self.i_files_weighted.extend(self.i_files_proc[i]*[self.i_files[i]])
 
-		read_id_length_est=math.ceil(
+		read_tuple_id_length_est=math.ceil(
 					math.log(
 						sum(self.i_files_sizes)/20,
 						16,
@@ -35,34 +49,50 @@ class FqMerger:
 				)
 
 		if mode=="single-end":
-			self.output_files=[
+			self.output_files_fn=[
 				"{}.fq".format(output_prefix)
 			]
-			self.output=FqMergerOutput(fn_1=self.output_files[0],reads_in_tuple=1,read_id_length=read_id_length_est)
+			self.output=FqMergerOutput(
+					fq_1_fn=self.output_files_fn[0],
+					reads_in_tuple=1,
+					read_tuple_id_width=read_tuple_id_length_est
+				)
 			self._reads_in_tuple=1
 		elif mode=="paired-end-bwa":
-			self.output_files=[
+			self.output_files_fn=[
 				"{}.1.fq".format(output_prefix),
 				"{}.2.fq".format(output_prefix),
 			]
-			self.output=FqMergerOutput(fn_1=self.output_files[0],fn_2=self.output_files[1],reads_in_tuple=2,read_id_length=read_id_length_est)
+			self.output=FqMergerOutput(
+					fq_1_fn=self.output_files_fn[0],
+					fq_2_fn=self.output_files_fn[1],
+					reads_in_tuple=2,
+					read_tuple_id_width=read_tuple_id_length_est
+				)
 			self._reads_in_tuple=2
 		elif mode=="paired-end-bfast":
-			self.output_files=[
+			self.output_files_fn=[
 				"{}.fq".format(output_prefix)
 			]
-			self.output=FqMergerOutput(fn_1=self.output_files[0],reads_in_tuple=2,read_id_length=read_id_length_est)
+			self.output=FqMergerOutput(
+					fq_1_fn=self.output_files_fn[0],
+					reads_in_tuple=2,
+					read_tuple_id_width=read_tuple_id_length_est
+				)
 			self._reads_in_tuple=2
 		else:
 			raise ValueError("Unknown mode '{}'".format(mode))
 
 	def run(self):
+		"""Run merging.
+		"""
+
 		print("",file=sys.stderr)
 		print("Going to merge/convert RNF-FASTQ files.",file=sys.stderr)
 		print("",file=sys.stderr)
 		print("   mode:          ", self.mode,file=sys.stderr)
-		print("   input files:   ", ", ".join(self.input_files),file=sys.stderr)
-		print("   output files:  ", ", ".join(self.output_files),file=sys.stderr)
+		print("   input files:   ", ", ".join(self.input_files_fn),file=sys.stderr)
+		print("   output files:  ", ", ".join(self.output_files_fn),file=sys.stderr)
 		print("",file=sys.stderr)
 
 
@@ -89,13 +119,30 @@ class FqMerger:
 
 
 class FqMergerOutput:
-	def __init__(self,reads_in_tuple,fn_1,fn_2=None,read_id_length=6):
+	"""Class for output of FqMerger.
+
+	Args:
+		reads_in_tuple (int): Number of reads in a tuple.
+		fq_1_fn (str): File name of first output FASTQ.
+		fq_2_fn (str): File name of second output FASTQ.
+		read_tuple_id_width: Width of Read ID.
+	"""
+
+
+	def __init__(self,
+				reads_in_tuple,
+				fq_1_fn,
+				fq_2_fn=None,
+				read_tuple_id_width=6
+			):
 		self.reads_in_tuple=reads_in_tuple
-		self.read_id_length=read_id_length
-		self.fs=[open(fn_1,"w+")]
-		if fn_2 is not None:
-			self.fs.append(open(fn_2,"w+"))
-		self.read_tuple_counter=0
+		self.fs=[open(fq_1_fn,"w+")]
+		if fq_2_fn is not None:
+			self.fs.append(open(fq_2_fn,"w+"))
+		self.read_tuple_counter=1
+		self.rnf_profile=rnftools.rnfformat.RnfProfile(
+				read_tuple_id_width=read_tuple_id_width
+			)
 
 	def close(self):
 		for f in self.fs:
@@ -104,9 +151,10 @@ class FqMergerOutput:
 	def save_read(self,ln1,ln2,ln3,ln4):
 		[ln1,ln2,ln3,ln4]=[ln1.strip(),ln2.strip(),ln3.strip(),ln4.strip()]
 
-		ln1_parts=ln1.split("__")
-		ln1_parts[1]="{:x}".format(self.read_tuple_counter).zfill(self.read_id_length)
-		ln1="__".join(ln1_parts)
+		ln1=self.rnf_profile.apply(
+				read_tuple_name=ln1,
+				read_tuple_id=self.read_tuple_counter
+			)
 	
 		if self.reads_in_tuple==1:
 			file_id=0

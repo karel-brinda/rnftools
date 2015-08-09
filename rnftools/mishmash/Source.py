@@ -16,7 +16,7 @@ class Source(object):
 		fasta (str): File name of the genome from which reads are created (FASTA file).
 		reads_in_tuple (int): Number of reads in each read tuple.
 		rng_seed (int): Seed for simulator's random number generator.
-		number_of_required_cores (int): Number of cores used by the simulator. It can be used to prevent running other threads at the same time.
+		number_of_required_cores (int): Number of cores used by the simulator. This parameter is used to prevent running other threads or programs at the same time.
 	"""
 
 	__metaclass__ = abc.ABCMeta
