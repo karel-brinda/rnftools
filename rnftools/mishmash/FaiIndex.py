@@ -16,6 +16,7 @@ class FaiIndex:
 
 	def __init__(self, fai_fo):
 		self.dict_chr_ids = {}
+		self.dict_ids_chr = {}
 		self.dict_chr_lengths = {}
 
 		# parsing FAI file
@@ -35,6 +36,7 @@ class FaiIndex:
 				chr=parts[0]
 				chr_len=int(parts[1])
 				self.dict_chr_ids[chr]=i
+				self.dict_ids_chr[i]=chr
 				self.dict_chr_lengths[chr]=chr_len
 
 		self.number_of_chromosomes=len(self.dict_chr_ids)

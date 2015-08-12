@@ -21,7 +21,7 @@ class ChainDict:
 				if head=="":
 					continue
 
-				print(head)
+				#print(head)
 				parts=head.split()
 
 				[
@@ -100,10 +100,10 @@ class ChainDict:
 				assert rightp==qSize, "{} {} vs. {} {} (diff: {} {})".format(leftp,rightp,tSize,qSize,tSize-leftp,qSize-rightp)
 
 
-	def one_based_transl(chromosome, coordinate):
+	def one_based_transl(self, chromosome, coordinate):
 		assert 0<=coordinate
-		assert coordinate<=self._dict_properties[chromosome][tSize]
+		#assert coordinate<=self._dict_properties[chromosome][tSize]
 		if coordinate==0:
 			return 0
 		else:
-			return sel._dict_array[chromosome][coordinate-1]+1
+			return self._dict_array[chromosome][coordinate-1]+1
