@@ -1,5 +1,6 @@
-from .chain_dict import ChainDict
+from .ChainDict import ChainDict
 import rnftools
+import pysam
 
 import re
 
@@ -7,8 +8,8 @@ class RnfLifter:
 
 	def __init__(self,
 				chain_fn,
-				fai_fn=,
-			):		if 
+				fai_fn,
+			):
 		self._fai_fn=fai_fn
 		self._chain_fn=chain_fn
 
@@ -19,12 +20,20 @@ class RnfLifter:
 
 	def lift_rnf_name(self,rnf_name):
 		for occur in self._reg_block.finditer(rnf_name):
-			print(occur)
+			pass
+			#print(occur)
 		return rnf_name
 
 	def lift_fastq(self, fastq_in_fo, fastq_out_fo):
 		for i, line in enumerate(fastq_in_fo,start=0):
 			if i%4==0:
 				fastq_out_fo.write(self.lift_rnf_name(line))
-			else
+			else:
 				fastq_out_fo.write(line)
+
+	def lift_bam(self, sam_in_fn, sam_out_fn):
+		infile = pysam.AlignmentFile(sam_in_fn, "r" if sam_in_fn[-4:]==".sam" else "rb")
+		outfile = pysam.AlignmentFile(sam_out_fn, "w" if sam_out_fn[-4:]==".sam" else "wb", template=infile)
+		for s in infile:
+			s.qname=self.lift_rnf_name(s.qname)
+			outfile.write(s)

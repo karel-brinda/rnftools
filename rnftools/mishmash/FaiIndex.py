@@ -29,15 +29,13 @@ class FaiIndex:
 		5) the number of bytes in each fasta line
 		"""
 
-		i=1
-		for line in fai_fo:
+		for (i,line) in enumerate(fai_fo,start=1):
 			if line.strip()!="":
 				parts=line.split("\t")
 				chr=parts[0]
 				chr_len=int(parts[1])
 				self.dict_chr_ids[chr]=i
 				self.dict_chr_lengths[chr]=chr_len
-				i+=1
 
 		self.number_of_chromosomes=len(self.dict_chr_ids)
 		self.chr_id_width=len(str(self.number_of_chromosomes))
