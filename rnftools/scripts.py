@@ -12,13 +12,15 @@ import smbl
 # todo: examples of usages for every subcommand (using epilog)
 
 
-################################
-################################
+
+
+################################################################
+################################################################
 ##
 ## RNFTOOLS SUBCOMMANDS
 ##
-################################
-################################
+################################################################
+################################################################
 
 
 def _add_shared_params(parser, unmapped_switcher=False):
@@ -553,12 +555,80 @@ def add_validate_parser(subparsers,subcommand,help,description):
 
 
 ################################
+# LIFTOVER
 ################################
+
+
+def liftover(args):
+	rnf_lifter=rnftools.rnfformat.RnfLifter(
+			chain_fn=args.chain_fn,
+			fai_fn=args.fai_fn,
+		)
+
+	if args.convert_fastq:
+		with open(args.input_fn) as fastq_in_fn:
+			with open(args.output_fn,"w+") as fastq_out_fn:
+					rnf_lifter.lift_fastq(
+							fastq_in_fo=fastq_in_fo,
+							fastq_out_fo=fastq_out_fo,
+						)
+	else:
+		rnf_lifter.lift_sam(
+				sam_in_fn=args.input_fn,
+				sam_out_fn=args.output_fn,
+			)
+		
+def add_liftover_parser(subparsers,subcommand,help,description):
+	parser_liftover = subparsers.add_parser(subcommand,help=help,description=description)
+	parser_liftover.add_argument(
+			'-i','--input',
+			type=str,
+			metavar='file',
+			dest='input_fn',
+			required=True,
+			help='Input file to be transformed (SAM/BAM unless other specified).',
+		)
+	parser_liftover.add_argument(
+			'-o','--output',
+			type=str,
+			metavar='file',
+			dest='output_fn',
+			required=True,
+			help='Output file (SAM/BAM unless other specified).',
+		)
+	parser_liftover.add_argument(
+			'-c','--chain',
+			type=str,
+			metavar='file',
+			dest='chain_fn',
+			required=True,
+			help='Chain format.',
+		)
+	parser_liftover.add_argument(
+			'-f','--fasta-index',
+			type=str,
+			metavar='file',
+			dest='fai_fn',
+			required=True,
+			help='Fasta index of the reference sequence.',
+		)
+	parser_liftover.add_argument(
+			'-q','--convert-fastq',
+			action='store_true',
+			dest='convert_fastq',
+			help='Input and output files are FASTQ files (not SAM/BAM).',
+		)
+	parser_liftover.set_defaults(func=liftover)
+
+
+
+################################################################
+################################################################
 ##
 ## RNFTOOLS SCRIPT
 ##
-################################
-################################
+################################################################
+################################################################
 
 def default_func(args):
 	pass
@@ -619,6 +689,16 @@ def rnftools_script():
 			subcommand="validate",
 			help="Validate RNF names in a FASTQ file.",
 			description="Validate RNF names in a FASTQ file.",
+		)
+
+	#
+	# rnftools liftover
+	#
+	add_liftover_parser(
+			subparsers=subparsers,
+			subcommand="liftover",
+			help="Liftover genomic coordinates in RNF names.",
+			description="Liftover genomic coordinates in RNF names in a SAM/BAM files or in a FASTQ file.",
 		)
 
 	subparsers.add_parser("",help="",description="")
