@@ -32,9 +32,7 @@ class ChainSequence:
 
 		if self._invert:
 			self._name1,self._name2=self._name2,self._name1
-
-			for (i,(interval1,interval2)) in enumerate(self._interval_pairs,start=0):
-				self._interval_pairs[i]=(interval2,interval1)
+			self._interval_pairs=[x[::-1] for x in self._interval_pairs]
 
 		self._length1=self._interval_pairs[-1][0][1]
 		self._length2=self._interval_pairs[-1][1][1]

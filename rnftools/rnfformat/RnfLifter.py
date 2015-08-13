@@ -12,14 +12,26 @@ class RnfLifter:
 		self._fai_fn=fai_fn
 		self._chain_fn=chain_fn
 
-		with open(chain_fn) as chain_fo:
-			self._chain=rnftools.utils.Chain(chain_fo=chain_fo)
-		with open(fai_fn) as fai_fo:
-			self._fai_index=rnftools.utils.FaiIndex(fai_fo=fai_fo)
+		if chain_fn is not None:
+			with open(chain_fn) as chain_fo:
+				self._chain=rnftools.utils.Chain(chain_fo=chain_fo)
+		else:
+			self._chain=None
+
+		if fai_fn is not None:	
+			with open(fai_fn) as fai_fo:
+				self._fai_index=rnftools.utils.FaIdx(fai_fo=fai_fo)
+		else:
+			if self._chain is not None:
+				self._fai_index=self._chain.get_fasta_index()
+			else:
+				self._fai_index=None
 
 		self._reg_block=re.compile(r"(\(([0-9]+),[0-9]+,[FRN],([0-9]+),([0-9]+)\))")
 
 	def lift_rnf_name(self,rnf_name):
+		if self._chain is None:
+			return rnf_name
 		for occur in self._reg_block.finditer(rnf_name):
 			groups=occur.groups()
 			chrom_id=int(groups[1])
@@ -49,11 +61,32 @@ class RnfLifter:
 				fastq_out_fo.write(line)
 
 	def lift_sam(self,
-				sam_in_fn,
-				sam_out_fn
+				sam_in_fn=None,
+				bam_in_fn=None,
+				sam_out_fn=None,
+				bam_out_fn=None,
 			):
-		infile = pysam.AlignmentFile(sam_in_fn, "rb" if sam_in_fn[-4:]==".bam" else "r")
-		outfile = pysam.AlignmentFile(sam_out_fn, "wb" if sam_out_fn[-4:]==".bam" else "wh", template=infile)
+		assert sam_in_fn is not None or bam_in_fn is not None
+		assert sam_in_fn is None or bam_in_fn is None
+		assert sam_out_fn is not None or bam_out_fn is not None
+		assert sam_out_fn is None or bam_out_fn is None
+
+		if sam_in_fn is None:
+			in_mode="rb"
+			in_fn=bam_in_fn
+		else:
+			in_mode="r"
+			in_fn=sam_in_fn
+
+		if sam_out_fn is None:
+			out_mode="wb"
+			out_fn=bam_out_fn
+		else:
+			out_mode="wh"
+			out_fn=sam_out_fn
+
+		infile = pysam.AlignmentFile(in_fn, in_mode)
+		outfile = pysam.AlignmentFile(out_fn, out_mode, template=infile)
 		for s in infile:
 			s.qname=self.lift_rnf_name(s.qname)
 			outfile.write(s)

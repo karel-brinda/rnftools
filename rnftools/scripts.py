@@ -560,12 +560,63 @@ def add_validate_parser(subparsers,subcommand,help,description):
 
 
 def liftover(args):
+	input_format=None
+	output_format=None
+
+	if args.input_fn.lower()[-4:]==".sam":
+		input_format="sam"
+	if args.input_fn.lower()[-4:]=="-":
+		input_format="sam"
+	elif args.input_fn.lower()[-4:]==".bam":
+		input_format="bam"
+	elif args.input_fn.lower()[-4:]==".fq":
+		input_format="fq"
+	elif args.input_fn.lower()[-4:]==".fastq":
+		input_format="fastq"
+
+	if args.output_fn.lower()[-4:]==".sam":
+		output_format="sam"
+	if args.output_fn.lower()[-4:]=="-":
+		output_format="sam"
+	elif args.output_fn.lower()[-4:]==".bam":
+		output_format="bam"
+	elif args.output_fn.lower()[-4:]==".fq":
+		output_format="fq"
+	elif args.output_fn.lower()[-4:]==".fastq":
+		output_format="fastq"
+
+	if args.input_format is not None:
+		assert args.input_format.lower() in ["sam","bam","fastq","fq"]
+		if args.input_format.lower()=="sam":
+			input_format="sam"
+		elif args.input_format.lower()=="bam":
+			input_format="sam"
+		elif args.input_format.lower() in ["fastq","fq"]:
+			input_format="fq"
+
+	if args.output_format is not None:
+		assert args.output_format.lower() in ["sam","bam","fastq","fq"]
+		if args.output_format.lower()=="sam":
+			output_format="sam"
+		elif args.output_format.lower()=="bam":
+			output_format="sam"
+		elif args.output_format.lower() in ["fastq","fq"]:
+			output_format="fq"
+
+	if input_format=="fq":
+		assert output_format=="fq"
+	if input_format in ["sam","bam"]:
+		assert output_format in ["sam","bam"]
+
+	assert input_format is not None
+	assert output_format is not None
+
 	rnf_lifter=rnftools.rnfformat.RnfLifter(
 			chain_fn=args.chain_fn,
 			fai_fn=args.fai_fn,
 		)
 
-	if args.convert_fastq:
+	if input_format=="fq" and output_format=="fq":
 		with open(args.input_fn) as fastq_in_fn:
 			with open(args.output_fn,"w+") as fastq_out_fn:
 					rnf_lifter.lift_fastq(
@@ -585,7 +636,6 @@ def add_liftover_parser(subparsers,subcommand,help,description):
 			type=str,
 			metavar='file',
 			dest='chain_fn',
-			required=True,
 			help='Chain liftover file for coordinates transformation. [no transformation]',
 		)
 	parser_liftover.add_argument(
@@ -593,21 +643,20 @@ def add_liftover_parser(subparsers,subcommand,help,description):
 			type=str,
 			metavar='file',
 			dest='fai_fn',
-			required=True,
 			help='Fasta index of the reference sequence. [extract from chain file]',
 		)
 	parser_liftover.add_argument(
 			'--input-format',
 			type=str,
 			metavar='str',
-			dest='format',
+			dest='input_format',
 			help='Input format (SAM/BAM/FASTQ). [autodetect]',
 		)
 	parser_liftover.add_argument(
 			'--output-format',
 			type=str,
 			metavar='str',
-			dest='format',
+			dest='output_format',
 			help='Output format (SAM/BAM/FASTQ).  [autodetect]',
 		)
 	parser_liftover.add_argument(
