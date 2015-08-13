@@ -34,7 +34,7 @@ def _add_shared_params(parser, unmapped_switcher=False):
 		)
 	
 	parser.add_argument(
-			'-i','--fasta-index',
+			'-x','--faidx',
 			type=argparse.FileType('r'),
 			metavar='file',
 			dest='fai_fo',
@@ -581,42 +581,46 @@ def liftover(args):
 def add_liftover_parser(subparsers,subcommand,help,description):
 	parser_liftover = subparsers.add_parser(subcommand,help=help,description=description)
 	parser_liftover.add_argument(
-			'-i','--input',
-			type=str,
-			metavar='file',
-			dest='input_fn',
-			required=True,
-			help='Input file to be transformed (SAM/BAM unless other specified).',
-		)
-	parser_liftover.add_argument(
-			'-o','--output',
-			type=str,
-			metavar='file',
-			dest='output_fn',
-			required=True,
-			help='Output file (SAM/BAM unless other specified).',
-		)
-	parser_liftover.add_argument(
 			'-c','--chain',
 			type=str,
 			metavar='file',
 			dest='chain_fn',
 			required=True,
-			help='Chain format.',
+			help='Chain liftover file for coordinates transformation. [no transformation]',
 		)
 	parser_liftover.add_argument(
-			'-f','--fasta-index',
+			'-x','--faidx',
 			type=str,
 			metavar='file',
 			dest='fai_fn',
 			required=True,
-			help='Fasta index of the reference sequence.',
+			help='Fasta index of the reference sequence. [extract from chain file]',
 		)
 	parser_liftover.add_argument(
-			'-q','--convert-fastq',
-			action='store_true',
-			dest='convert_fastq',
-			help='Input and output files are FASTQ files (not SAM/BAM).',
+			'--input-format',
+			type=str,
+			metavar='str',
+			dest='format',
+			help='Input format (SAM/BAM/FASTQ). [autodetect]',
+		)
+	parser_liftover.add_argument(
+			'--output-format',
+			type=str,
+			metavar='str',
+			dest='format',
+			help='Output format (SAM/BAM/FASTQ).  [autodetect]',
+		)
+	parser_liftover.add_argument(
+			'input_fn',
+			type=str,
+			metavar='input',
+			help='Input file to be transformed (- for standard input).',
+		)
+	parser_liftover.add_argument(
+			'output_fn',
+			type=str,
+			metavar='output',
+			help='Output file to be transformed (- for standard output).',
 		)
 	parser_liftover.set_defaults(func=liftover)
 

@@ -1,5 +1,6 @@
 import collections
 from .ChainSequence import ChainSequence
+from .FaIdx import FaIdx
 
 class Chain:
 
@@ -100,7 +101,6 @@ class Chain:
 				]
 			)
 
-
 	def zero_based_transl(self, chromosome, coordinate):
 		self._chain_sequences[chromosome].zero_based_transl(coordinate)
 
@@ -108,5 +108,7 @@ class Chain:
 		self._chain_sequences[chromosome].one_based_transl(coordinate)
 
 	def get_fasta_index(self):
-		#TODO: method for creating FAI object from a Chain object
-		pass
+		faidx=FaIdx(fai_fo=None)
+		pairs=[(seq.name1,seq.length1) for seq in self._chain_sequences]
+		faidx.load_from_list(pairs)
+		return faidx
