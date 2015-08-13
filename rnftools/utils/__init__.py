@@ -1,2 +1,2 @@
-from .ChainDict import *
+from .Chain import *
 from .FaIdx import *

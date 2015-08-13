@@ -1,4 +1,3 @@
-from .ChainDict import ChainDict
 import rnftools
 import pysam
 
@@ -13,21 +12,15 @@ class RnfLifter:
 		self._fai_fn=fai_fn
 		self._chain_fn=chain_fn
 
-		self._chain_dict=ChainDict(chain_fn=chain_fn)
+		with open(chain_fn) as chain_fo:
+			self._chain=rnftools.utils.Chain(chain_fo=chain_fo)
 		with open(fai_fn) as fai_fo:
-			self._fai_index=rnftools.mishmash.FaiIndex(fai_fo=fai_fo)
+			self._fai_index=rnftools.utils.FaiIndex(fai_fo=fai_fo)
 
 		self._reg_block=re.compile(r"(\(([0-9]+),[0-9]+,[FRN],([0-9]+),([0-9]+)\))")
 
 	def lift_rnf_name(self,rnf_name):
-		#print("=======")
-		#print(rnf_name)
 		for occur in self._reg_block.finditer(rnf_name):
-			# 
-			#pass
-			#print(rnf_name)
-			#print(occur)
-			#print(occur.groups())
 			groups=occur.groups()
 			chrom_id=int(groups[1])
 			chrom=self._fai_index.dict_ids_chr[chrom_id]
@@ -36,16 +29,13 @@ class RnfLifter:
 			left=int(o_left)
 			right=int(o_right)
 			if left!=0:
-				n_left=self._chain_dict.one_based_transl(chrom,left)
+				n_left=self._chain.one_based_transl(chrom,left)
 				f_new_left=str(n_left).zfill(len(o_left))
 				rnf_name=rnf_name.replace(",{},".format(o_left),",{},".format(f_new_left))
-				#print("l",o_left,f_new_left)
 			if right!=0:
-				new_right=self._chain_dict.one_based_transl(chrom,right)
+				new_right=self._chain.one_based_transl(chrom,right)
 				f_new_right=str(n_right).zfill(len(o_right))
 				rnf_name=rnf_name.replace(",{})".format(o_right),",{})".format(f_new_right))
-				#print("r",o_right,f_new_right)
-		#print(rnf_name)
 		return rnf_name
 
 	def lift_fastq(self,

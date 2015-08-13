@@ -6,4 +6,3 @@ sphinxcontrib-napoleon>=0.3.3
 sphinx_rtd_theme>=0.1.8
 snakemake>=3.3
 smbl>=0.1.1.dev47
-numpy
