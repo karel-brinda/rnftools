@@ -1,6 +1,5 @@
 import rnftools
 from .Source import *
-from .FaiIndex import *
 
 import os
 import smbl
@@ -223,7 +222,7 @@ class DwgSim(Source):
 		14) read number (unique within a given contig/chromosome)
 		"""
 
-		fai_index = FaiIndex(fai_fo=fai_fo)
+		fai_index = rnftools.utils.FaIdx(fai_fo=fai_fo)
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		# parsing FQ file

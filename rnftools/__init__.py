@@ -11,6 +11,8 @@ except AttributeError:
 import rnftools.mishmash
 import rnftools.lavender
 import rnftools.rnfformat
+import rnftools.utils
+
 import os
 
 # version detection
