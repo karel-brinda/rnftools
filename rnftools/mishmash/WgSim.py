@@ -1,6 +1,5 @@
 import rnftools
 from .Source import *
-from .FaiIndex import *
 
 import os
 import smbl
@@ -208,7 +207,7 @@ class WgSim(Source):
 		11) pair
 		"""
 		
-		fai_index = FaiIndex(fai_fo)
+		fai_index = rnftools.utils.FaIdx(fai_fo)
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		last_read_tuple_name=None

@@ -1,6 +1,4 @@
-
-
-class FaiIndex:
+class FaIdx:
 	"""Class for loading FASTA indexes.
 
 	Args:
