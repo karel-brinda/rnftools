@@ -37,7 +37,7 @@ class FaIdx:
 					parts=line.split("\t")
 					chromosome=parts[0]
 					length=int(parts[1])
-					pairs.append( (chromosome,legth) )
+					pairs.append( (chromosome,length) )
 			self.load_from_list(pairs)
 
 	# pairs:list of (chromosome, length)

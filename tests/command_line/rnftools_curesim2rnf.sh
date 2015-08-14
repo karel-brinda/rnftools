@@ -16,6 +16,6 @@ $CURESIM \
 2> /dev/null
 
 rnftools curesim2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--curesim-fastq curesim.fq \
 	--rnf-fastq _curesim_rnf_se.fq \

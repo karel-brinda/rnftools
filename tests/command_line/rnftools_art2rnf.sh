@@ -32,6 +32,6 @@ $ART_ILLUMINA -sam \
 	--out art_pe \
 
 rnftools art2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--sam art_pe.sam \
 	--rnf-fastq _art_rnf_pe.fq \
