@@ -81,7 +81,7 @@ class ChainSequence:
 		(left1,right1),(left2,right2)=self._interval_pairs[p]
 		assert right1-left1>0
 		slope=1.0*(right2-left2)/(right1-left1)
-		translated_coordinate=int(round(left2+slope*(right1-left1)))
+		translated_coordinate=int(round(left2+slope*(coordinate-left1)))
 		return translated_coordinate
 		
 	def one_based_transl(self, coordinate):
