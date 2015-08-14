@@ -17,7 +17,7 @@ $ART_ILLUMINA -sam \
 	--out art_se \
 
 rnftools art2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--sam art_se.sam \
 	--rnf-fastq _art_rnf_se.fq \
 

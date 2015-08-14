@@ -19,7 +19,7 @@ $DWGSIM \
 	$FA sim_se
 
 rnftools dwgsim2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--dwgsim-prefix sim_se \
 	--rnf-fastq _dwgsim_rnf_se.fq \
 
@@ -34,6 +34,6 @@ $DWGSIM \
 	$FA sim_pe \
 
 rnftools dwgsim2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--dwgsim-prefix sim_pe \
 	--rnf-fastq _dwgsim_rnf_pe.fq \
