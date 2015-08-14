@@ -8,13 +8,15 @@ class RnfLifter:
 	def __init__(self,
 				chain_fn,
 				fai_fn,
+				invert=False,
 			):
 		self._fai_fn=fai_fn
 		self._chain_fn=chain_fn
+		self._invert=invert
 
 		if chain_fn is not None:
 			with open(chain_fn) as chain_fo:
-				self._chain=rnftools.utils.Chain(chain_fo=chain_fo)
+				self._chain=rnftools.utils.Chain(chain_fo=chain_fo,invert=invert)
 		else:
 			self._chain=None
 

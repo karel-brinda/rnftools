@@ -614,6 +614,7 @@ def liftover(args):
 	rnf_lifter=rnftools.rnfformat.RnfLifter(
 			chain_fn=args.chain_fn,
 			fai_fn=args.fai_fn,
+			invert=args.invert,
 		)
 
 	if input_format=="fq" and output_format=="fq":
@@ -644,6 +645,12 @@ def add_liftover_parser(subparsers,subcommand,help,description):
 			metavar='file',
 			dest='fai_fn',
 			help='Fasta index of the reference sequence. [extract from chain file]',
+		)
+	parser_liftover.add_argument(
+			'--invert',
+			action='store_true',
+			dest='invert',
+			help='Invert chain file (transformation in the other direction).',
 		)
 	parser_liftover.add_argument(
 			'--input-format',

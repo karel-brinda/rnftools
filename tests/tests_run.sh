@@ -51,6 +51,9 @@
 @test "TESTS: rnftools dwgsim2rnf" {
 	./command_line/rnftools_dwgsim2rnf.sh
 }
+@test "TESTS: rnftools liftover" {
+	./command_line/rnftools_liftover.sh
+}
 
 #################################################
 
