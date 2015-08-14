@@ -1,3 +1,6 @@
+import sys
+import traceback
+
 class ChainSequence:
 
 	def __init__(self,
@@ -39,9 +42,12 @@ class ChainSequence:
 
 		self._sampling=[]
 		p=0
-		for i in range(self._length1//self._sampling_step):
+		for i in range(self._length1//self._sampling_step+1):
 			coordinate=i*self._sampling_step
-			while self._interval_pairs[p][0][0]<coordinate or self._interval_pairs[p][0][1]<coordinate+1:
+			while not ( \
+						self._interval_pairs[p][0][0]<=coordinate and \
+						coordinate<self._interval_pairs[p][0][1] \
+					):
 				p+=1
 			self._sampling.append(p)
 
@@ -62,8 +68,15 @@ class ChainSequence:
 		return self._length2
 	
 	def zero_based_transl(self,coordinate):
-		p=self._sampling[coordinate//self._sampling_step]
-		while self._interval_pairs[p][0][0]<coordinate or self._interval_pairs[p][0][1]<coordinate+1:
+		assert isinstance(coordinate,int), coordinate
+		assert 0<=coordinate
+		assert coordinate<self.length1
+		i=coordinate//self._sampling_step
+		p=self._sampling[i]
+		while not ( \
+					self._interval_pairs[p][0][0]<=coordinate and \
+					coordinate<self._interval_pairs[p][0][1] \
+				):
 			p+=1
 		(left1,right1),(left2,right2)=self._interval_pairs[p]
 		assert right1-left1>0
