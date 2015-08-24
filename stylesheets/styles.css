@@ -39,7 +39,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color:#232323;
-  margin:36px 0 10px;
+  margin:20px 0 10px;
 }
 
 p, ul, ol, table, dl {
@@ -59,11 +59,12 @@ h1,h2, h3 {
 }
 
 h1 {
-	font-size: 30px;
+	font-size: 27px;
+  text-align:center;
 }
 
 h2 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 h3 {
@@ -201,8 +202,9 @@ th {
  }
 
 td {
+  border: 1px solid #ccc;
   padding: 10px;
-	background: #ccc;
+	background: #fff;
  }
 
 
@@ -420,4 +422,14 @@ footer {
     font-size:12pt;
     color:#444;
   }
+}
+
+.main_section ul {
+  margin-top: 10px!important;
+  margin-bottom: 10px!important;
+}
+
+.main_section p {
+  margin-top: 10px!important;
+  margin-bottom: 0px!important;
 }

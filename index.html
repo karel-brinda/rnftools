@@ -42,9 +42,11 @@
 				<li class="download">
 					<a href="https://github.com/karel-brinda/rnftools">View On GitHub</a>
 				</li>
+				<!--
 				<li class="download">
 					<a href="https://github.com/karel-brinda/rnftools/issues/new">Report a bug</a>
 				</li>
+				-->
 				<!--
 				<li class="download">
 					<a class="buttons" href="https://github.com/karel-brinda/rnftools/zipball/master">Download ZIP</a>
@@ -63,32 +65,51 @@
 		</header>
 		<section class="main_section">
 
-			<h1>RNFtools</h1>
+			<h1>Read Naming Format and RNFtools</h1>
 
 <!--
 	========================================================
 -->
-<h2>Introduction</h2>
+<h2>RNF</h2>
 
 <p>
-	<strong>RNF</strong> (Read Naming Format) is a generic format for 
-	assigning read names with encoded information about original positions
-	to simulated NGS reads.
-	See its <a href="http://karel-brinda.github.io/rnf-spec/RNF.pdf">specification</a>
-	(its XeTeX/LaTeX source is available
-	in a <a href="http://github.com/karel-brinda/rnf-spec/">standalone GitHub repository</a>).
+	<strong>RNF</strong> (Read Naming Format, <a href="http://karel-brinda.github.io/rnf-spec/RNF.pdf">specification</a>)
+	is a generic format for assigning names to simulated Next-Generation Sequencing (NGS) reads. It provides a unified
+	way of encoding genomic coordinates of reads,
+	no matter which specific sequencing technology is simulated or which read simulator employed.
+	Altogether, it simplifies evaluation of read mappers and debugging of tools for NGS data.
 </p>
 
+<h2>RNFtools</h2>
+
 <p>
-	<strong>RNFtools</strong> is an associated software package for RNF.
+	<strong>RNFtools</strong> is an associated software package for RNF,
+	which can:
+	<ul>
+		<li>
+			<strong>simulate</strong> RNF-compliant reads using a wide class of integrated read simulators (Art, DwgSim, Mason, WgSim, etc.);
+		</li>
+		<li>
+			<strong>evaluate</strong> mappers using RNF reads;
+		</li>
+		<li>
+			<strong>convert</strong> non-RNF simulated reads to RNF (e.g., from SAM format);
+		</li>
+		<li>
+			<strong>transform</strong> genomic coordinates of RNF reads between different coordinate systems (using chain LiftOver format).
+		</li>
+	</ul>
+
 	A full documentation with tutorials is available on 
 	<a href="http://rnftools.rtfd.org">http://rnftools.rtfd.org</a>. 
+	<!--
 	It can work on any Unix-like OS with Python 3.2+. The package can be installed
 	using PIP: <br />
 	<code style="margin-left:20px">&gt; pip3 install rnftools</code>
 	<br />
 	or using some
-	<a href="http://rnftools.readthedocs.org/en/latest/tutorial/00_installation.html">alternative way of installation</a>.
+	<a href="http://rnftools.readthedocs.org/en/latest/tutorial/00_installation.html">alternative way of installation</a>. 
+	-->
 	Source codes of RNFtools are available in its <a href="http://github.com/karel-brinda/rnftools/">GitHub repository</a>.
 </p>
 
@@ -100,8 +121,13 @@
 	News
 </h2>
 
-<p>
-	<strong>9 July 2015.</strong> Version 0.2.0b. List of changes:
+<table>
+<tr>
+	<td>
+		<strong>9 July 2015</strong>
+	</td>
+	<td>
+	Version 0.2.0b. List of changes:
 	<ul style="">
 		<li>A <a href="http://rnftools.readthedocs.org/en/latest/reference/04_command_line.html">command-line variant</a> of RNFtools added.</li>
 		<li>Documentation strongly improved (especially the <a href="http://rnftools.readthedocs.org/en/latest/tutorial/00_installation.html">tutorial about installation</a>).</li>
@@ -109,11 +135,25 @@
 		<li><a href="http://karel-brinda.github.io/rnf-spec">RNF specification</a> slightly updated.</li>
 	</ul>
 	For a list of all differences, see <a href="https://github.com/karel-brinda/rnftools/pull/14">GitHub diff</a>.
-</p>
-
-<p>
-	<strong>23 April 2015.</strong> Support for Mason in MIShmash.
-</p>
+	</td>
+</tr>
+<tr>
+	<td>
+	<strong>23 April 2015</strong>
+	</td>
+	<td>
+	Version 0.1.1. Support for Mason in MIShmash.
+	</td>
+</tr>
+<tr>
+	<td>
+	<strong>19 March 2015</strong>
+	</td>
+	<td>
+	Version 0.1.0. First release of RNFtools.
+	</td>
+</tr>
+</table>
 
 <!--
 	========================================================
