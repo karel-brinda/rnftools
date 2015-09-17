@@ -7,7 +7,6 @@ import os
 import pysam
 
 import rnftools
-from .FaiIndex import *
 
 class Source(object):
 	"""	Abstract class for a genome from which read tuples are simulated.
@@ -166,7 +165,7 @@ class Source(object):
 			NotImplementedError
 		"""
 
-		fai_index = FaiIndex(fai_fo)
+		fai_index = rnftools.utils.FaIdx(fai_fo)
 		#last_read_tuple_name=[]
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 		fq_creator=rnftools.rnfformat.FqCreator(

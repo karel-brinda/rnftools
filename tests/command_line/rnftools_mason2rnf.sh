@@ -17,7 +17,7 @@ $MASON \
 	--out tmp.mason.1.fq \
 
 rnftools mason2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--sam mason_se.sam \
 	--rnf-fastq _mason_rnf_se.fq \
 
@@ -31,6 +31,6 @@ $MASON \
 	--out-right tmp.mason.2.fq \
 
 rnftools mason2rnf \
-	--fasta-index ${FA}.fai \
+	--faidx ${FA}.fai \
 	--sam mason_pe.sam \
 	--rnf-fastq _mason_rnf_pe.fq \

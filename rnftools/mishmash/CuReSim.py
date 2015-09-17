@@ -121,9 +121,9 @@ class CuReSim(Source):
 		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
 
 		Args:
-			curesim_fastq_fo (file): File object of CuReSim FASTQ file.
-			fastq_rnf_fo (file): File object of RNF FASTQ.
-			fai_fo (file): File object for FAI file of the reference genome.
+			curesim_fastq_fo (file object): File object of CuReSim FASTQ file.
+			fastq_rnf_fo (file object): File object of RNF FASTQ.
+			fai_fo (file object): File object for FAI file of the reference genome.
 			genome_id (int): RNF genome ID to be used.
 			number_of_read_tuples (int): Expected number of read tuples (to estimate number of digits in RNF).
 
@@ -149,7 +149,7 @@ class CuReSim(Source):
 
 		max_seq_len=0
 
-		fai_index = FaiIndex(fai_fo=fai_fo)
+		fai_index = rnftools.utils.FaIdx(fai_fo=fai_fo)
 		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
 
 		fq_creator=rnftools.rnfformat.FqCreator(
