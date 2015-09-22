@@ -5,6 +5,8 @@ import snakemake
 import os
 import glob
 
+from . import _default_gp_style_func
+
 #############
 #############
 ### PANEL ###
@@ -22,6 +24,7 @@ class Panel:
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
 		default_x_label (str): Label on x-axis.
+		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.
 	
 	Raises:
 		ValueError
@@ -37,11 +40,9 @@ class Panel:
 			compress_intermediate_files,
 			default_x_axis,
 			default_x_label,
+			gp_style_func=_default_gp_style_func,
 		):
-		"""
 
-
-		"""
 		self.report=report
 		rnftools.lavender.add_panel(self)
 		self.name=name
@@ -50,6 +51,14 @@ class Panel:
 		self.default_x_label=default_x_label
 
 		self.gp_plots = []
+
+		self._gp_style_func=gp_style_func
+		#simple test
+		nb_styles=10
+		for i in range(nb_styles):
+			res=self._gp_style_func(i,nb_styles)
+			assert isinstance(res,str)
+			assert len(res)>0
 
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
 		self._svg_fns=[] #os.path.join(self.panel_dir,"svg","_combined.svg")
@@ -257,10 +266,7 @@ class Panel:
 	def create_gp(self):
 		""" Create GnuPlot file. """
 
-		def gp_style(i):
-			colors=["red","green","blue","goldenrod","black"]
-			color=colors[i % len(colors)]
-			return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
+		nb_bams=len(self.bams)
 
 		with open(self._gp_fn,"w+") as f:
 
@@ -291,7 +297,7 @@ class Panel:
 
 				""".format(
 					all_plots=os.linesep.join(self.gp_plots),
-					styles=os.linesep.join([gp_style(i) for i in range(40)]),
+					styles=os.linesep.join([self._gp_style_func(i,nb_bams) for i in range(nb_bams)]),
 					x_lab=self.default_x_label,
 				)
 			)
