@@ -26,7 +26,7 @@ class Report:
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
 		default_x_label (str): Label on x-axis.
-		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.
+		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.		
 	"""
 
 
@@ -45,6 +45,8 @@ class Report:
 		default_x_label="FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  ",
 		gp_style_func=_default_gp_style_func,
 		):
+
+		self._gp_style_func=gp_style_func
 
 		rnftools.lavender.add_report(self)
 
@@ -71,6 +73,7 @@ class Report:
 					compress_intermediate_files=compress_intermediate_files,
 					default_x_axis=default_x_axis,
 					default_x_label=default_x_label,
+					gp_style_func=self._gp_style_func,
 				)
 				for i in range(len(bam_dirs))
 			]
