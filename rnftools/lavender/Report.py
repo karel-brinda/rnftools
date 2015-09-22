@@ -4,6 +4,7 @@ import os
 
 
 from . import DEFAULT_ALLOWED_DELTA
+from . import _default_gp_style_func
 
 ##############
 ##############
@@ -25,6 +26,7 @@ class Report:
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
 		default_x_label (str): Label on x-axis.
+		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.
 	"""
 
 
@@ -41,6 +43,7 @@ class Report:
 		compress_intermediate_files=True,
 		default_x_axis="({m}+{w})/({M}+{m}+{w})",
 		default_x_label="FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  ",
+		gp_style_func=_default_gp_style_func,
 		):
 
 		rnftools.lavender.add_report(self)

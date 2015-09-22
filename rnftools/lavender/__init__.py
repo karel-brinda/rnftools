@@ -67,6 +67,10 @@ def reports():
 def add_report(report):
 	__REPORTS__.append(report)
 
+def _default_gp_style_func(i,number):
+	colors=["red","green","blue","goldenrod","black"]
+	color=colors[i % len(colors)]
+	return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
 
 from .Report import *
 from .Panel import *
