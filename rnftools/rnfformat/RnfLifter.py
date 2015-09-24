@@ -37,7 +37,7 @@ class RnfLifter:
 		for occur in self._reg_block.finditer(rnf_name):
 			groups=occur.groups()
 			p_genome_id=int(groups[1])
-			chrom_id=int(groups[2)
+			chrom_id=int(groups[2])
 			# is this segment from a genome to be transformed?
 			if genome_id==p_genome_id:
 				chrom=self._fai_index.dict_ids_chr[chrom_id]
