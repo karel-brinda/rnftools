@@ -29,20 +29,20 @@ class RnfLifter:
 			else:
 				self._fai_index=None
 
-		self._reg_block=re.compile(r"(\(([0-9]+),[0-9]+,[FRN],([0-9]+),([0-9]+)\))")
+		self._reg_block=re.compile(r"(\(([0-9]+),([0-9]+),[FRN],([0-9]+),([0-9]+)\))")
 
 	def lift_rnf_name(self,rnf_name, genome_id):
 		if self._chain is None:
 			return rnf_name
 		for occur in self._reg_block.finditer(rnf_name):
 			groups=occur.groups()
-			p_genome_id=int(groups[0])
-			chrom_id=int(groups[1])
+			p_genome_id=int(groups[1])
+			chrom_id=int(groups[2)
 			# is this segment from a genome to be transformed?
 			if genome_id==p_genome_id:
 				chrom=self._fai_index.dict_ids_chr[chrom_id]
-				o_left=groups[2]
-				o_right=groups[3]
+				o_left=groups[3]
+				o_right=groups[4]
 				left=int(o_left)
 				right=int(o_right)
 				if left!=0:
