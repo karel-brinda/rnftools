@@ -623,11 +623,13 @@ def liftover(args):
 					rnf_lifter.lift_fastq(
 							fastq_in_fo=fastq_in_fo,
 							fastq_out_fo=fastq_out_fo,
+							genome_id=args.genome_id,
 						)
 	else:
 		rnf_lifter.lift_sam(
 				sam_in_fn=args.input_fn,
 				sam_out_fn=args.output_fn,
+				genome_id=args.genome_id,
 			)
 		
 def add_liftover_parser(subparsers,subcommand,help,description):
@@ -638,6 +640,14 @@ def add_liftover_parser(subparsers,subcommand,help,description):
 			metavar='file',
 			dest='chain_fn',
 			help='Chain liftover file for coordinates transformation. [no transformation]',
+		)
+	parser_liftover.add_argument(
+			'-g','--genome-id',
+			type=str,
+			metavar='int',
+			dest='genome_id',
+			help='ID of genome to be transformed.',
+			required=True,
 		)
 	parser_liftover.add_argument(
 			'-x','--faidx',
