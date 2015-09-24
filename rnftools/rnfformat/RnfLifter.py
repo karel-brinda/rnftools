@@ -1,7 +1,7 @@
 import rnftools
 import pysam
 
-import re
+import re,sys
 
 class RnfLifter:
 
@@ -38,8 +38,10 @@ class RnfLifter:
 			groups=occur.groups()
 			p_genome_id=int(groups[1])
 			chrom_id=int(groups[2])
-			# is this segment from a genome to be transformed?
-			if genome_id==p_genome_id:
+
+			# is this segment from a genome to be transformed?1
+			if int(genome_id)==int(p_genome_id):
+				#print("going to transform",file=sys.stderr)
 				chrom=self._fai_index.dict_ids_chr[chrom_id]
 				o_left=groups[3]
 				o_right=groups[4]
@@ -49,10 +51,12 @@ class RnfLifter:
 					n_left=self._chain.one_based_transl(chrom,left)
 					f_new_left=str(n_left).zfill(len(o_left))
 					rnf_name=rnf_name.replace(",{},".format(o_left),",{},".format(f_new_left))
+					#print("left",o_left,"=>",f_new_left,file=sys.stderr)
 				if right!=0:
 					new_right=self._chain.one_based_transl(chrom,right)
 					f_new_right=str(n_right).zfill(len(o_right))
 					rnf_name=rnf_name.replace(",{})".format(o_right),",{})".format(f_new_right))
+					#print(o_right,"=>",f_new_right,file=sys.stderr)
 		return rnf_name
 
 	def lift_fastq(self,
@@ -62,7 +66,7 @@ class RnfLifter:
 			):
 		for i, line in enumerate(fastq_in_fo,start=0):
 			if i%4==0:
-				fastq_out_fo.write(self.lift_rnf_name(line,genome_id=genome_id))
+				fastq_out_fo.write(self.lift_rnf_name(line,genome_id=int(genome_id)))
 			else:
 				fastq_out_fo.write(line)
 
@@ -95,5 +99,5 @@ class RnfLifter:
 		infile = pysam.AlignmentFile(in_fn, in_mode)
 		outfile = pysam.AlignmentFile(out_fn, out_mode, template=infile)
 		for s in infile:
-			s.qname=self.lift_rnf_name(s.qname,genome_id=genome_id)
+			s.qname=self.lift_rnf_name(s.qname,genome_id=int(genome_id))
 			outfile.write(s)
