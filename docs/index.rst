@@ -3,10 +3,12 @@ RNFtools manual
 
 This is the manual of RNFtools which is an associate software package for **Read Naming Format** (RNF), a generic format for naming simulated Next-Generation Sequencing reads.
 
-.. admonition:: Publication (preprint)
+**RNFtools** can be used for simulation of NGS reads, evaluation of mappers, and conversion of RNF-compliant data.
+
+.. admonition:: Publication
 	:class: error
 
-	K. Břinda, V. Boeva, G. Kucherov. **RNF: a general framework to evaluate NGS read mappers**. `arXiv:1504.00556`_ [q-bio.GN], 2015.
+	K. Břinda, V. Boeva, G. Kucherov. **RNF: a general framework to evaluate NGS read mappers**. Bioinformatics [doi:`10.1093/bioinformatics/btv524`_], 2015.
 
 Links
 -----
@@ -18,7 +20,7 @@ Links
 `Mailing list`_ -
 `Contact`_ 
 
-.. _`arXiv:1504.00556`: http://arxiv.org/pdf/1504.00556.pdf
+.. _`10.1093/bioinformatics/btv524`: http://dx.doi.org/10.1093/bioinformatics/btv524
 .. _`Project webpage`: http://karel-brinda.github.io/rnftools/
 .. _`RNF specification`: http://karel-brinda.github.io/rnf-spec/RNF.pdf
 .. _`GitHub repository`: http://github.com/karel-brinda/rnftools
@@ -37,10 +39,10 @@ Table of contents
 	Tutorials demonstrating installation and basic usage of RNFtools.
 
 :ref:`reference`
-	Automatically generated documentation for RNFtools.
+	Automatically generated documentation for RNFtools (including CLI variant ``rnftools``).
 
 :ref:`other_information`
- 	FAQs and other information about RNFtools and read simulators in general.
+ 	FAQs, supplementary information about RNFtools, information about state-of-the-art read simulators.
 
 
 .. toctree::
