@@ -42,6 +42,13 @@ General
 		:code: text
 
 
+``rnftools liftover`` 
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+	.. include:: command_line/liftover.txt
+		:code: text
+
+
 MIShmash
 --------
 

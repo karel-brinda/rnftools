@@ -1,0 +1,27 @@
+$ rnftools liftover -h
+
+usage: rnftools liftover [-h] [-c file] -g int [-x file] [--invert]
+                         [--input-format str] [--output-format str]
+                         input output
+
+Liftover genomic coordinates in RNF names in a SAM/BAM files or in a FASTQ
+file.
+
+positional arguments:
+  input                 Input file to be transformed (- for standard input).
+  output                Output file to be transformed (- for standard output).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c file, --chain file
+                        Chain liftover file for coordinates transformation.
+                        [no transformation]
+  -g int, --genome-id int
+                        ID of genome to be transformed.
+  -x file, --faidx file
+                        Fasta index of the reference sequence. [extract from
+                        chain file]
+  --invert              Invert chain file (transformation in the other
+                        direction).
+  --input-format str    Input format (SAM/BAM/FASTQ). [autodetect]
+  --output-format str   Output format (SAM/BAM/FASTQ). [autodetect]

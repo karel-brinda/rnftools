@@ -1,22 +1,23 @@
 $ rnftools  -h
 
 usage: rnftools [-h]
-                {,check,publication,validate,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
+                {,check,publication,validate,liftover,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
                 ...
 
 ================================================
 RNFtools -  http://rnftools.rtfd.org
 ------------------------------------
-version: 0.2.0.0b0
+version: 0.2.2
 contact: Karel Brinda (karel.brinda@univ-mlv.fr)
 ================================================
 
 positional arguments:
-  {,check,publication,validate,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
+  {,check,publication,validate,liftover,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
     
     check               Check for the latest version.
     publication         Print information about the associated publication.
     validate            Validate RNF names in a FASTQ file.
+    liftover            Liftover genomic coordinates in RNF names.
     
                         ---------------------[MIShmash]---------------------
     sam2rnf             Convert a SAM/BAM file to RNF-FASTQ.

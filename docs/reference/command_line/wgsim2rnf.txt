@@ -1,6 +1,6 @@
 $ rnftools wgsim2rnf -h
 
-usage: rnftools wgsim2rnf [-h] -1 file [-2 file] -o file -i file [-g int] [-u]
+usage: rnftools wgsim2rnf [-h] -1 file [-2 file] -o file -x file [-g int] [-u]
 
 Convert WgSim FASTQ files to RNF-FASTQ.
 
@@ -13,7 +13,7 @@ optional arguments:
                         default: none).
   -o file, --rnf-fastq file
                         Output FASTQ file (- for standard output).
-  -i file, --fasta-index file
+  -x file, --faidx file
                         FAI index of the reference FASTA file (- for standard
                         input). It can be created using 'samtools faidx'.
   -g int, --genome-id int

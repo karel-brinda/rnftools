@@ -1,6 +1,6 @@
 $ rnftools curesim2rnf -h
 
-usage: rnftools curesim2rnf [-h] -c file -o file -i file [-g int]
+usage: rnftools curesim2rnf [-h] -c file -o file -x file [-g int]
 
 Convert a CuReSim FASTQ file to RNF-FASTQ.
 
@@ -10,7 +10,7 @@ optional arguments:
                         CuReSim FASTQ file (- for standard input).
   -o file, --rnf-fastq file
                         Output FASTQ file (- for standard output).
-  -i file, --fasta-index file
+  -x file, --faidx file
                         FAI index of the reference FASTA file (- for standard
                         input). It can be created using 'samtools faidx'.
   -g int, --genome-id int
