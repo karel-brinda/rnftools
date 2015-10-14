@@ -81,8 +81,10 @@ class Report:
 
 		if bam_dirs is not None:
 
-			assert isinstance(bam_dirs,collections.iterable)
-			assert isinstance(bamdirs, basestring)
+			assert hasattr(bam_dirs, '__iter__'), "bamdirs should be iterable (list, tuple,  etc.)"
+
+			#assert isinstance(bam_dirs,collections.iterable)
+			#assert isinstance(bamdirs, basestring)
 
 			self.panels = [
 					rnftools.lavender.Panel(
