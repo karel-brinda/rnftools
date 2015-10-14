@@ -19,11 +19,12 @@ class Panel:
 		report (rnftools.lavender.Report): The owner report.
 		bam_dir (str): Directory to the BAM files for this panel.
 		panel_dir (str): Directory with auxiliary files for this panel.
-		name (str): Name of the panel.
+		name (str): Name of the panel (used for CSS, etc.).
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
 		default_x_label (str): Label on x-axis.
+		title (str): Title of the panel (to be displayed).
 		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.
 	
 	Raises:
@@ -36,6 +37,7 @@ class Panel:
 			bam_dir,
 			panel_dir,
 			name,
+			title,
 			keep_intermediate_files,
 			compress_intermediate_files,
 			default_x_axis,
@@ -46,6 +48,7 @@ class Panel:
 		self.report=report
 		rnftools.lavender.add_panel(self)
 		self.name=name
+		self.title=title
 		self.panel_dir=panel_dir
 		self.default_x_axis=default_x_axis
 		self.default_x_label=default_x_label
@@ -109,6 +112,9 @@ class Panel:
 
 		panel_id="panel_{}".format(self.name)
 		return [
+				"<h2>{}</h2>".format(self.title)
+			] + [
+				#list of links
 				(" <br />"+os.linesep).join(
 					[
 						"""
@@ -126,6 +132,7 @@ class Panel:
 
 				),
 
+				#main graph
 				"""
 					<div class="formats">
 						<a href="{html}" id="{panel_id}_">
@@ -139,6 +146,7 @@ class Panel:
 						panel_id=panel_id,
 					),
 			] + [
+				# overall graphs
 				"""
 					<div class="formats">
 						<img src="{svg}" />

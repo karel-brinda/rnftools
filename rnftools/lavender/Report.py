@@ -1,6 +1,7 @@
 import rnftools
 import snakemake
 import os
+import collections
 
 
 from . import DEFAULT_ALLOWED_DELTA
@@ -12,11 +13,14 @@ from . import _default_gp_style_func
 ##############
 ##############
 class Report:
-	"""Class for an entire report.		
+	"""Class for an entire report.
 
 	Args:
-		name (str): Name of the report.
-		bam_dirs (str): Directories with BAM files.
+		name (str): Name of the report (name of output file and dir).
+		title (str): Title of the report (if None, then name is used).
+		description (str): Description of the report.
+		bam_dirs (list of str): Directories with BAM files.
+		panels (list of dicts): More advanced configuration of directories with BAM files.
 		allowed_delta (int): Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!).
 		default_x_run ((float,float)): Range for x-axis in GnuPlot plots.
 		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
@@ -29,12 +33,17 @@ class Report:
 		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.		
 	"""
 
+	#todo: describe format of panels
+
 
 	def __init__(
 		self,
 		name,
+		title=None,
+		description="",
 		allowed_delta=DEFAULT_ALLOWED_DELTA,
-		bam_dirs=[],
+		bam_dirs=None,
+		panels=None,
 		default_x_run=(0.00001,1.0),
 		default_y_run=(60,100),
 		default_pdf_size_cm=(10,10),
@@ -50,8 +59,10 @@ class Report:
 
 		rnftools.lavender.add_report(self)
 
-		self.name = name
-		self.report_dir = self.name
+		self.name=name
+		self.report_dir=self.name
+		self.title=self.name if title==None else title
+		self.description=description
 
 		self.default_x_run=self._load_x_run(default_x_run)
 		self.default_y_run=self._load_y_run(default_y_run)
@@ -63,20 +74,67 @@ class Report:
 		assert 0 <= allowed_delta
 
 		self._html_fn = name+".html"
-		self.panels = [
-				rnftools.lavender.Panel(
-					bam_dir=bam_dirs[i],
-					panel_dir=os.path.join(self.report_dir,str(i)),
-					report=self,
-					name=str(i),
-					keep_intermediate_files=keep_intermediate_files,
-					compress_intermediate_files=compress_intermediate_files,
-					default_x_axis=default_x_axis,
-					default_x_label=default_x_label,
-					gp_style_func=self._gp_style_func,
+
+		assert bam_dirs is None or panels is None, "Panels can be specified using bam_dirs or panels, but not both at the same time."
+
+		self.panels=[]
+
+		if bam_dirs is not None:
+
+			assert isinstance(bam_dirs,collections.iterable)
+			assert isinstance(bamdirs, basestring)
+
+			self.panels = [
+					rnftools.lavender.Panel(
+						bam_dir=bam_dirs[i],
+						panel_dir=os.path.join(self.report_dir,str(i)),
+						report=self,
+						name=str(i),
+						title="dir {}".format(i),
+						keep_intermediate_files=keep_intermediate_files,
+						compress_intermediate_files=compress_intermediate_files,
+						default_x_axis=default_x_axis,
+						default_x_label=default_x_label,
+						gp_style_func=self._gp_style_func,
+					)
+					for i in range(len(bam_dirs))
+				]
+
+		if panels is not None:
+
+			for i,panel_dict in enumerate(panels):
+
+				bam_dir=panel_dict["bam_dir"]
+
+				try:
+					panel_dir=panel_dict["panel_dir"]
+				except KeyError:
+					panel_dir=os.path.join(self.report_dir,str(i))
+
+				try:
+					panel_name=panel_dict["name"]
+				except KeyError:
+					panel_name="panel_{}".format(i)
+
+				try:
+					panel_title=panel_dict["title"]
+				except KeyError:
+					panel_title="dir {}".format(i)
+
+				self.panels.append(
+					rnftools.lavender.Panel(
+						bam_dir=bam_dir,
+						panel_dir=panel_dir,
+						report=self,
+						name=panel_name,
+						title=panel_title,
+						keep_intermediate_files=keep_intermediate_files,
+						compress_intermediate_files=compress_intermediate_files,
+						default_x_axis=default_x_axis,
+						default_x_label=default_x_label,
+						gp_style_func=self._gp_style_func,
+					)
 				)
-				for i in range(len(bam_dirs))
-			]
 
 		rnftools.lavender.add_input(self._html_fn)
 
@@ -214,7 +272,7 @@ class Report:
 			<html>
 			<head>
 				<meta charset="UTF-8" />
-				<title>{name}</title>
+				<title>{title}</title>
 				<style type="text/css">
 					table                             {{border-collapse:collapse;}}
 					td                                {{border: solid #aaaaff 1px;padding:4px;vertical-alignment:top;}}
@@ -226,14 +284,16 @@ class Report:
 				</style>
 			</head>
 			<body>
-				<h1>{name}</h1>
+				<h1>{title}</h1>
+				<strong>{description}</strong>
 				<table>
 				{html_table}
 				</table>
 			</body>
 			""".format(
 					html_table=html_table,
-					name=self.name
+					title=self.title,
+					description=self.description,
 				)
 			f.write(html_src)
 
