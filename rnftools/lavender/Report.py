@@ -179,7 +179,7 @@ class Report:
 				y_run=None,
 				pdf_size_cm=None,
 				svg_size_px=None,
-				key_position="top left",
+				key_position="bottom right",
 			):
 		"""
 		Add a new graph to the overlap report.
