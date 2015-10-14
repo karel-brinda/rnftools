@@ -21,9 +21,9 @@
 @test "TESTS: rnftools es2et" {
 	./command_line/rnftools_es2et.sh
 }
-@test "TESTS: rnftools curesim2rnf" {
-	./command_line/rnftools_curesim2rnf.sh
-}
+#@test "TESTS: rnftools curesim2rnf" {
+#	./command_line/rnftools_curesim2rnf.sh
+#}
 @test "TESTS: rnftools wgsim2rnf" {
 	./command_line/rnftools_wgsim2rnf.sh
 }
