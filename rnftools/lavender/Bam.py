@@ -731,19 +731,21 @@ class Bam:
 			for line in roc:
 				line=line.strip()
 				if line!="" and line[0]!="#":
-					(q,M,w,m,P,U,u,T,t,x,a)=line.split("\t")
+					(q,M,w,m,P,U,u,T,t,x,a)=map(int,line.split("\t"))
 					roc_dict = {
-						"q":int(q),
-						"M":int(M),
-						"w":int(w),
-						"m":int(m),
-						"P":int(P),
-						"U":int(U),
-						"u":int(u),
-						"T":int(T),
-						"t":int(t),
-						"x":int(x),
-						"a":int(a)
+						"q":q,
+						"M":M,
+						"w":w,
+						"m":m,
+						"P":P,
+						"U":U,
+						"u":u,
+						"T":T,
+						"t":t,
+						"x":x,
+						"a":a,
+						"mapped":M+w+m+P,
+						"unmapped":U+u+T+t+x,
 					}
 					roc_dicts.append(roc_dict)
 		tbody = os.linesep.join([
@@ -777,30 +779,30 @@ class Bam:
 					</tr>
 				""".format(
 						quality       = roc_dict["q"],
-						mapped        = roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"],
-						mapped_proc   = 100.0*(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"])/roc_dict["a"],
+						mapped        = roc_dict["mapped"],
+						mapped_proc   = 100.0*(roc_dict["mapped"])/roc_dict["a"],
 						M             = roc_dict["M"],
-						M_proc        = 100.0*(roc_dict["M"])/roc_dict["a"],
+						M_proc        = 100.0*(roc_dict["M"])/(roc_dict["mapped"]) if (roc_dict["mapped"]) != 0 else 0,
 						w             = roc_dict["w"],
-						w_proc        = 100.0*(roc_dict["w"])/roc_dict["a"],
+						w_proc        = 100.0*(roc_dict["w"])/(roc_dict["mapped"]) if (roc_dict["mapped"]) != 0 else 0,
 						m             = roc_dict["m"],
-						m_proc        = 100.0*(roc_dict["m"])/roc_dict["a"],
+						m_proc        = 100.0*(roc_dict["m"])/(roc_dict["mapped"]) if (roc_dict["mapped"]) != 0 else 0,
 						P             = roc_dict["P"],
-						P_proc        = 100.0*(roc_dict["P"])/roc_dict["a"],
-						unmapped      = roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"],
-						unmapped_proc = 100.0*(roc_dict["U"]+roc_dict["u"]+roc_dict["T"]+roc_dict["t"]+roc_dict["x"])/roc_dict["a"],
+						P_proc        = 100.0*(roc_dict["P"])/(roc_dict["mapped"]) if (roc_dict["mapped"]) != 0 else 0,
+						unmapped      = roc_dict["unmapped"],
+						unmapped_proc = 100.0*(roc_dict["unmapped"])/roc_dict["a"],
 						U             = roc_dict["U"],
-						U_proc        = 100.0*(roc_dict["U"])/roc_dict["a"],
+						U_proc        = 100.0*(roc_dict["U"])/(roc_dict["unmapped"]) if (roc_dict["unmapped"]) != 0 else 0,
 						u             = roc_dict["u"],
-						u_proc        = 100.0*(roc_dict["u"])/roc_dict["a"],
+						u_proc        = 100.0*(roc_dict["u"])/(roc_dict["unmapped"]) if (roc_dict["unmapped"]) != 0 else 0,
 						T             = roc_dict["T"],
-						T_proc        = 100.0*(roc_dict["T"])/roc_dict["a"],
+						T_proc        = 100.0*(roc_dict["T"])/(roc_dict["unmapped"]) if (roc_dict["unmapped"]) != 0 else 0,
 						t             = roc_dict["t"],
-						t_proc        = 100.0*(roc_dict["t"])/roc_dict["a"],
+						t_proc        = 100.0*(roc_dict["t"])/(roc_dict["unmapped"]) if (roc_dict["unmapped"]) != 0 else 0,
 						x             = roc_dict["x"],
-						x_proc        = 100.0*(roc_dict["x"])/roc_dict["a"],
+						x_proc        = 100.0*(roc_dict["x"])/(roc_dict["unmapped"]) if (roc_dict["unmapped"]) != 0 else 0,
 						sum           = roc_dict["a"],
-						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) if (roc_dict["M"]+roc_dict["w"]+roc_dict["m"]+roc_dict["P"]) != 0 else 0,
+						prec_proc      = 100.0*(roc_dict["M"])/(roc_dict["mapped"]) if (roc_dict["mapped"]) != 0 else 0,
 					)
 				for roc_dict in roc_dicts
 			])
