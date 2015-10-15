@@ -825,10 +825,22 @@ class Bam:
 
 					program_info=["<table>"]
 					for part in parts:
-						(lvalue,colon,rvalue)=part.partition(":")
+						(lvalue,_,rvalue)=part.partition(":")
 						program_info.append('<tr><td style="font-weight:bold">{}:</td><td style="text-align:left">{}</td></tr>'.format(lvalue,rvalue))
 
 					program_info.append("</table>")
+
+
+
+			eval_info=["<table>"]
+			for (lvalue,rvalue) in [
+					("BAM file", self._bam_fn),
+					("Allowed delta", self.report.allowed_delta),
+				]:
+				eval_info.append('<tr><td style="font-weight:bold">{}:</td><td style="text-align:left">{}</td></tr>'.format(lvalue,rvalue))
+
+			eval_info.append("</table>")
+
 
 			html_src="""<!DOCTYPE html>
 			<html>
@@ -853,12 +865,20 @@ class Bam:
 				</h1>
 
 				<p>
-					<a href="#info">Information about program</a> -
+					<a href="#info_eval">Information about evaluation</a> -
+					<a href="#info_prog">Information about program</a> -
 					<a href="#roctable">ROC table</a> -
 					<a href="#graphs">Graphs</a>
 				</p>
 
-				<h2 id="info">
+				<h2 id="info_eval">
+					Information about evaluation
+					{headline_links}
+				</h2>
+
+				{eval_info}
+
+				<h2 id="info_prog">
 					Information about program
 					{headline_links}
 				</h2>
@@ -1000,6 +1020,7 @@ class Bam:
 						self._gp_fn,
 						os.path.dirname(self._html_fn)
 					),
+					eval_info=os.linesep.join(eval_info),
 					program_info=os.linesep.join(program_info),
 					homepage=os.path.relpath(
 						self.report.html_fn(),
