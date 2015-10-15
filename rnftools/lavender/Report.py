@@ -276,7 +276,7 @@ class Report:
 				<meta charset="UTF-8" />
 				<title>{title}</title>
 				<style type="text/css">
-					table                             {{border-collapse:collapse;}}
+					.main_table                       {{border-collapse:collapse;margin-top:15px;}}
 					td                                {{border: solid #aaaaff 1px;padding:4px;vertical-alignment:top;}}
 					colgroup, thead                   {{border: solid black 2px;padding 2px;}}
 					.configuration                    {{font-size:85%;}}
@@ -288,9 +288,11 @@ class Report:
 			<body>
 				<h1>{title}</h1>
 				<strong>{description}</strong>
-				<table>
+
+				<table class="main_table">
 				{html_table}
 				</table>
+
 			</body>
 			""".format(
 					html_table=html_table,
