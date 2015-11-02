@@ -65,6 +65,14 @@
 	./snakemake/02_PE_simulation/run.sh -p
 }
 
+@test "TESTS: snakemake 03_SE_metagenomic_simulation" {
+	./snakemake/03_SE_metagenomic_simulation/run.sh -p
+}
+	
+@test "TESTS: snakemake 04_PE_metagenomic_simulation" {
+	./snakemake/04_PE_metagenomic_simulation/run.sh -p
+}
+
 #################################################
 #################################################
 
