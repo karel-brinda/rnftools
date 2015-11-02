@@ -1,16 +1,5 @@
 #! /usr/bin/env bats
 
-#################################################
-
-@test "DOCUMENTATION" {
-	cd ../docs
-	make clean
-	mkdir -p _static
-	sphinx-build -W -b html -d _build/doctrees . _build/html
-}
-
-#################################################
-
 #@test "TESTS: ensure programs" {
 #	cd command_line
 #	snakemake -p -s __ensure_programs.snake --cores
@@ -21,9 +10,9 @@
 @test "TESTS: rnftools es2et" {
 	./command_line/rnftools_es2et.sh
 }
-@test "TESTS: rnftools curesim2rnf" {
-	./command_line/rnftools_curesim2rnf.sh
-}
+#@test "TESTS: rnftools curesim2rnf" {
+#	./command_line/rnftools_curesim2rnf.sh
+#}
 @test "TESTS: rnftools wgsim2rnf" {
 	./command_line/rnftools_wgsim2rnf.sh
 }
@@ -63,6 +52,14 @@
 
 @test "TESTS: snakemake 02_PE_simulation" {
 	./snakemake/02_PE_simulation/run.sh -p
+}
+
+@test "TESTS: snakemake 03_SE_metagenomic_simulation" {
+	./snakemake/03_SE_metagenomic_simulation/run.sh -p
+}
+	
+@test "TESTS: snakemake 04_PE_metagenomic_simulation" {
+	./snakemake/04_PE_metagenomic_simulation/run.sh -p
 }
 
 #################################################
@@ -175,4 +172,16 @@
 @test "EXAMPLES: 02 RNF" {
 	./_test_rnf.sh ../examples/02_*/
 }
+
+#################################################
+
+@test "DOCUMENTATION" {
+	cd ../docs
+	make clean
+	mkdir -p _static
+	sphinx-build -W -b html -d _build/doctrees . _build/html
+}
+
+#################################################
+
 

@@ -31,12 +31,12 @@ rnftools.mishmash.WgSim(
 	read_length_2=0,
 )
 
-rnftools.mishmash.CuReSim(
-	fasta=smbl.fasta.EXAMPLE_1,
-	number_of_read_tuples=10000,
-	read_length_1=100,
-	read_length_2=0,
-)
+#rnftools.mishmash.CuReSim(
+#	fasta=smbl.fasta.EXAMPLE_1,
+#	number_of_read_tuples=10000,
+#	read_length_1=100,
+#	read_length_2=0,
+#)
 
 
 rnftools.mishmash.sample("pe_example",reads_in_tuple=2)
