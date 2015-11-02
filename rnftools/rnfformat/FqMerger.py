@@ -43,9 +43,12 @@ class FqMerger:
 		self.keep_files_open=os_allowed_files>files_to_be_opened_estimate # autodetection
 
 		# input files
-		self.i_files=[FqMergerFileReader(fn,keep_files_open=self.keep_files_open) for fn in input_files_fn]
+		self.i_files=[
+				FqMergerFileReader(fn,keep_files_open=self.keep_files_open)
+					for fn in input_files_fn
+			]
 		self.i_files_sizes=[os.path.getsize(fn) for fn in input_files_fn]
-		self.i_files_proc=[int((100.0*x)/sum(self.i_files_sizes)) for x in self.i_files_sizes]
+		self.i_files_proc=[math.ceil((100.0*x)/sum(self.i_files_sizes)) for x in self.i_files_sizes]
 		self.i_files_weighted=[]
 		for i in range(len(self.i_files)):
 			self.i_files_weighted.extend(self.i_files_proc[i]*[self.i_files[i]])
@@ -119,7 +122,7 @@ class FqMerger:
 				ln3=self.i_files_weighted[file_id].readline()
 				ln4=self.i_files_weighted[file_id].readline()
 
-				if not ln1 or not ln2 or not ln3 or not ln4:
+				if ln1=="" or ln2=="" or ln3=="" or ln4=="":
 					self.i_files_weighted[file_id].close()
 					del self.i_files_weighted[file_id]
 					break
@@ -129,20 +132,21 @@ class FqMerger:
 		self.output.close()
 
 
+# Wrapper for reading FASTQ files (for the case when number of open files would exceed allowed limit).
 class FqMergerFileReader:
 
 	def __init__(self, fn, keep_files_open=False, buffer_lines=50):
 		self.fn=fn
 		self.keep_files_open=keep_files_open
-		self.fo=None
-		self.file_pos=0
-		self.buffer=[]
-		self.buffer_lines=buffer_lines
-
+	
 		if self.keep_files_open:
 			self.fo=open(fn)
-
-		self._closed=False
+		else:
+			self.fo=None
+			self.buffer=[]
+			self.buffer_lines=buffer_lines
+			self._closed=False
+			self.file_pos=0
 
 	def readline(self):
 		if self.keep_files_open:
@@ -153,24 +157,24 @@ class FqMergerFileReader:
 				self.fo.seek(self.file_pos)
 				for _ in range(self.buffer_lines):
 					line=self.fo.readline()
-					if line is not None:
-						self.buffer.append(line)
+					self.buffer.append(line)
 				self.file_pos=self.fo.tell()
 				self.fo.close()
 
-			if len(self.buffer)==0:
-				return None
-			else:
-				return self.buffer.pop(0)
+			return self.buffer.pop(0)
 
 	def close(self):
-		self._closed=True
 		if self.keep_files_open:
 			self.fo.close()
+		else:
+			self._closed=True
 
 	@property
 	def closed(self):
-		return self._closed
+		if self.keep_files_open:
+			return self.fo.closed
+		else:
+			return self._closed
 
 
 class FqMergerOutput:
