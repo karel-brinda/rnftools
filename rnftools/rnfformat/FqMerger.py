@@ -40,7 +40,7 @@ class FqMerger:
 		# single-file or multi-file mode
 		files_to_be_opened_estimate=2+len(input_files_fn)+10 # 1 or 2 output files; input files; backup
 		(os_allowed_files,_)=resource.getrlimit(resource.RLIMIT_NOFILE)
-		self.keep_files_open=os_allowed_files<files_to_be_opened_estimate # autodetection
+		self.keep_files_open=os_allowed_files>files_to_be_opened_estimate # autodetection
 
 		# input files
 		self.i_files=[FqMergerFileReader(fn,keep_files_open=self.keep_files_open) for fn in input_files_fn]
