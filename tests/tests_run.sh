@@ -1,16 +1,5 @@
 #! /usr/bin/env bats
 
-#################################################
-
-@test "DOCUMENTATION" {
-	cd ../docs
-	make clean
-	mkdir -p _static
-	sphinx-build -W -b html -d _build/doctrees . _build/html
-}
-
-#################################################
-
 #@test "TESTS: ensure programs" {
 #	cd command_line
 #	snakemake -p -s __ensure_programs.snake --cores
@@ -183,4 +172,16 @@
 @test "EXAMPLES: 02 RNF" {
 	./_test_rnf.sh ../examples/02_*/
 }
+
+#################################################
+
+@test "DOCUMENTATION" {
+	cd ../docs
+	make clean
+	mkdir -p _static
+	sphinx-build -W -b html -d _build/doctrees . _build/html
+}
+
+#################################################
+
 
