@@ -6,21 +6,21 @@ import snakemake
 import os
 
 class ArtIllumina(Source):
-	"""Class for the ART Illumina.
+	"""Class for the ART Illumina (http://www.niehs.nih.gov/research/resources/software/biostatistics/art/).
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	lengths of both ends must be equal.
 
 	Args:
-		fasta (str): File name of the genome from which read tuples are created (FASTA file).
-		coverage (float): Average coverage of the genome.
+		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding ART parameter: ``-i --in``.
+		coverage (float): Average coverage of the genome. Corresponding ART parameter: ``-f --fcov``.
 		number_of_read_tuples (int): Number of read tuples.
-		read_length_1 (int): Length of the first end of a read tuple.
-		read_length_2 (int): Length of the second end of a read tuple (if zero, then single-end reads are created).
+		read_length_1 (int): Length of the first read. Corresponding ART parameter: ``-l --len``.
+		read_length_2 (int): Length of the second read (if zero, then single-end reads are simulated). Corresponding ART parameter: ``-l --len``.
+		distance (int): Mean inner distance between reads. Corresponding ART parameter: ``-m --mflen``.
+		distance_deviation (int): Standard devation of inner distances between reads. Corresponding ART parameter: ``-s --sdev``.
+		rng_seed (int): Seed for simulator's random number generator. Corresponding ART parameter: ``-rs --rndSeed``.
 		other_params (str): Other parameters which are used on commandline.
-		distance (int): Mean inner distance between ends.
-		distance_deviation (int): Devation of inner distances between ends.
-		rng_seed (int): Seed for simulator's random number generator.
 
 	Raises:
 		ValueError
@@ -32,10 +32,10 @@ class ArtIllumina(Source):
 				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
-				other_params="",
 				distance=500,
 				distance_deviation=50.0,
-				rng_seed=1
+				rng_seed=1,
+				other_params="",
 			):
 
 		if read_length_2==0:

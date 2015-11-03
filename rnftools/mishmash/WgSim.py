@@ -8,26 +8,26 @@ import re
 import itertools
 
 class WgSim(Source):
-	"""Class for the WgSim.
+	"""Class for the WGsim (https://github.com/lh3/wgsim).
 
-	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
-	ends can have different lengths.
+	Single-end and pair-end simulations are supported. For pair-end simulations,
+	reads can have different lengths.
 
 	Args:
 		fasta (str): File name of the genome from which reads are created (FASTA file).
 		coverage (float): Average coverage of the genome (if number_of_read_tuples specified, then it must be equal to zero).
-		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero).
-		read_length_1 (int): Length of the first read.
-		read_length_2 (int): Length of the second read (if zero, then single-end reads are created).
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding WGsim parameter: ``-N``.
+		read_length_1 (int): Length of the first read. Corresponding WGsim parameter: ``-1``.
+		read_length_2 (int): Length of the second read (if zero, then single-end reads are simulated). Corresponding WGsim parameter: ``-2``.
+		distance (int): Mean outer distance of reads. Corresponding WGsim parameter: ``-d``.
+		distance_deviation (int): Standard deviation of outer distances of reads. Corresponding WGsim parameter: ``-s``.
+		rng_seed (int): Seed for simulator's random number generator. Corresponding WGsim parameter: ``-S``.
+		haploid_mode (bools): Simulate reads in haploid mode. Corresponding WGsim parameter: ``-h``.
+		error_rate (float): Sequencing error rate (sequencing errors). Corresponding WGsim parameter: ``-e``.
+		mutation_rate (float): Mutation rate. Corresponding WGsim parameter: ``-r``.
+		indels (float): Rate of indels in mutations. Corresponding WGsim parameter: ``-R``.
+		prob_indel_ext (float): Probability that an indel is extended. Corresponding WGsim parameter: ``-X``.
 		other_params (str): Other parameters on commandline.
-		distance (int): Mean inner distance between ends.
-		distance_deviation (int): Deviation of inner distances between ends.
-		rng_seed (int): Seed for simulator's random number generator.
-		haploid_mode (bools): Simulate reads in haploid mode.
-		error_rate (float): Base error rate (sequencing errors).
-		mutation_rate (float): Mutation rate.
-		indels (float): Rate of indels in mutations.
-		prob_indel_ext (float): Probability that an indel is extended.
 
 	Raises:
 		ValueError
@@ -40,7 +40,6 @@ class WgSim(Source):
 				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
-				other_params="",
 				distance=500,
 				distance_deviation=50.0,
 				rng_seed=1,
@@ -49,6 +48,7 @@ class WgSim(Source):
 				mutation_rate=0.001,
 				indels=0.15,
 				prob_indel_ext=0.3,
+				other_params="",
 			):
 		
 		if read_length_2==0:

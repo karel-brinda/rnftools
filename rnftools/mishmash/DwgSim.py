@@ -21,27 +21,27 @@ import re
 #
 
 class DwgSim(Source):
-	"""Class for DwgSim.
+	"""Class for DWGsim (https://github.com/nh13/DWGSIM/wiki).
 
-	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
-	ends can have different lengths.
+	Single-end and pair-end simulations are supported. For pair-end simulations,
+	readss can have different lengths.
 
 	Args:
-		fasta (str): File name of the genome from which reads are created (FASTA file).
-		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
-		number_of_read_tuples (int): Number of reads (if coverage specified, then it must be equal to zero).
-		read_length_1 (int): Length of the first read.
-		read_length_2 (int): Length of the second read (if zero, then single-end reads are created).
-		other_params (str): Other parameters which are used on commandline.
-		distance (int): Mean inner distance between ends.
-		distance_deviation (int): Deviation of inner distances between ends.
-		rng_seed (int): Seed for simulator's random number generator.
-		haploid_mode (bools): Simulate reads in haploid mode.
-		error_rate_1 (float): Base error rate in the first read (sequencing errors).
-		error_rate_2 (float): Base error rate in the second read (sequencing errors).
-		mutation_rate (float): Mutation rate.
-		indels (float): Rate of indels in mutations.
-		prob_indel_ext (float): Probability that an indel is extended.
+		fasta (str): File name of the genome from which reads are created (FASTA file). 
+		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero). Corresponding DWGsim parameter: ``-C``.
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding DWGsim parameter: ``-N``.
+		read_length_1 (int): Length of the first read. Corresponding DWGsim parameter: ``-1``.
+		read_length_2 (int): Length of the second read (if zero, then single-end simulation performed). Corresponding DWGsim parameter: ``-2``.
+		distance (int): Mean inner distance between reads. Corresponding DWGsim parameter: ``-d``.
+		distance_deviation (int): Standard deviation of inner distances between both reads. Corresponding DWGsim parameter: ``-s``.
+		rng_seed (int): Seed for simulator's random number generator. Corresponding DWGsim parameter: ``-z``.
+		haploid_mode (bools): Simulate reads in haploid mode. Corresponding DWGsim parameter: ``-H``.
+		error_rate_1 (float): Sequencing error rate in the first read. Corresponding DWGsim parameter: ``-e``.
+		error_rate_2 (float): Sequencing error rate in the second read. Corresponding DWGsim parameter: ``-E``.
+		mutation_rate (float): Mutation rate. Corresponding DWGsim parameter: ``-e``.
+		indels (float): Rate of indels in mutations. Corresponding DWGsim parameter: ``-R``.
+		prob_indel_ext (float): Probability that an indel is extended. Corresponding DWGsim parameter: ``-X``.
+		other_params (str): Other parameters which are used on command-line.
 
 	Raises:
 		ValueError
@@ -54,7 +54,6 @@ class DwgSim(Source):
 				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
-				other_params="",
 				distance=500,
 				distance_deviation=50.0,
 				rng_seed=1,
@@ -64,6 +63,7 @@ class DwgSim(Source):
 				mutation_rate=0.001,
 				indels=0.15,
 				prob_indel_ext=0.3,
+				other_params="",
 			):
 
 		if read_length_2==0:
@@ -123,8 +123,9 @@ class DwgSim(Source):
 		if self.number_of_read_tuples == 0:
 			genome_size=os.stat(self._fa_fn).st_size
 			self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
-
-
+			#prevent number_of_read_tuples=0 
+			self.number_of_read_tuples=max(1,self.number_of_read_tuples)
+			
 		if self._reads_in_tuple==2:
 			paired_params="-d {dist} -s {dist_dev}".format(
 					dist=self.distance,

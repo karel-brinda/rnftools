@@ -6,21 +6,21 @@ import snakemake
 import os
 
 class MasonIllumina(Source):
-	"""Class for the Mason (Illumina mode).
+	"""Class for the Mason  - Illumina mode (https://www.seqan.de/projects/mason/).
 
 	Single-end reads and pair-end reads simulations are supported. For pair-end simulations,
 	lengths of both ends must be equal.
 
 	Args:
-		fasta (str): File name of the genome from which read tuples are created (FASTA file).
-		coverage (float): Average coverage of the genome.
-		number_of_read_tuples (int): Number of read tuples.
-		read_length_1 (int): Length of the first end of a read tuple.
-		read_length_2 (int): Length of the second end of a read tuple (if zero, then single-end reads are created).
-		other_params (str): Other parameters which are used on commandline.
-		distance (int): Mean inner distance between ends.
-		distance_deviation (int): Devation of inner distances between ends.
-		rng_seed (int): Seed for simulator's random number generator.
+		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding Mason parameter: ``-ir, --input-reference``.
+		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding Mason parameter: ``-n, --num-fragments``.
+		read_length_1 (int): Length of the first read. Corresponding Mason parameter: ``--illumina-read-length``.
+		read_length_2 (int): Length of the read read (if zero, then single-end reads are simulated). Corresponding Mason parameter: ``--illumina-read-length``.
+		distance (int): Mean inner distance between reads. Corresponding Mason parameter: ``--fragment-mean-size``.
+		distance_deviation (int): Standard devation of inner distances between reads. Corresponding Mason parameter: ``--fragment-size-std-dev``.
+		rng_seed (int): Seed for simulator's random number generator. Corresponding Mason parameter: ``--seed``.
+		other_params (str): Other parameters which are used on command-line.
 
 	Raises:
 		ValueError
@@ -32,10 +32,10 @@ class MasonIllumina(Source):
 				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
-				other_params="",
 				distance=500,
 				distance_deviation=50,
-				rng_seed=1
+				rng_seed=1,
+				other_params="",
 			):
 
 		if read_length_2==0:

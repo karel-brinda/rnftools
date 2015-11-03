@@ -7,18 +7,18 @@ import snakemake
 import re
 
 class CuReSim(Source):
-	"""Class for CuReSim.
+	"""Class for CuReSim (http://www.pegase-biosciences.com/curesim-a-customized-read-simulator).
 
 	Only single-end reads simulations are supported.
 
 	Args:
-		fasta (str): File name of the genome from which reads are created (FASTA file).
-		coverage (float): Average coverage of the genome.
-		number_of_read_tuples (int): Number of read tuples.
-		read_length_1 (int): Length of the first end of a read.
-		read_length_2 (int): Length of the second end of a read. It must be equal to zero.
-		other_params (str): Other parameters which are used on commandline.
-		rng_seed (int): Seed for simulator's random number generator (fake, it is not supported by CuReSim).
+		fasta (str): File name of the genome from which reads are created (FASTA file). Corresponding CuReSim parameter: ``-f``.
+		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding CuReSim parameter: ``-n``.
+		read_length_1 (int): Length of the first read.  Corresponding CuReSim parameter: ``-m``.
+		read_length_2 (int): Length of the second read. Fake parameter (unsupported by CuReSim).
+		rng_seed (int): Seed for simulator's random number generator. Fake parameter (unsupported by CuReSim).
+		other_params (str): Other parameters which are used on command-line.
 
 	Raises:
 		ValueError
@@ -30,8 +30,8 @@ class CuReSim(Source):
 				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
+				rng_seed=1,
 				other_params="",
-				rng_seed=1
 			):
 		
 		if read_length_2!=0:
@@ -49,6 +49,9 @@ class CuReSim(Source):
 		self.read_length_2=read_length_2
 		self.other_params=other_params
 
+		if coverage*number_of_read_tuples!=0:
+			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+
 		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
 
@@ -65,7 +68,6 @@ class CuReSim(Source):
 				self._fq_fn,
 			]
 
-	# TODO: find out how it is with RNG seeds
 	def create_fq(self):
 		if self.number_of_read_tuples == 0:
 			genome_size=os.stat(self._fa_fn).st_size
