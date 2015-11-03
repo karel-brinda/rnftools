@@ -7,17 +7,17 @@ import snakemake
 import re
 
 class CuReSim(Source):
-	"""Class for CuReSim.
+	"""Class for CuReSim (http://www.pegase-biosciences.com/curesim-a-customized-read-simulator).
 
 	Only single-end reads simulations are supported.
 
 	Args:
-		fasta (str): File name of the genome from which reads are created (FASTA file). CuReSim param '-f'.
+		fasta (str): File name of the genome from which reads are created (FASTA file). Corresponding CuReSim parameter: ``-f``.
 		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
-		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). CuReSim param '-n'.
-		read_length_1 (int): Length of the first read.  CuReSim param '-m'.
-		read_length_2 (int): Length of the second read. Fake param (unsupported by CuReSim).
-		rng_seed (int): Seed for simulator's random number generator. Fake param (unsupported by CuReSim).
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding CuReSim parameter: ``-n``.
+		read_length_1 (int): Length of the first read.  Corresponding CuReSim parameter: ``-m``.
+		read_length_2 (int): Length of the second read. Fake parameter (unsupported by CuReSim).
+		rng_seed (int): Seed for simulator's random number generator. Fake parameter (unsupported by CuReSim).
 		other_params (str): Other parameters which are used on command-line.
 
 	Raises:
@@ -30,7 +30,7 @@ class CuReSim(Source):
 				number_of_read_tuples=0,
 				read_length_1=100,
 				read_length_2=0,
-				rng_seed=1
+				rng_seed=1,
 				other_params="",
 			):
 		
@@ -68,7 +68,6 @@ class CuReSim(Source):
 				self._fq_fn,
 			]
 
-	# TODO: find out how it is with RNG seeds
 	def create_fq(self):
 		if self.number_of_read_tuples == 0:
 			genome_size=os.stat(self._fa_fn).st_size

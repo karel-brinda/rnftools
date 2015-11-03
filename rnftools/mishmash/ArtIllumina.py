@@ -12,14 +12,14 @@ class ArtIllumina(Source):
 	lengths of both ends must be equal.
 
 	Args:
-		fasta (str): File name of the genome from which read tuples are created (FASTA file). ART param '-i --in'.
-		coverage (float): Average coverage of the genome. ART param '-f --fcov'.
+		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding ART parameter: ``-i --in``.
+		coverage (float): Average coverage of the genome. Corresponding ART parameter: ``-f --fcov``.
 		number_of_read_tuples (int): Number of read tuples.
-		read_length_1 (int): Length of the first read. ART param '-l --len'.
-		read_length_2 (int): Length of the second read (if zero, then single-end reads are simulated). ART param '-l --len'.
-		distance (int): Mean inner distance between reads. ART param '-m --mflen'.
-		distance_deviation (int): Standard devation of inner distances between reads. ART param '-s --sdev'.
-		rng_seed (int): Seed for simulator's random number generator. ART param '-rs --rndSeed'.
+		read_length_1 (int): Length of the first read. Corresponding ART parameter: ``-l --len``.
+		read_length_2 (int): Length of the second read (if zero, then single-end reads are simulated). Corresponding ART parameter: ``-l --len``.
+		distance (int): Mean inner distance between reads. Corresponding ART parameter: ``-m --mflen``.
+		distance_deviation (int): Standard devation of inner distances between reads. Corresponding ART parameter: ``-s --sdev``.
+		rng_seed (int): Seed for simulator's random number generator. Corresponding ART parameter: ``-rs --rndSeed``.
 		other_params (str): Other parameters which are used on commandline.
 
 	Raises:
