@@ -6,6 +6,11 @@ import os
 class FqCreator:
 	"""Class for writing RNF reads to FASTQ files.
 
+	Every new read is added to the internal buffer. If read tuple ID is different,
+	buffer is flushed. Hence, reads from the same tuple must be added in a series.
+	It does not matter in which order are blocks reported and with which exact reads,
+	they will be sorted during flushing.
+
 	Args:
 		fastq_fo (str): Output FASTQ file - file object.
 		read_tuple_id_width (int): Maximal expected string length of read tuple ID.
@@ -91,7 +96,7 @@ class FqCreator:
 				segments,
 			):
 
-		"""Add a new read to the current buffer. If it is a new read tuple, the buffer will be flushed.
+		"""Add a new read to the current buffer. If it is a new read tuple (detected from ID), the buffer will be flushed.
 
 		Args:
 			read_tuple_id (int): ID of the read tuple.

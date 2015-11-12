@@ -7,24 +7,14 @@ import snakemake
 import re
 
 #
-# AUXILIARY FUNCTIONS
-#
-
-# TODO
-# - check parameters
-#
-#
-
-#
 # THERE IS A BUG IN DWGSIM DOCUMENTATION -- it is 1-based
-#
 #
 
 class DwgSim(Source):
 	"""Class for DWGsim (https://github.com/nh13/DWGSIM/wiki).
 
-	Single-end and pair-end simulations are supported. For pair-end simulations,
-	readss can have different lengths.
+	Both single-end and paired-end simulations are supported. In paired-end simulations,
+	reads can have different lengths.
 
 	Args:
 		fasta (str): File name of the genome from which reads are created (FASTA file). 
@@ -181,7 +171,6 @@ class DwgSim(Source):
 					allow_unmapped=False,
 				)
 
-	#todo: param estimate parameters
 
 	@staticmethod
 	def recode_dwgsim_reads(
@@ -191,6 +180,7 @@ class DwgSim(Source):
 				genome_id,
 				number_of_read_tuples=10**9,
 				allow_unmapped=False,
+				estimate_unknown_values=True,
 			):
 		"""Convert DwgSim FASTQ file to RNF FASTQ file.
 
@@ -201,6 +191,7 @@ class DwgSim(Source):
 			genome_id (int): RNF genome ID to be used.
 			number_of_read_tuples (int): Estimate of number of simulated read tuples (to set width).
 			allow_unmapped (bool): Allow unmapped reads in the original FASTQ.
+			estimate_unknown_values (bool): Estimate unknown values (right coordinate of each end).
 		"""
 
 		dwgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)')
@@ -246,8 +237,13 @@ class DwgSim(Source):
 			for line in f1:
 				if i%4==0:
 					read_tuple_name=line[1:].strip()
-					if read_tuple_name!=last_read_tuple_name and last_read_tuple_name is not None:
-						read_tuple_id+=1
+					if read_tuple_name!=last_read_tuple_name:
+						new_tuple=True
+						if last_read_tuple_name is not None:
+							read_tuple_id+=1
+					else:
+						new_tuple=False
+
 					last_read_tuple_name=read_tuple_name
 					m = dwgsim_pattern.search(line)
 					if m is None:
@@ -273,13 +269,25 @@ class DwgSim(Source):
 				elif i%4==1:
 					bases=line.strip()
 
-					segment=rnftools.rnfformat.Segment(
-							genome_id=genome_id,
-							chr_id=chr_id,
-							direction=direction_1,
-							left=start_1,
-							right=0
-						)
+					if new_tuple:
+	
+						segment=rnftools.rnfformat.Segment(
+								genome_id=genome_id,
+								chr_id=chr_id,
+								direction=direction_1,
+								left=start_1,
+								right=start_1+len(bases)-1 if estimate_unknown_values else 0,
+							)
+
+					else:
+						
+						segment=rnftools.rnfformat.Segment(
+								genome_id=genome_id,
+								chr_id=chr_id,
+								direction=direction_2,
+								left=start_2,
+								right=start_2+len(bases)-1 if estimate_unknown_values else 0,
+							)
 
 				elif i%4==2:
 					pass
