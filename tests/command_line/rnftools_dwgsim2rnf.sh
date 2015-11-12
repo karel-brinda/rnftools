@@ -46,7 +46,7 @@ rnftools dwgsim2rnf \
 	--dwgsim-prefix dwgsim_reads_se \
 	-o _dwgsim_reads_se_recoded.fq \
 
-diff -q _dwgsim_reads_se_recoded.fq dwgsim_reads_se_recoded.fq > /dev/null
+diff -q _dwgsim_reads_se_recoded.fq dwgsim_reads_se_recoded.fq
 
 # 4) PE test of RNF names
 
@@ -56,4 +56,5 @@ rnftools dwgsim2rnf \
 	--estimate-unknown \
 	-o _dwgsim_reads_pe_recoded.fq
 
-diff -q _dwgsim_reads_pe_recoded.fq dwgsim_reads_pe_recoded.fq > /dev/null
+diff -q _dwgsim_reads_pe_recoded.fq dwgsim_reads_pe_recoded.fq
+
