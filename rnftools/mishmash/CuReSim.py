@@ -70,6 +70,10 @@ class CuReSim(Source):
 						self.get_dir(),
 						"output.fastq",
 					),
+				os.path.join(
+						self.get_dir(),
+						"log.txt",
+					),
 			]
 
 	# todo: check if "output.fastq" is defined as an output file

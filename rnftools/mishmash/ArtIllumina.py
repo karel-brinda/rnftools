@@ -66,7 +66,7 @@ class ArtIllumina(Source):
 
 		self.art_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.genome_id)
+			"art_illumina_files.{}.{}".format("se" if self.number_of_read_tuples==1 else "pe",self.genome_id)
 		)
 
 		self._sam1_fn = self.art_prefix+".sam"

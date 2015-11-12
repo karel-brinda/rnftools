@@ -92,7 +92,7 @@ class DwgSim(Source):
 
 		self.dwg_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.genome_id)
+			"dwgsim_files.{}.{}".format("se" if self.number_of_read_tuples==1 else "pe",self.genome_id)
 		)
 
 
