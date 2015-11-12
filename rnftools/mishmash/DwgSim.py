@@ -31,6 +31,7 @@ class DwgSim(Source):
 		mutation_rate (float): Mutation rate. Corresponding DWGsim parameter: ``-e``.
 		indels (float): Rate of indels in mutations. Corresponding DWGsim parameter: ``-R``.
 		prob_indel_ext (float): Probability that an indel is extended. Corresponding DWGsim parameter: ``-X``.
+		estimate_unknown_values (bool): Estimate unknown values (coordinates missing in DWGsim output).
 		other_params (str): Other parameters which are used on command-line.
 
 	Raises:
@@ -53,6 +54,7 @@ class DwgSim(Source):
 				mutation_rate=0.001,
 				indels=0.15,
 				prob_indel_ext=0.3,
+				estimate_unknown_values=False,
 				other_params="",
 			):
 
@@ -85,6 +87,8 @@ class DwgSim(Source):
 		self.mutation_rate=mutation_rate
 		self.indels=indels
 		self.prob_indel_ext=prob_indel_ext
+
+		self.estimate_unknown_values=estimate_unknown_values
 
 		self.dwg_prefix=os.path.join(
 			self.get_dir(),
@@ -169,6 +173,7 @@ class DwgSim(Source):
 					genome_id=self.genome_id,
 					number_of_read_tuples=10**9,
 					allow_unmapped=False,
+					estimate_unknown_values=self.estimate_unknown_values,
 				)
 
 
@@ -178,9 +183,9 @@ class DwgSim(Source):
 				fastq_rnf_fo,
 				fai_fo,
 				genome_id,
+				estimate_unknown_values,
 				number_of_read_tuples=10**9,
 				allow_unmapped=False,
-				estimate_unknown_values=True,
 			):
 		"""Convert DwgSim FASTQ file to RNF FASTQ file.
 
@@ -189,9 +194,9 @@ class DwgSim(Source):
 			fastq_rnf_fo (file): File object of RNF FASTQ.
 			fai_fo (file): File object for FAI file of the reference genome.
 			genome_id (int): RNF genome ID to be used.
+			estimate_unknown_values (bool): Estimate unknown values (right coordinate of each end).
 			number_of_read_tuples (int): Estimate of number of simulated read tuples (to set width).
 			allow_unmapped (bool): Allow unmapped reads in the original FASTQ.
-			estimate_unknown_values (bool): Estimate unknown values (right coordinate of each end).
 		"""
 
 		dwgsim_pattern = re.compile('@(.*)_([0-9]+)_([0-9]+)_([01])_([01])_([01])_([01])_([0-9]+):([0-9]+):([0-9]+)_([0-9]+):([0-9]+):([0-9]+)_(([0-9abcdef])+)')

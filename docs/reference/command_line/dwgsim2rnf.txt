@@ -1,6 +1,6 @@
 $ rnftools dwgsim2rnf -h
 
-usage: rnftools dwgsim2rnf [-h] [-p str] -o file -x file [-g int] [-u]
+usage: rnftools dwgsim2rnf [-h] [-p str] [-e] -o file -x file [-g int] [-u]
 
 Convert a DwgSim FASTQ file (dwgsim_prefix.bfast.fastq) to RNF-FASTQ.
 
@@ -8,6 +8,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -p str, --dwgsim-prefix str
                         Prefix for DwgSim.
+  -e, --estimate-unknown
+                        Estimate unknown values.
   -o file, --rnf-fastq file
                         Output FASTQ file (- for standard output).
   -x file, --faidx file
