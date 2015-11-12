@@ -157,6 +157,7 @@ def add_dwgsim_parser(subparsers,subcommand,help,description):
 			'-p','--dwgsim-prefix',
 			type=str,
 			metavar='str',
+			required=True,
 			dest='dwgsim_prefix',
 			help='Prefix for DwgSim.',
 		)
