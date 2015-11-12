@@ -66,7 +66,7 @@ class MasonIllumina(Source):
 
 		self.mason_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.genome_id)
+			"mason_files.{}.{}".format("se" if self.number_of_read_tuples==1 else "pe",self.genome_id)
 		)
 
 		self._sam_fn = self.mason_prefix+".sam"
