@@ -53,6 +53,7 @@ diff -q _dwgsim_reads_se_recoded.fq dwgsim_reads_se_recoded.fq > /dev/null
 rnftools dwgsim2rnf \
 	--faidx Mycobacterium_tuberculosis.fa.fai \
 	--dwgsim-prefix dwgsim_reads_pe \
+	--estimate-unknown \
 	-o _dwgsim_reads_pe_recoded.fq
 
 diff -q _dwgsim_reads_pe_recoded.fq dwgsim_reads_pe_recoded.fq > /dev/null
