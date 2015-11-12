@@ -5,4 +5,4 @@ sphinx
 sphinxcontrib-napoleon
 sphinx_rtd_theme
 snakemake
-smbl>1.4.0
+smbl>=1.4.0
