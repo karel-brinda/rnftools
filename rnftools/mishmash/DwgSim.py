@@ -110,71 +110,76 @@ class DwgSim(Source):
 				self.dwg_prefix+".bfast.fastq",
 				self.dwg_prefix+".mutations.vcf",
 				self.dwg_prefix+".mutations.txt",
-				self._fq_fn
+				self._fq_fn,
 			]
 
 	def create_fq(self):
-		if self.number_of_read_tuples == 0:
-			genome_size=os.stat(self._fa_fn).st_size
-			self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
-			#prevent number_of_read_tuples=0 
-			self.number_of_read_tuples=max(1,self.number_of_read_tuples)
-			
-		if self._reads_in_tuple==2:
-			paired_params="-d {dist} -s {dist_dev}".format(
-					dist=self.distance,
-					dist_dev=self.distance_deviation,
-				)
-		else:
-			paired_params=""
+		if self.coverage==0 and self.number_of_read_tuples==0:
+			for x in self.get_output():
+				with open(x,"w+") as f:
+					f.write(os.linesep)
 
-		smbl.utils.shell("""
-				"{dwgsim}" \
-				-1 {rlen1} \
-				-2 {rlen2} \
-				-z {rng_seed} \
-				-y 0 \
-				-N {nb} \
-				-e {error_rate_1} \
-				-E {error_rate_2} \
-				-r {mutation_rate} \
-				-R {indels} \
-				-X {prob_indel_ext} \
-				{haploid} \
-				{paired_params} \
-				{other_params} \
-				"{fa}" \
-				"{pref}" \
-				> /dev/null
-			""".format(
-				dwgsim=smbl.prog.DWGSIM,
-				fa=self._fa_fn,
-				pref=self.dwg_prefix,
-				nb=self.number_of_read_tuples,
-				rlen1=self.read_length_1,
-				rlen2=self.read_length_2,
-				other_params=self.other_params,
-				paired_params=paired_params,
-				rng_seed=self._rng_seed,
-				haploid="-h" if self.haploid_mode else "",
-				error_rate_1=self.error_rate_1,
-				error_rate_2=self.error_rate_2,
-				mutation_rate=self.mutation_rate,
-				indels=self.indels,
-				prob_indel_ext=self.prob_indel_ext,
-			)
-		)
-		with open(self._fq_fn,"w+") as fastq_fo:
-			with open(self._fai_fn) as fai_fo:
-				self.recode_dwgsim_reads(
-					dwgsim_prefix=self.dwg_prefix,
-					fastq_rnf_fo=fastq_fo,
-					fai_fo=fai_fo,
-					genome_id=self.genome_id,
-					number_of_read_tuples=10**9,
-					allow_unmapped=False,
-					estimate_unknown_values=self.estimate_unknown_values,
+		else:
+
+			if self.number_of_read_tuples == 0:
+				genome_size=os.stat(self._fa_fn).st_size
+				self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
+				
+			if self._reads_in_tuple==2:
+				paired_params="-d {dist} -s {dist_dev}".format(
+						dist=self.distance,
+						dist_dev=self.distance_deviation,
+					)
+			else:
+				paired_params=""
+
+			smbl.utils.shell("""
+					"{dwgsim}" \
+					-1 {rlen1} \
+					-2 {rlen2} \
+					-z {rng_seed} \
+					-y 0 \
+					-N {nb} \
+					-e {error_rate_1} \
+					-E {error_rate_2} \
+					-r {mutation_rate} \
+					-R {indels} \
+					-X {prob_indel_ext} \
+					{haploid} \
+					{paired_params} \
+					{other_params} \
+					"{fa}" \
+					"{pref}" \
+					> /dev/null
+				""".format(
+					dwgsim=smbl.prog.DWGSIM,
+					fa=self._fa_fn,
+					pref=self.dwg_prefix,
+					nb=self.number_of_read_tuples,
+					rlen1=self.read_length_1,
+					rlen2=self.read_length_2,
+					other_params=self.other_params,
+					paired_params=paired_params,
+					rng_seed=self._rng_seed,
+					haploid="-h" if self.haploid_mode else "",
+					error_rate_1=self.error_rate_1,
+					error_rate_2=self.error_rate_2,
+					mutation_rate=self.mutation_rate,
+					indels=self.indels,
+					prob_indel_ext=self.prob_indel_ext,
 				)
+			)
+			with open(self._fq_fn,"w+") as fastq_fo:
+				with open(self._fai_fn) as fai_fo:
+					self.recode_dwgsim_reads(
+						dwgsim_prefix=self.dwg_prefix,
+						fastq_rnf_fo=fastq_fo,
+						fai_fo=fai_fo,
+						genome_id=self.genome_id,
+						number_of_read_tuples=10**9,
+						allow_unmapped=False,
+						estimate_unknown_values=self.estimate_unknown_values,
+					)
 
 
 	@staticmethod

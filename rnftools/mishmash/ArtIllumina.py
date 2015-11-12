@@ -92,63 +92,69 @@ class ArtIllumina(Source):
 
 
 	def create_fq(self):
-		if self.coverage == 0:
-			genome_size=os.stat(self._fa_fn).st_size
-			self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
-
-		if self._reads_in_tuple==2:
-			paired_params="-p -m {dist} -s {dist_dev}".format(
-					dist=self.distance,
-					dist_dev=self.distance_deviation,
-				)
+		if self.coverage==0 and self.number_of_read_tuples==0:
+			for x in self.get_output():
+				with open(x,"w+") as f:
+					f.write(os.linesep)
 		else:
-			paired_params=""
 
-		command_1 ="""
-				{art_il} -sam -na \
-					-i "{fasta}" \
-					-l {rlen} \
-					-rs {rng_seed} \
-					-f {coverage} \
-					-o "{o_pref}" \
-					{paired_params} \
-					{other_params} \
-					> /dev/null
+			if self.coverage == 0:
+				genome_size=os.stat(self._fa_fn).st_size
+				self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
+
+			if self._reads_in_tuple==2:
+				paired_params="-p -m {dist} -s {dist_dev}".format(
+						dist=self.distance,
+						dist_dev=self.distance_deviation,
+					)
+			else:
+				paired_params=""
+
+			command_1 ="""
+					{art_il} -sam -na \
+						-i "{fasta}" \
+						-l {rlen} \
+						-rs {rng_seed} \
+						-f {coverage} \
+						-o "{o_pref}" \
+						{paired_params} \
+						{other_params} \
+						> /dev/null
+				""".format(
+					art_il=smbl.prog.ART_ILLUMINA,
+					paired_params=paired_params,
+					fasta=self._fa_fn,
+					rlen=self.read_length_1,
+					other_params=self.other_params,
+					coverage=self.coverage,
+					o_pref=self.art_prefix,
+					rng_seed=self._rng_seed,
+				)
+
+			# correction of header (bug in ART)
+			command_2 ="""
+				cat "{sam_1}" | \
+				grep -v ^@ | \
+				"{samtools}" view -h -T "{fa}" - \
+				> "{sam_2}"
 			""".format(
-				art_il=smbl.prog.ART_ILLUMINA,
-				paired_params=paired_params,
-				fasta=self._fa_fn,
-				rlen=self.read_length_1,
-				other_params=self.other_params,
-				coverage=self.coverage,
-				o_pref=self.art_prefix,
-				rng_seed=self._rng_seed,
+					samtools=smbl.prog.SAMTOOLS,
+					sam_1=self._sam1_fn,
+					sam_2=self._sam2_fn,
+					fa=self._fa_fn,
 			)
 
-		# correction of header (bug in ART)
-		command_2 ="""
-			cat "{sam_1}" | \
-			grep -v ^@ | \
-			"{samtools}" view -h -T "{fa}" - \
-			> "{sam_2}"
-		""".format(
-				samtools=smbl.prog.SAMTOOLS,
-				sam_1=self._sam1_fn,
-				sam_2=self._sam2_fn,
-				fa=self._fa_fn,
-		)
+			smbl.utils.shell(command_1)
+			smbl.utils.shell(command_2)
 
-		smbl.utils.shell(command_1)
-		smbl.utils.shell(command_2)
-
-		with open(self._fq_fn,"w+") as fq_fo:
-			with open(self._fai_fn) as fai_fo :
-				self.recode_sam_reads(
-					sam_fn=self._sam2_fn,
-					fastq_rnf_fo=fq_fo,
-					fai_fo=fai_fo,
-					genome_id=self.genome_id,
-					number_of_read_tuples=10**9,
-					simulator_name="art-illumina",
-					allow_unmapped=False,
-				)
+			with open(self._fq_fn,"w+") as fq_fo:
+				with open(self._fai_fn) as fai_fo :
+					self.recode_sam_reads(
+						sam_fn=self._sam2_fn,
+						fastq_rnf_fo=fq_fo,
+						fai_fo=fai_fo,
+						genome_id=self.genome_id,
+						number_of_read_tuples=10**9,
+						simulator_name="art-illumina",
+						allow_unmapped=False,
+					)

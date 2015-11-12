@@ -66,51 +66,61 @@ class CuReSim(Source):
 	def get_output(self):
 		return [
 				self._fq_fn,
+				os.path.join(
+						self.get_dir(),
+						"output.fastq",
+					),
 			]
 
+	# todo: check if "output.fastq" is defined as an output file
 	def create_fq(self):
-		if self.number_of_read_tuples == 0:
-			genome_size=os.stat(self._fa_fn).st_size
-			self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
+		if self.number_of_read_tuples==0 and self.number_of_read_tuples==0:
+			for x in self.get_output():
+				with open(x,"w+") as f:
+					f.write(os.linesep)
+		else:
+			if self.number_of_read_tuples==0:
+				genome_size=os.stat(self._fa_fn).st_size
+				self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
 
-		smbl.utils.shell("""
-				cd "{dir}"
-				java -Xmx8g -jar "{curesim}" \
-				-f "{fa}" \
-				-n {nb} \
-				-m {rlen1} \
-				-r 0 \
-				-sd 0 \
-				-y 0 \
-				{other_params} \
-				> /dev/null
-			""".format(
-				dir=self.get_dir(),
-				curesim=smbl.prog.CURESIM,
-				fa=self._fa_fn,
-				nb=self.number_of_read_tuples,
-				rlen1=self.read_length_1,
-				other_params=self.other_params,
-				rng_seed=self._rng_seed,
-			)
-		)
-
-		curesim_fastq_fn=os.path.join(
-					self.get_dir(),
-					"output.fastq",
+			smbl.utils.shell("""
+					cd "{dir}"
+					java -Xmx8g -jar "{curesim}" \
+					-f "{fa}" \
+					-n {nb} \
+					-m {rlen1} \
+					-r 0 \
+					-sd 0 \
+					-y 0 \
+					{other_params} \
+					> /dev/null
+				""".format(
+					dir=self.get_dir(),
+					curesim=smbl.prog.CURESIM,
+					fa=self._fa_fn,
+					nb=self.number_of_read_tuples,
+					rlen1=self.read_length_1,
+					other_params=self.other_params,
+					rng_seed=self._rng_seed,
 				)
+			)
+
+			curesim_fastq_fn=os.path.join(
+						self.get_dir(),
+						"output.fastq",
+					)
 
 
-		with open(curesim_fastq_fn,"r+") as curesim_fastq_fo:
-			with open(self._fai_fn) as fai_fo:
-				with open(self._fq_fn,"w+") as rnf_fastq_fo:
-					self.recode_curesim_reads(
-							curesim_fastq_fo=curesim_fastq_fo,
-							rnf_fastq_fo=rnf_fastq_fo,
-							fai_fo=fai_fo,
-							genome_id=self.genome_id,
-							number_of_read_tuples=10**9,
-						)
+			with open(curesim_fastq_fn,"r+") as curesim_fastq_fo:
+				with open(self._fai_fn) as fai_fo:
+					with open(self._fq_fn,"w+") as rnf_fastq_fo:
+						self.recode_curesim_reads(
+								curesim_fastq_fo=curesim_fastq_fo,
+								rnf_fastq_fo=rnf_fastq_fo,
+								fai_fo=fai_fo,
+								genome_id=self.genome_id,
+								number_of_read_tuples=10**9,
+							)
 
 	@staticmethod
 	def recode_curesim_reads(
