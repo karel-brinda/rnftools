@@ -37,3 +37,22 @@ rnftools dwgsim2rnf \
 	--faidx ${FA}.fai \
 	--dwgsim-prefix sim_pe \
 	--rnf-fastq _dwgsim_rnf_pe.fq \
+
+
+# 3) SE test of RNF names
+
+rnftools dwgsim2rnf \
+	--faidx Mycobacterium_tuberculosis.fa.fai \
+	--dwgsim-prefix dwgsim_reads_se \
+	-o _dwgsim_reads_se_recoded.fq \
+
+diff -q _dwgsim_reads_se_recoded.fq dwgsim_reads_se_recoded.fq > /dev/null
+
+# 4) PE test of RNF names
+
+rnftools dwgsim2rnf \
+	--faidx Mycobacterium_tuberculosis.fa.fai \
+	--dwgsim-prefix dwgsim_reads_pe \
+	-o _dwgsim_reads_pe_recoded.fq
+
+diff -q _dwgsim_reads_pe_recoded.fq dwgsim_reads_pe_recoded.fq > /dev/null
