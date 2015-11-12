@@ -82,13 +82,15 @@ class ArtIllumina(Source):
 			]
 
 	def get_output(self):
+		if self._reads_in_tuple==1:
+			fqs = [self.art_prefix+".fq"]
+		else:
+			fqs = [self.art_prefix+"1.fq",self.art_prefix+"2.fq"]
 		return 	[
 				self._fq_fn,
 				self._sam1_fn,
 				self._sam2_fn,
-				self.art_prefix+".fq" if self._reads_in_tuple==1 else
-					[self.art_prefix+"1.fq",self.art_prefix+"2.fq"],
-			]
+			] + fqs
 
 
 	def create_fq(self):
