@@ -147,6 +147,7 @@ def dwgsim2rnf(args):
 		genome_id=args.genome_id,
 		number_of_read_tuples=10**9,
 		allow_unmapped=args.allow_unmapped,
+		estimate_unknown_values=args.estimate_unknown_values,
 	)
 
 def add_dwgsim_parser(subparsers,subcommand,help,description):
@@ -158,6 +159,12 @@ def add_dwgsim_parser(subparsers,subcommand,help,description):
 			metavar='str',
 			dest='dwgsim_prefix',
 			help='Prefix for DwgSim.',
+		)
+	parser_dwgsim2rnf.add_argument(
+			'-e','--estimate-unknown',
+			action='store_false',
+			dest='estimate_unknown_values',
+			help='Estimate unknown values.',
 		)
 	_add_shared_params(parser_dwgsim2rnf,unmapped_switcher=True)
 
