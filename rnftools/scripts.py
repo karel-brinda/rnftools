@@ -163,7 +163,7 @@ def add_dwgsim_parser(subparsers,subcommand,help,description):
 		)
 	parser_dwgsim2rnf.add_argument(
 			'-e','--estimate-unknown',
-			action='store_false',
+			action='store_true',
 			dest='estimate_unknown_values',
 			help='Estimate unknown values.',
 		)
