@@ -80,12 +80,14 @@ class MasonIllumina(Source):
 			]
 
 	def get_output(self):
+		if self._reads_in_tuple==1:
+			fqs=[self.mason_prefix+"1.fq"]
+		else:
+			fqs=[self.mason_prefix+"1.fq",self.mason_prefix+"2.fq"]
 		return 	[
 				self._fq_fn,
 				self._sam_fn,
-				self.mason_prefix+"1.fq" if self._reads_in_tuple==1 else
-					[self.mason_prefix+"1.fq",self.mason_prefix+"2.fq"],
-			]
+			] + fqs
 
 
 	def create_fq(self):
