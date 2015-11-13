@@ -43,10 +43,12 @@ class FqCreator:
 		self.current_read_tuple_id=None
 		self.empty()
 
+	def __del__(self):
+		self.flush_read_tuple()
+
 	def flush_read_tuple(self):
 		"""Flush the internal buffer of reads.
 		"""
-		#print("flush")
 		if not self.is_empty():
 			suffix_comment_buffer=[]
 			if self._info_simulator is not None:
@@ -116,7 +118,7 @@ class FqCreator:
 		assert type(qualities) is str, "Wrong type of qualities: '{}'".format(qualities)
 		assert type(segments) is tuple or type(segments) is list
 
-		if self.current_read_tuple_id!=read_tuple_id and self.current_read_tuple_id is not None:
+		if self.current_read_tuple_id!=read_tuple_id:
 			self.flush_read_tuple()
 		self.current_read_tuple_id=read_tuple_id
 
