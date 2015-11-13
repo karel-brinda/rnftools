@@ -6,39 +6,52 @@ import smbl
 import snakemake
 import re
 
-#
-# THERE IS A BUG IN DWGSIM DOCUMENTATION -- it is 1-based
-#
-
 class DwgSim(Source):
 	"""Class for DWGsim (https://github.com/nh13/DWGSIM/wiki).
 
 	Both single-end and paired-end simulations are supported. In paired-end simulations,
-	reads can have different lengths.
+	reads can have different lengths. Note that there is a bug in DWGsim documentation:
+	coordinates are 1-based.
 
 	Args:
 		fasta (str): File name of the genome from which reads are created (FASTA file). 
-		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero). Corresponding DWGsim parameter: ``-C``.
-		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding DWGsim parameter: ``-N``.
-		read_length_1 (int): Length of the first read. Corresponding DWGsim parameter: ``-1``.
-		read_length_2 (int): Length of the second read (if zero, then single-end simulation performed). Corresponding DWGsim parameter: ``-2``.
-		distance (int): Mean inner distance between reads. Corresponding DWGsim parameter: ``-d``.
-		distance_deviation (int): Standard deviation of inner distances between both reads. Corresponding DWGsim parameter: ``-s``.
-		rng_seed (int): Seed for simulator's random number generator. Corresponding DWGsim parameter: ``-z``.
-		haploid_mode (bools): Simulate reads in haploid mode. Corresponding DWGsim parameter: ``-H``.
-		error_rate_1 (float): Sequencing error rate in the first read. Corresponding DWGsim parameter: ``-e``.
-		error_rate_2 (float): Sequencing error rate in the second read. Corresponding DWGsim parameter: ``-E``.
-		mutation_rate (float): Mutation rate. Corresponding DWGsim parameter: ``-e``.
-		indels (float): Rate of indels in mutations. Corresponding DWGsim parameter: ``-R``.
-		prob_indel_ext (float): Probability that an indel is extended. Corresponding DWGsim parameter: ``-X``.
-		estimate_unknown_values (bool): Estimate unknown values (coordinates missing in DWGsim output).
+		coverage (float): Average coverage of the genome (if number_of_reads specified,
+			then it must be equal to zero).
+			Corresponding DWGsim parameter: ``-C``.
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then
+			it must be equal to zero).
+			Corresponding DWGsim parameter: ``-N``.
+		read_length_1 (int): Length of the first read.
+			Corresponding DWGsim parameter: ``-1``.
+		read_length_2 (int): Length of the second read (if zero, then single-end
+			simulation performed).
+			Corresponding DWGsim parameter: ``-2``.
+		distance (int): Mean inner distance between reads.
+			Corresponding DWGsim parameter: ``-d``.
+		distance_deviation (int): Standard deviation of inner distances between both reads.
+			Corresponding DWGsim parameter: ``-s``.
+		rng_seed (int): Seed for simulator's random number generator.
+			Corresponding DWGsim parameter: ``-z``.
+		haploid_mode (bools): Simulate reads in haploid mode.
+			Corresponding DWGsim parameter: ``-H``.
+		error_rate_1 (float): Sequencing error rate in the first read.
+			Corresponding DWGsim parameter: ``-e``.
+		error_rate_2 (float): Sequencing error rate in the second read.
+			Corresponding DWGsim parameter: ``-E``.
+		mutation_rate (float): Mutation rate.
+			Corresponding DWGsim parameter: ``-e``.
+		indels (float): Rate of indels in mutations.
+			Corresponding DWGsim parameter: ``-R``.
+		prob_indel_ext (float): Probability that an indel is extended.
+			Corresponding DWGsim parameter: ``-X``.
+		estimate_unknown_values (bool): Estimate unknown values (coordinates missing in
+			DWGsim output).
 		other_params (str): Other parameters which are used on command-line.
 
 	Raises:
 		ValueError
 	"""
 
-	#TODO:estimate_unknown_values=False,
 	def __init__(self,
 				fasta,
 				coverage=0,

@@ -40,11 +40,12 @@ class FqMerger:
 		# single-file or multi-file mode
 		files_to_be_opened_estimate=2+len(input_files_fn)+10 # 1 or 2 output files; input files; backup
 		(os_allowed_files,_)=resource.getrlimit(resource.RLIMIT_NOFILE)
+		print(len(input_files_fn),files_to_be_opened_estimate,os_allowed_files)
 		self.keep_files_open=os_allowed_files>files_to_be_opened_estimate # autodetection
 
 		# input files
 		self.i_files=[
-				FqMergerFileReader(fn,keep_files_open=self.keep_files_open)
+				FileReader(fn,keep_file_open=self.keep_files_open)
 					for fn in input_files_fn
 			]
 		self.i_files_sizes=[os.path.getsize(fn) for fn in input_files_fn]
@@ -132,14 +133,23 @@ class FqMerger:
 		self.output.close()
 
 
-# Wrapper for reading FASTQ files (for the case when number of open files would exceed allowed limit).
-class FqMergerFileReader:
 
-	def __init__(self, fn, keep_files_open=False, buffer_lines=50):
+class FileReader:
+	"""Class for reading a file without "OSError: Too many open files".
+	If keep_file_open==True, data are read in small batches and files are being reopened
+	and closed for each reading. Last position in file is kept.
+
+	Args:
+		fn (str): File name of the file to be read.
+		keep_file_open (bool): Keep the file open.
+		buffer_lines (int): Number of lines read as a single batch.
+	"""
+
+	def __init__(self, fn, keep_file_open=False, buffer_lines=50):
 		self.fn=fn
-		self.keep_files_open=keep_files_open
+		self.keep_file_open=keep_file_open
 	
-		if self.keep_files_open:
+		if self.keep_file_open:
 			self.fo=open(fn)
 		else:
 			self.fo=None
@@ -149,7 +159,7 @@ class FqMergerFileReader:
 			self.file_pos=0
 
 	def readline(self):
-		if self.keep_files_open:
+		if self.keep_file_open:
 			return self.fo.readline()
 		else:
 			if len(self.buffer)==0:
@@ -164,14 +174,14 @@ class FqMergerFileReader:
 			return self.buffer.pop(0)
 
 	def close(self):
-		if self.keep_files_open:
+		if self.keep_file_open:
 			self.fo.close()
 		else:
 			self._closed=True
 
 	@property
 	def closed(self):
-		if self.keep_files_open:
+		if self.keep_file_open:
 			return self.fo.closed
 		else:
 			return self._closed
@@ -202,6 +212,11 @@ class FqMergerOutput:
 		self.rnf_profile=rnftools.rnfformat.RnfProfile(
 				read_tuple_id_width=read_tuple_id_width
 			)
+
+	def __del__(self):
+		for f in self.fs:
+			if not f.closed:
+				f.close()
 
 	def close(self):
 		for f in self.fs:
