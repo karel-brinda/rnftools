@@ -4,4 +4,4 @@ termcolor
 sphinx>=1.3
 sphinx_rtd_theme
 snakemake
-smbl>=1.4.1
+smbl>=1.4.2
