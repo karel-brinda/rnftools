@@ -8,7 +8,10 @@ python:
 #- 'nightly'
 sudo: false
 cache:
-  apt: true
+#  apt: true
+  directories:
+  - $HOME/.smbl
+  - $HOME/.cache/pip
 addons:
   apt:
     sources:
