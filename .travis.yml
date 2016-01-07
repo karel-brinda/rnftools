@@ -43,7 +43,7 @@ install:
 #- sudo ./tests/tests_install_bats.sh
 - pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
 - pip install .
-before-script:
+before_script:
 - git clone git://github.com/sstephenson/bats $PWD/bats
 - export PATH=$PATH:$PWD/bats/bin
 - snakemake -p -s tests/command_line/__ensure_programs.snake --cores
