@@ -6,39 +6,61 @@ python:
 - '3.3'
 #- '3.4'
 #- 'nightly'
+sudo: false
 cache:
-  apt: true
+#  apt: true
+  directories:
+  - $HOME/.smbl
+  - $HOME/.cache/pip
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+    - gcc-4.8
+    - zlib1g-dev
+    - libbz2-dev
+    - libboost-dev
+    - git-svn
+#    - bats
 before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -qq
+#- sudo apt-get update -qq
+#- sudo apt-get install -qq
 #- wget -A *.whl -nd -r --no-parent http://www.cgat.org/downloads/public/pysam/wheels/
 #- tar -xvf wheelhouse.tar
-- pip install --upgrade setuptools
-- pip install --upgrade pip
+#- cd tests && ./tests_install_bats.sh
 install:
-- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-- sudo add-apt-repository ppa:duggan/bats --yes
-- sudo apt-get update
-- sudo apt-get install g++-4.8
-- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
-- sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
-- sudo apt-get install git-svn
-- sudo apt-get install -qq bats
-- pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
+#- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+#- sudo add-apt-repository ppa:duggan/bats --yes
+#- sudo apt-get update
+#- sudo apt-get install g++-4.8
+#- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+#- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
+#- sudo apt-get install zlib1g-dev libbz2-dev libboost-dev
+#- sudo apt-get install git-svn
+#- sudo apt-get install -qq bats
+#- pip install --upgrade setuptools
+#- pip install --upgrade pip
 #- pip install -r requirements.txt
-- pip install .
 #- sudo ./tests/tests_install_bats.sh
+- pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
+- pip install .
+before_script:
+- export CC=/usr/bin/gcc-4.8
+- export CXX=/usr/bin/g++-4.8
+- git clone git://github.com/sstephenson/bats $PWD/bats
+- export PATH=$PATH:$PWD/bats/bin
 - snakemake -p -s tests/command_line/__ensure_programs.snake --cores
 script:
 - cd tests && bats ${CI:+--tap} ./tests_run.sh
-deploy:
-  provider: pypi
-  user: karel.brinda
-  distributions: "sdist"
-  password:
-    secure: 5nL+obm5eVrVHifDpSOgWMIVZXVWNt3DUsCGpxlfH/K5Owt4l4r5p7YRlE6IALIv3RtjZ7VB9KTLttUKmNNkyRAJ3WpAim0ln6T36cEIirO3VRG0YP1Nm3k5lyg6UNhz9xbKgEiUizKMDkVPptnnvxGNQomtUHMz+KYfLnPJ9Yo=
-  on:
-    repo: karel-brinda/rnftools
-    branch: master
-    tags: true
+#deploy:
+#  provider: pypi
+#  user: karel.brinda
+#  distributions: "sdist"
+#  password:
+#    secure: 5nL+obm5eVrVHifDpSOgWMIVZXVWNt3DUsCGpxlfH/K5Owt4l4r5p7YRlE6IALIv3RtjZ7VB9KTLttUKmNNkyRAJ3WpAim0ln6T36cEIirO3VRG0YP1Nm3k5lyg6UNhz9xbKgEiUizKMDkVPptnnvxGNQomtUHMz+KYfLnPJ9Yo=
+#  on:
+#    repo: karel-brinda/rnftools
+#    branch: master
+#    tags: true
