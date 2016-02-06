@@ -245,7 +245,8 @@ class Panel:
 
 		self.gp_plots.append( os.linesep.join(
 				[
-					"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
+					#"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
+					"set termin pdf enhanced".format(
 							pdf_size="{:.10f}cm,{:.10f}cm".format(pdf_size_cm[0],pdf_size_cm[1])
 						),
 					'set out "{}"'.format(pdf_file),

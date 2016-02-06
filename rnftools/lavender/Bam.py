@@ -690,7 +690,8 @@ class Bam:
 				{plot}
 
 
-				set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
+				#set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
+				set termin pdf enhanced 
 				set out "{pdf_fn}"
 				set key spacing 0.8 opaque width 0
 				{plot}
