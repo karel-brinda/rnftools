@@ -23,6 +23,7 @@ addons:
     - libbz2-dev
     - libboost-dev
     - git-svn
+    - cython3
 #    - bats
 before_install:
 #- sudo apt-get update -qq
