@@ -46,7 +46,6 @@ for i, panel in enumerate(rnftools.lavender.panels()):
 			smbl.prog.GNUPLOT5,
 		output:
 			panel.svg_fns(),
-			panel.pdf_fns(),
 		params:
 			i=str(i)
 		run:
@@ -144,7 +143,6 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 			smbl.prog.GNUPLOT5
 		output:
 			bam.svg_fn(),
-			bam.pdf_fn(),
 		params:
 			i=str(i)
 		run:

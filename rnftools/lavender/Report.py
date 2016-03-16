@@ -24,8 +24,6 @@ class Report:
 		allowed_delta (int): Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!).
 		default_x_run ((float,float)): Range for x-axis in GnuPlot plots.
 		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
-		default_pdf_size_cm ((float,float)): Size of PDF page.
-		default_svg_size_px ((int,int)): Size of SVG picture.
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
@@ -46,7 +44,6 @@ class Report:
 		panels=None,
 		default_x_run=(0.00001,1.0),
 		default_y_run=(60,100),
-		default_pdf_size_cm=(10,10),
 		default_svg_size_px=(640,640),
 		keep_intermediate_files=False,
 		compress_intermediate_files=True,
@@ -66,7 +63,6 @@ class Report:
 
 		self.default_x_run=self._load_x_run(default_x_run)
 		self.default_y_run=self._load_y_run(default_y_run)
-		self.default_pdf_size_cm=self._load_pdf_size_cm(default_pdf_size_cm)
 		self.default_svg_size_px=self._load_svg_size_px(default_svg_size_px)
 		self.default_x_label=default_x_label
 
@@ -179,7 +175,6 @@ class Report:
 				title="",
 				x_run=None,
 				y_run=None,
-				pdf_size_cm=None,
 				svg_size_px=None,
 				key_position="bottom right",
 			):
@@ -193,7 +188,6 @@ class Report:
 			title (str): Title of the plot.
 			x_run ((float,float)): x-range.
 			y_run ((int,int)): y-rang.
-			pdf_size_cm ((float,float)): Size of PDF image in cm.
 			svg_size_px ((int,int): Size of SVG image in pixels.
 			key_position (str): GnuPlot position of the legend.
 		"""
@@ -202,21 +196,17 @@ class Report:
 			x_run=self.default_x_run
 		if y_run==None:
 			y_run=self.default_y_run
-		if pdf_size_cm==None:
-			pdf_size_cm=self.default_pdf_size_cm
 		if svg_size_px==None:
 			svg_size_px=self.default_svg_size_px
 
 		for panel in self.panels:
 			x_run=self._load_x_run(x_run)
 			y_run=self._load_y_run(y_run)
-			pdf_size_cm=self._load_pdf_size_cm(pdf_size_cm)
 			svg_size_px=self._load_svg_size_px(svg_size_px)
 			panel.add_graph(
 					y=y,
 					x_run=x_run,
 					y_run=y_run,
-					pdf_size_cm=pdf_size_cm,
 					svg_size_px=svg_size_px,
 					y_label=y_label,
 					x_label=x_label if x_label != None else self.default_x_label,
@@ -317,14 +307,6 @@ class Report:
 		to_return=[float(x) for x in y_run]
 		assert 0<=to_return[0] and to_return[0]<=100
 		assert 0<=to_return[1] and to_return[1]<=100
-		return to_return
-
-	@staticmethod
-	def _load_pdf_size_cm(pdf_size_cm):
-		assert len(pdf_size_cm)==2
-		to_return=[float(x) for x in pdf_size_cm]
-		assert 0<=to_return[0]
-		assert 0<=to_return[1]
 		return to_return
 
 	@staticmethod

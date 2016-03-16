@@ -58,7 +58,6 @@ class Bam:
 			self._et_fn  = os.path.join(self.panel.get_panel_dir(),"et",self.name+".et")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
 		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
-		self._pdf_fn  = os.path.join(self.panel.get_panel_dir(),"pdf",self.name+".pdf")
 
 		self.bam_id=len(rnftools.lavender.bams())
 		rnftools.lavender.add_bam(self)
@@ -101,10 +100,6 @@ class Bam:
 	def svg_fn(self):
 		"""Get name of the SVG file."""
 		return self._svg_fn
-
-	def pdf_fn(self):
-		"""Get name of the PDF file."""
-		return self._pdf_fn
 
 
 	############################
@@ -688,21 +683,11 @@ class Bam:
 				set out "{svg_fn}"
 				set key spacing 0.8 opaque width -5
 				{plot}
-
-
-				#set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'
-				set termin pdf enhanced 
-				set out "{pdf_fn}"
-				set key spacing 0.8 opaque width 0
-				{plot}
-
 			""".format(
 				svg_fn=self._svg_fn,
-				pdf_fn=self._pdf_fn,
 				xran="{:.10f}:{:.10f}".format(self.report.default_x_run[0],self.report.default_x_run[1]),
 				yran="{:.10f}:{:.10f}".format(self.report.default_y_run[0],self.report.default_y_run[1]),
 				svg_size="{},{}".format(self.report.default_svg_size_px[0],self.report.default_svg_size_px[1]),
-				pdf_size="{:.10f}cm,{:.10f}cm".format(self.report.default_pdf_size_cm[0],self.report.default_pdf_size_cm[1]),
 				title=os.path.basename(self._bam_fn)[:-4],
 				plot=plot,
 				x_lab=self.default_x_label,
@@ -990,8 +975,6 @@ class Bam:
 				<div class="formats">
 					<img src="{svg}" />
 					<br />
-					<a href="{pdf}">PDF version</a>
-					|
 					<a href="{svg}">SVG version</a>
 					|
 					<a href="{roc}" type="text/csv">ROC file</a>
@@ -1007,10 +990,6 @@ class Bam:
 					tbody=tbody,
 					svg=os.path.relpath(
 						self._svg_fn,
-						os.path.dirname(self._html_fn)
-					),
-					pdf=os.path.relpath(
-						self._pdf_fn,
 						os.path.dirname(self._html_fn)
 					),
 					roc=os.path.relpath(
