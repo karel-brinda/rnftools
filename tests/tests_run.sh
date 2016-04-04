@@ -10,9 +10,9 @@
 @test "TESTS: rnftools es2et" {
 	./command_line/rnftools_es2et.sh
 }
-#@test "TESTS: rnftools curesim2rnf" {
-#	./command_line/rnftools_curesim2rnf.sh
-#}
+@test "TESTS: rnftools curesim2rnf" {
+	./command_line/rnftools_curesim2rnf.sh
+}
 @test "TESTS: rnftools wgsim2rnf" {
 	./command_line/rnftools_wgsim2rnf.sh
 }
@@ -46,20 +46,28 @@
 
 #################################################
 
-@test "TESTS: snakemake 01_SE_simulation" {
-	./snakemake/01_SE_simulation/run.sh -p
+@test "TESTS: snakemake: all simulators SE" {
+	./snakemake/01_*/run.sh -p
 }
 
-@test "TESTS: snakemake 02_PE_simulation" {
-	./snakemake/02_PE_simulation/run.sh -p
+@test "TESTS: snakemake: all simulators PE" {
+	./snakemake/02_*/run.sh -p
 }
 
-@test "TESTS: snakemake 03_SE_metagenomic_simulation" {
-	./snakemake/03_SE_metagenomic_simulation/run.sh -p
+@test "TESTS: snakemake: many files SE" {
+	./snakemake/03_*/run.sh -p
 }
 	
-@test "TESTS: snakemake 04_PE_metagenomic_simulation" {
-	./snakemake/04_PE_metagenomic_simulation/run.sh -p
+@test "TESTS: snakemake: many files PE" {
+	./snakemake/04_*/run.sh -p
+}
+
+@test "TESTS: snakemake: zero reads SE" {
+	./snakemake/05_*/run.sh -p
+}
+
+@test "TESTS: snakemake: zero reads PE" {
+	./snakemake/06_*/run.sh -p
 }
 
 #################################################

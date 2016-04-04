@@ -66,7 +66,7 @@ class MasonIllumina(Source):
 
 		self.mason_prefix=os.path.join(
 			self.get_dir(),
-			"tmp.{}".format(self.genome_id)
+			"mason_files.{}.{}".format("se" if self.number_of_read_tuples==1 else "pe",self.genome_id)
 		)
 
 		self._sam_fn = self.mason_prefix+".sam"
@@ -80,61 +80,69 @@ class MasonIllumina(Source):
 			]
 
 	def get_output(self):
+		if self._reads_in_tuple==1:
+			fqs=[self.mason_prefix+"1.fq"]
+		else:
+			fqs=[self.mason_prefix+"1.fq",self.mason_prefix+"2.fq"]
 		return 	[
 				self._fq_fn,
 				self._sam_fn,
-				self.mason_prefix+"1.fq" if self._reads_in_tuple==1 else
-					[self.mason_prefix+"1.fq",self.mason_prefix+"2.fq"],
-			]
+			] + fqs
 
 
 	def create_fq(self):
-		if self.coverage == 0:
-			genome_size=os.stat(self._fa_fn).st_size
-			self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
+		if self.coverage==0 and self.number_of_read_tuples==0:
+			for x in self.get_output():
+				with open(x,"w+") as f:
+					f.write(os.linesep)
 
-		if self._reads_in_tuple==2:
-			paired_params='--fragment-mean-size {dist} --fragment-size-std-dev {dist_dev} -or "{fq2}"'.format(
-					dist=self.distance,
-					dist_dev=self.distance_deviation,
-					fq2=self.mason_prefix+"2.fq",
-				)
 		else:
-			paired_params=""
+			if self.coverage==0:
+				genome_size=os.stat(self._fa_fn).st_size
+				self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1+self.read_length_2) / (0.8 * genome_size)
 
-		command ="""
-				{mason} \
-					-n {number_of_read_tuples} \
-					-ir "{fasta}" \
-					--illumina-read-length {rlen} \
-					--seed {rng_seed} \
-					-o "{fq1}" \
-					-oa "{sam}" \
-					{paired_params} \
-					{other_params} \
-					> /dev/null
-			""".format(
-				mason=smbl.prog.MASON_SIMULATOR,
-				paired_params=paired_params,
-				fasta=self._fa_fn,
-				rlen=self.read_length_1,
-				other_params=self.other_params,
-				number_of_read_tuples=self.number_of_read_tuples,
-				fq1=self.mason_prefix+"1.fq",
-				rng_seed=self._rng_seed,
-				sam=self._sam_fn,
-			)
+			if self._reads_in_tuple==2:
+				paired_params='--fragment-mean-size {dist} --fragment-size-std-dev {dist_dev} -or "{fq2}"'.format(
+						dist=self.distance,
+						dist_dev=self.distance_deviation,
+						fq2=self.mason_prefix+"2.fq",
+					)
+			else:
+				paired_params=""
 
-		smbl.utils.shell(command)
-
-		with open(self._fq_fn,"w+") as fq_fo:
-			with open(self._fai_fn) as fai_fo:
-				self.recode_sam_reads(
-					sam_fn=self._sam_fn,
-					fastq_rnf_fo=fq_fo,
-					fai_fo=fai_fo,
-					genome_id=self.genome_id,
-					number_of_read_tuples=10**9,
-					simulator_name="mason",
-					allow_unmapped=False,
+			command ="""
+					"{mason}" \
+						-n {number_of_read_tuples} \
+						-ir "{fasta}" \
+						--illumina-read-length {rlen} \
+						--seed {rng_seed} \
+						-o "{fq1}" \
+						-oa "{sam}" \
+						{paired_params} \
+						{other_params} \
+						> /dev/null
+				""".format(
+					mason=smbl.prog.MASON_SIMULATOR,
+					paired_params=paired_params,
+					fasta=self._fa_fn,
+					rlen=self.read_length_1,
+					other_params=self.other_params,
+					number_of_read_tuples=self.number_of_read_tuples,
+					fq1=self.mason_prefix+"1.fq",
+					rng_seed=self._rng_seed,
+					sam=self._sam_fn,
 				)
+
+			smbl.utils.shell(command)
+
+			with open(self._fq_fn,"w+") as fq_fo:
+				with open(self._fai_fn) as fai_fo:
+					self.recode_sam_reads(
+						sam_fn=self._sam_fn,
+						fastq_rnf_fo=fq_fo,
+						fai_fo=fai_fo,
+						genome_id=self.genome_id,
+						number_of_read_tuples=10**9,
+						simulator_name="mason",
+						allow_unmapped=False,
+					)

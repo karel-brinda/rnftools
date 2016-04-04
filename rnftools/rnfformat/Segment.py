@@ -38,7 +38,7 @@ class Segment:
 
 	def stringize(
 				self,
-				rnf_profile=RnfProfile(),
+				rnf_profile,
 			):
 		"""Create RNF representation of this segment.
 
@@ -69,3 +69,7 @@ class Segment:
 		self.direction=m.group(3)
 		self.left=int(m.group(4))
 		self.right=int(m.group(5))
+
+	def __str__(self,):
+		rnf_profile=RnfProfile()
+		return self.stringize(rnf_profile)

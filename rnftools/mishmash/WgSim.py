@@ -81,9 +81,9 @@ class WgSim(Source):
 		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
 
-		self._tmp_fq1_fn = os.path.join(self._dir,"1.fq")
+		self._tmp_fq1_fn = os.path.join(self._dir,"wgsim_files.1.fq")
 		if self._reads_in_tuple==2:
-			self._tmp_fq2_fn = os.path.join(self._dir,"2.fq")
+			self._tmp_fq2_fn = os.path.join(self._dir,"wgsim_files.2.fq")
 		else:
 			self._tmp_fq2_fn = "/dev/null"
 

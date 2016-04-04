@@ -6,6 +6,11 @@ import os
 class FqCreator:
 	"""Class for writing RNF reads to FASTQ files.
 
+	Every new read is added to the internal buffer. If read tuple ID is different,
+	buffer is flushed. Hence, reads from the same tuple must be added in a series.
+	It does not matter in which order are blocks reported and with which exact reads,
+	they will be sorted during flushing.
+
 	Args:
 		fastq_fo (str): Output FASTQ file - file object.
 		read_tuple_id_width (int): Maximal expected string length of read tuple ID.
@@ -38,44 +43,47 @@ class FqCreator:
 		self.current_read_tuple_id=None
 		self.empty()
 
+	def __del__(self):
+		self.flush_read_tuple()
+
 	def flush_read_tuple(self):
 		"""Flush the internal buffer of reads.
 		"""
-		#print("flush")
-		suffix_comment_buffer=[]
-		if self._info_simulator is not None:
-			suffix_comment_buffer.append(self._info_simulator)
-		if self._info_reads_in_tuple:
-			#todo: orientation (FF, FR, etc.)
-			#orientation="".join([])
-			suffix_comment_buffer.append("reads-in-tuple:{}".format(len(self.seqs_bases)))
-		if len(suffix_comment_buffer)!=0:
-			suffix_comment="[{}]".format(",".join(suffix_comment_buffer))
-		else:
-			suffix_comment=""
+		if not self.is_empty():
+			suffix_comment_buffer=[]
+			if self._info_simulator is not None:
+				suffix_comment_buffer.append(self._info_simulator)
+			if self._info_reads_in_tuple:
+				#todo: orientation (FF, FR, etc.)
+				#orientation="".join([])
+				suffix_comment_buffer.append("reads-in-tuple:{}".format(len(self.seqs_bases)))
+			if len(suffix_comment_buffer)!=0:
+				suffix_comment="[{}]".format(",".join(suffix_comment_buffer))
+			else:
+				suffix_comment=""
 
-		rnf_name=self._rnf_profile.get_rnf_name(
-					rnftools.rnfformat.ReadTuple(
-							segments=self.segments,
-							read_tuple_id=self.current_read_tuple_id,
-							suffix=suffix_comment,
-						)
-				)
-		fq_reads = [
-			os.linesep.join([
-					"@{rnf_name}{read_suffix}".format(
-							rnf_name=rnf_name,
-							read_suffix="/{}".format(str(i+1)) if len(self.seqs_bases)>1 else "",
-						),
-					self.seqs_bases[i],
-					"+",
-					self.seqs_qualities[i],
-				])
-			for i in range(len(self.seqs_bases))
-		]
-		self._fq_file.write(os.linesep.join(fq_reads))
-		self._fq_file.write(os.linesep)
-		self.empty()
+			rnf_name=self._rnf_profile.get_rnf_name(
+						rnftools.rnfformat.ReadTuple(
+								segments=self.segments,
+								read_tuple_id=self.current_read_tuple_id,
+								suffix=suffix_comment,
+							)
+					)
+			fq_reads = [
+				os.linesep.join([
+						"@{rnf_name}{read_suffix}".format(
+								rnf_name=rnf_name,
+								read_suffix="/{}".format(str(i+1)) if len(self.seqs_bases)>1 else "",
+							),
+						self.seqs_bases[i],
+						"+",
+						self.seqs_qualities[i],
+					])
+				for i in range(len(self.seqs_bases))
+			]
+			self._fq_file.write(os.linesep.join(fq_reads))
+			self._fq_file.write(os.linesep)
+			self.empty()
 
 	def empty(self):
 		"""Empty all internal buffers.
@@ -84,6 +92,12 @@ class FqCreator:
 		self.seqs_qualities=[]
 		self.segments=[]
 
+	def is_empty(self):
+		"""All internal buffer empty?
+		"""
+		return self.seqs_bases==[] and self.seqs_qualities==[] and self.segments==[]
+
+
 	def add_read(self,
 				read_tuple_id,
 				bases,
@@ -91,7 +105,7 @@ class FqCreator:
 				segments,
 			):
 
-		"""Add a new read to the current buffer. If it is a new read tuple, the buffer will be flushed.
+		"""Add a new read to the current buffer. If it is a new read tuple (detected from ID), the buffer will be flushed.
 
 		Args:
 			read_tuple_id (int): ID of the read tuple.
@@ -104,7 +118,7 @@ class FqCreator:
 		assert type(qualities) is str, "Wrong type of qualities: '{}'".format(qualities)
 		assert type(segments) is tuple or type(segments) is list
 
-		if self.current_read_tuple_id!=read_tuple_id and self.current_read_tuple_id is not None:
+		if self.current_read_tuple_id!=read_tuple_id:
 			self.flush_read_tuple()
 		self.current_read_tuple_id=read_tuple_id
 

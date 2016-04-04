@@ -147,6 +147,7 @@ def dwgsim2rnf(args):
 		genome_id=args.genome_id,
 		number_of_read_tuples=10**9,
 		allow_unmapped=args.allow_unmapped,
+		estimate_unknown_values=args.estimate_unknown_values,
 	)
 
 def add_dwgsim_parser(subparsers,subcommand,help,description):
@@ -156,8 +157,15 @@ def add_dwgsim_parser(subparsers,subcommand,help,description):
 			'-p','--dwgsim-prefix',
 			type=str,
 			metavar='str',
+			required=True,
 			dest='dwgsim_prefix',
 			help='Prefix for DwgSim.',
+		)
+	parser_dwgsim2rnf.add_argument(
+			'-e','--estimate-unknown',
+			action='store_true',
+			dest='estimate_unknown_values',
+			help='Estimate unknown values.',
 		)
 	_add_shared_params(parser_dwgsim2rnf,unmapped_switcher=True)
 
@@ -417,64 +425,134 @@ def add_et2roc_parser(subparsers,subcommand,help,description):
 # CHECK
 ################################
 
-def check(args):
-
-	print("Checking the latest version.")
-	print()
-
-	import xmlrpc
-	import pip
+def _max_version(versions):
 	from distutils.version import LooseVersion as V
 
-	update=False
-	ok=True
-	try:
-		pypi = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
-		print ('{pkg_info:20} {msg:20} {msg2:20}'.format(pkg_info="package", msg="installed",msg2="available"))
-		print ("="*70)
-		for dist in pip.get_installed_distributions():
-			if dist.project_name.lower() in ["rnftools","smbl"]:
-				ver1=V(dist.version)
-				comparison=" "
-				available = pypi.package_releases(dist.project_name)
-				if not available:
-					# Try to capitalize pkg name
-					available = pypi.package_releases(dist.project_name.capitalize())
-				    #
-				if available:
-					ver2=V(available[0])
-					if ver1>ver2:
-						comparison=">"
-					elif ver1==ver2:
-						comparison="="
-					else:
-						comparison="<"
-						update=True
-				else:
-					ver2 = 'no releases at pypi'
+	max_ver=None
+	for version in versions:
+		version=str(version)
+		if max_ver is None:
+			max_ver=version
+		else:
+			if V(version)>V(max_ver):
+				max_ver=version
+	return max_ver
 
-				pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
-				print ('{pkg:20} {installed:15} {comp:4} {available:20}'.format(
-							pkg=dist.project_name,
-							installed=str(ver1),
-							comp=comparison,
-							available=str(ver2)
-						)
-					)
-	except:
-		ok=False
+def _print_package_line(package,inst_ver,comp,av_ver):
+	print ('{:20} {:15} {:4} {:20}'.format(package,inst_ver,comp,av_ver))
+
+def check(args):
+
+	import xmlrpc.client
+	import pkg_resources
+	import socket
+	from distutils.version import LooseVersion as V
+
+	print("Checking the latest version. Please note that this is a very experimental subcommand.")
 	print()
-	if update and ok:
+
+	_print_package_line("package","installed","","available")
+	print ("="*70)
+	for package in ["RNFtools","SMBL"]:
+		# 1) get version on PyPI
+		ver_web="N/A"
+		try:
+			pypi_client = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
+			available = pypi_client.package_releases(package)
+			ver_web_max=_max_version(available)
+			if ver_web_max is not None:
+				ver_web=ver_web_max
+		except socket.error:
+			ver_web="N/A"
+
+		# 2) get installed version
+		try:
+			ver_installed=pkg_resources.require(package)[0].version
+		except:
+			ver_installed="N/A"
+		
+		# 3) print summary
+		versions_available="N/A" not in [ver_installed,ver_web]
+		update=False
+		if versions_available:
+			if V(ver_installed)>V(ver_web):
+				comparison=">"
+			elif V(ver_installed)==V(ver_web):
+				comparison="="
+			else:
+				comparison="<"
+				update=True
+		else:
+			comparison=" "
+
+		#pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
+		_print_package_line(package,ver_installed,comparison,ver_web)
+
+	if update:
+		print()
 		print("An update is available. You can install the latest version using by")
 		print("   pip3 install --upgrade rnftools smbl")
 		print()
 		print("Note that pip3 may be available under a different name (pip-3, pip-3.4, etc.).")
 		print("Root account might be required for this operation.")
-	elif ok:
+	elif versions_available:
+		print()
 		print("Your installation is up-to-date.")
-	else:
-		print("Some problem with connection to the PyPI server occurred.")
-		sys.exit(1)
+
+
+	# import xmlrpc
+	# import pip
+	# from distutils.version import LooseVersion as V
+
+	# update=False
+	# ok=True
+	# try:
+	# 	pypi = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
+	# 	print ('{pkg_info:20} {msg:20} {msg2:20}'.format(pkg_info="package", msg="installed",msg2="available"))
+	# 	print ("="*70)
+	# 	for dist in pip.get_installed_distributions():
+	# 		if dist.project_name.lower() in ["rnftools","smbl"]:
+	# 			ver1=V(dist.version)
+	# 			comparison=" "
+	# 			available = pypi.package_releases(dist.project_name)
+	# 			if not available:
+	# 				# Try to capitalize pkg name
+	# 				available = pypi.package_releases(dist.project_name.capitalize())
+	# 			    #
+	# 			if available:
+	# 				ver2=V(available[0])
+	# 				if ver1>ver2:
+	# 					comparison=">"
+	# 				elif ver1==ver2:
+	# 					comparison="="
+	# 				else:
+	# 					comparison="<"
+	# 					update=True
+	# 			else:
+	# 				ver2 = 'no releases at pypi'
+
+	# 			pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
+	# 			print ('{pkg:20} {installed:15} {comp:4} {available:20}'.format(
+	# 						pkg=dist.project_name,
+	# 						installed=str(ver1),
+	# 						comp=comparison,
+	# 						available=str(ver2)
+	# 					)
+	# 				)
+	# except:
+	# 	ok=False
+	# print()
+	# if update and ok:
+	# 	print("An update is available. You can install the latest version using by")
+	# 	print("   pip3 install --upgrade rnftools smbl")
+	# 	print()
+	# 	print("Note that pip3 may be available under a different name (pip-3, pip-3.4, etc.).")
+	# 	print("Root account might be required for this operation.")
+	# elif ok:
+	# 	print("Your installation is up-to-date.")
+	# else:
+	# 	print("Some problem with connection to the PyPI server occurred.")
+	# 	sys.exit(1)
 
 
 def add_check_parser(subparsers,subcommand,help,description):
@@ -489,20 +567,19 @@ def add_check_parser(subparsers,subcommand,help,description):
 
 def publication(args):
 	print()
-	print("-------------------------------------------------------------------------------------------")
+	print("--------------------------------------------------------------------------------------------")
 	print("  K. Brinda, V. Boeva, G. Kucherov: RNF: a general framework to evaluate NGS read mappers.")
-	print("             arXiv:1504.00556 [q-bio.GN], accepted to Bioinformatics, 2015.")
-	print("-------------------------------------------------------------------------------------------")
+	print("             Bioinformatics, 2015 [DOI:10.1093/bioinformatics/btv524].")
+	print("--------------------------------------------------------------------------------------------")
 	print()
 	print("@article{rnf,")
 	print("\tauthor  = {B{\\v r}inda, Karel AND Boeva, Valentina AND Kucherov, Gregory},")
 	print("\ttitle   = {RNF: a general framework to evaluate NGS read mappers},")
+	print("\tjournal = {Bioinformatics},")
 	print("\tyear    = {2015},")
-	print("\tvolume  = {abs/1504.00556},")
-	print("\tee      = {http://arxiv.org/abs/1504.00556},")
+	print("\tdoi     = {10.1093/bioinformatics/btv524}")
 	print("}")
 	print()
-
 
 def add_publication_parser(subparsers,subcommand,help,description):
 	parser_publication = subparsers.add_parser(subcommand,help=help,description=description)
