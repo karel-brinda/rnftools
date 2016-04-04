@@ -23,6 +23,7 @@ addons:
     - libbz2-dev
     - libboost-dev
     - git-svn
+#    - cython3
 #    - bats
 before_install:
 #- sudo apt-get update -qq
@@ -44,6 +45,7 @@ install:
 #- pip install --upgrade pip
 #- pip install -r requirements.txt
 #- sudo ./tests/tests_install_bats.sh
+- pip install cython
 - pip install --use-wheel --find-links=https://www.cgat.org/downloads/public/pysam/wheels/ -r requirements.txt
 - pip install .
 before_script:

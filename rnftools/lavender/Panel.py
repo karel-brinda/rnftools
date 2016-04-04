@@ -65,7 +65,6 @@ class Panel:
 
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
 		self._svg_fns=[] #os.path.join(self.panel_dir,"svg","_combined.svg")
-		self._pdf_fns=[] #os.path.join(self.panel_dir,"pdf","_combined.pdf")
 
 		bams_fns=glob.glob(os.path.join(bam_dir,"*.bam"))
 		self.bams=[
@@ -84,7 +83,7 @@ class Panel:
 		if len(self.bams)==0:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
-		for x in ["gp","html","roc","svg","pdf"]:
+		for x in ["gp","html","roc","svg"]:
 			smbl.utils.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
@@ -142,7 +141,6 @@ class Panel:
 				""".format(
 						html=self.bams[0]._html_fn,
 						svg=self.bams[0]._svg_fn,
-						pdf=self.bams[0]._pdf_fn,
 						panel_id=panel_id,
 					),
 			] + [
@@ -151,8 +149,6 @@ class Panel:
 					<div class="formats">
 						<img src="{svg}" />
 						<br />
-						<a href="{pdf}">PDF version</a>
-						|
 						<a href="{svg}">SVG version</a>
 						|
 						<a href="{gp}" type="text/plain">GP file</a>
@@ -160,11 +156,10 @@ class Panel:
 
 				""".format(
 						svg=svg,
-						pdf=pdf,
 						gp=self._gp_fn,
 					)
 
-				for (svg,pdf) in zip(self._svg_fns,self._pdf_fns)
+				for svg in self._svg_fns
 			]
 			
 
@@ -181,10 +176,6 @@ class Panel:
 
 		return self._svg_fns
 
-	def pdf_fns(self):
-		""" Get the PDF file names for the overall graphs. """
-		return self._pdf_fns
-
 	######################################
 	######################################
 
@@ -195,7 +186,6 @@ class Panel:
 				title,
 				x_run,
 				y_run,
-				pdf_size_cm,
 				svg_size_px,
 				key_position,
 			):
@@ -205,10 +195,8 @@ class Panel:
 
 		i=len(self.gp_plots)
 		svg_file = os.path.join(self.panel_dir,"svg","_combined_{}.svg".format(i))
-		pdf_file = os.path.join(self.panel_dir,"pdf","_combined_{}.pdf".format(i))
 
 		self._svg_fns.append(svg_file)
-		self._pdf_fns.append(pdf_file)
 
 		params = [
 			"",
@@ -242,19 +230,6 @@ class Panel:
 							)
 						for i in range(len(self.bams))
 			]
-
-		self.gp_plots.append( os.linesep.join(
-				[
-					"set termin pdf enhanced size {pdf_size} enhanced font 'Arial,12'".format(
-							pdf_size="{:.10f}cm,{:.10f}cm".format(pdf_size_cm[0],pdf_size_cm[1])
-						),
-					'set out "{}"'.format(pdf_file),
-					'set key spacing 0.8 opaque',
-				] + params + [
-
-					"plot \\"
-				] + plot + ["",""]
-			))
 
 		self.gp_plots.append( os.linesep.join(
 				[
@@ -313,5 +288,5 @@ class Panel:
 	def create_graphics(self):
 		"""Create images related to this panel."""
 
-		if len(self._svg_fns)+len(self._pdf_fns)>0:
+		if len(self._svg_fns)>0:
 			smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
