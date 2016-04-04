@@ -24,6 +24,8 @@ class Report:
 		allowed_delta (int): Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!).
 		default_x_run ((float,float)): Range for x-axis in GnuPlot plots.
 		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
+		default_pdf_size_cm ((float,float)): Legacy parameter which does not have any function.
+ 		default_svg_size_px ((int,int)): Size of SVG picture.
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
@@ -44,6 +46,7 @@ class Report:
 		panels=None,
 		default_x_run=(0.00001,1.0),
 		default_y_run=(60,100),
+		default_pdf_size_cm=(10,10),
 		default_svg_size_px=(640,640),
 		keep_intermediate_files=False,
 		compress_intermediate_files=True,
