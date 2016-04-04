@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
-set -eux
+set -eu
+set -o verbose
 set -o pipefail
 
 cd "$(dirname "$0")"

@@ -193,7 +193,7 @@ class Source(object):
 		read_tuple_id=0
 		last_read_tuple_name=None
 		with pysam.AlignmentFile(
-					filename=sam_fn,
+					sam_fn,
 					check_header=False,
 				) as samfile:
 			for alignment in samfile:
@@ -216,11 +216,11 @@ class Source(object):
 					direction  = "R"
 					bases      = "".join([reverse_complement_dict[nucl]
 						for nucl in alignment.seq[::-1]])
-					qualities  = alignment.qual[::-1]
+					qualities  = str(alignment.qual[::-1])
 				else:
 					direction  = "F"
 					bases      = alignment.seq[:]
-					qualities  = alignment.qual[:]
+					qualities  = str(alignment.qual[:])
 
 				# todo: are chromosomes in bam sorted correctly (the same order as in FASTA)?
 				if fai_index.dict_chr_ids!={}:

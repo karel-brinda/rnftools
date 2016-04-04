@@ -5,7 +5,7 @@ rule:
 		smbl.prog.SAMTOOLS,
 		smbl.prog.DWGSIM,
 		smbl.prog.WGSIM,
-		#smbl.prog.CURESIM,
+		smbl.prog.CURESIM,
 		smbl.prog.ART_ILLUMINA,
 		smbl.prog.MASON_SIMULATOR,
 

@@ -1,4 +1,4 @@
-pysam==0.9.0
+pysam==0.8.4
 pbr
 termcolor
 sphinx>=1.3
