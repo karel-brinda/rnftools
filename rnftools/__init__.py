@@ -48,7 +48,7 @@ if RNFTOOLS_CONF["print_info"]:
 	smbl.messages.message("Web:         http://karel-brinda.github.io/rnftools/",program="RNFtools")
 	smbl.messages.message("Contact:     Karel Brinda, karel.brinda@univ-mlv.fr",program="RNFtools")
 	smbl.messages.message("Publication: K. Brinda, V. Boeva, G. Kucherov. RNF: a general framework to evaluate",program="RNFtools")
-	smbl.messages.message("             NGS read mappers, Bioinformatics, 2015 [DOI:10.1093/bioinformatics/btv524].",program="RNFtools")
+	smbl.messages.message("             NGS read mappers, Bioinformatics 32(1), 2016 [DOI:10.1093/bioinformatics/btv524].",program="RNFtools")
 	smbl.messages.message("",program="RNFtools")
 
 

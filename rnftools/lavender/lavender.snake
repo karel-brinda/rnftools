@@ -6,7 +6,7 @@ rule lavender_clean:
 	run:
 		for report in rnftools.lavender.reports():
 			report.clean()
-		
+
 
 	##############
 	##############
@@ -29,11 +29,11 @@ for i, report in enumerate(rnftools.lavender.reports()):
 			rnftools.lavender.reports()[int(params.i)].create_html()
 
 
-	##############
-	##############
-	### PANNEL ###
-	##############
-	##############
+	#############
+	#############
+	### PANEL ###
+	#############
+	#############
 
 ####################
 # svg
@@ -46,10 +46,12 @@ for i, panel in enumerate(rnftools.lavender.panels()):
 			smbl.prog.GNUPLOT5,
 		output:
 			panel.svg_fns(),
+			panel.tar_fn(),
 		params:
 			i=str(i)
 		run:
 			rnftools.lavender.panels()[int(params.i)].create_graphics()
+			rnftools.lavender.panels()[int(params.i)].create_tar()
 
 ####################
 # gp
@@ -159,4 +161,3 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 			i=str(i)
 		run:
 			rnftools.lavender.bams()[int(params.i)].create_gp()
-

@@ -4,6 +4,8 @@ import smbl
 import snakemake
 import os
 import glob
+import tarfile
+import io
 
 from . import _default_gp_style_func
 
@@ -26,7 +28,7 @@ class Panel:
 		default_x_label (str): Label on x-axis.
 		title (str): Title of the panel (to be displayed).
 		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.
-	
+
 	Raises:
 		ValueError
 
@@ -64,6 +66,7 @@ class Panel:
 			assert len(res)>0
 
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
+		self._tar_fn=os.path.join(self.panel_dir,"tar","lavender_archive.tar")
 		self._svg_fns=[] #os.path.join(self.panel_dir,"svg","_combined.svg")
 
 		bams_fns=glob.glob(os.path.join(bam_dir,"*.bam"))
@@ -76,14 +79,14 @@ class Panel:
 					compress_intermediate_files=compress_intermediate_files,
 					default_x_axis=default_x_axis,
 					default_x_label=default_x_label,
-				) 
+				)
 				for bam_fn in sorted(bams_fns)
 			]
 
 		if len(self.bams)==0:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
-		for x in ["gp","html","roc","svg"]:
+		for x in ["gp","html","roc","svg","tar"]:
 			smbl.utils.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
@@ -111,8 +114,9 @@ class Panel:
 
 		panel_id="panel_{}".format(self.name)
 		return [
-				"<h2>{}</h2>".format(self.title)
-			] + [
+				"<h2>{}</h2>".format(self.title) +
+				'<a href="{}">Download data</a>'.format(self.tar_fn())
+				] + [
 				#list of links
 				(" <br />"+os.linesep).join(
 					[
@@ -129,7 +133,7 @@ class Panel:
 						for bam in self.bams
 					]
 
-				),
+				)+'<br /> '.format(self.tar_fn()),
 
 				#main graph
 				"""
@@ -161,10 +165,15 @@ class Panel:
 
 				for svg in self._svg_fns
 			]
-			
+
 
 	######################################
 	######################################
+
+	def tar_fn(self):
+		""" Get the TAR file name for the archive with data. """
+
+		return self._tar_fn
 
 	def gp_fn(self):
 		""" Get the GnuPlot file name for the overall graphs. """
@@ -191,7 +200,7 @@ class Panel:
 			):
 
 		x_gp=rnftools.lavender._format_xxx(self.default_x_axis)
-		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))	
+		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))
 
 		i=len(self.gp_plots)
 		svg_file = os.path.join(self.panel_dir,"svg","_combined_{}.svg".format(i))
@@ -210,10 +219,10 @@ class Panel:
 			'set x2ran [{xran}]'.format(
 						xran="{:.10f}:{:.10f}".format(x_run[0],x_run[1])
 					),
-			'set yran [{yran}]'.format(					
+			'set yran [{yran}]'.format(
 						yran="{:.10f}:{:.10f}".format(y_run[0],y_run[1]),
 					),
-			'set y2ran [{yran}]'.format(					
+			'set y2ran [{yran}]'.format(
 						yran="{:.10f}:{:.10f}".format(y_run[0],y_run[1]),
 					),
 			"",
@@ -273,7 +282,7 @@ class Panel:
 				set grid ytics lc rgb "#777777" lw 1 lt 0 front
 				set grid x2tics lc rgb "#777777" lw 1 lt 0 front
 
-				set datafile separator "\t"
+				set datafile separator "\\t"
 				set palette negative
 
 				{all_plots}
@@ -290,3 +299,65 @@ class Panel:
 
 		if len(self._svg_fns)>0:
 			smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+
+	def create_tar(self):
+
+		def add_file_to_tar(tar, orig_fn, new_fn, func=None):
+			tf = tarfile.TarInfo(name=new_fn)
+			with open(orig_fn) as f:
+				tfs=f.read()
+
+			if func is not None:
+				tfs=func(tfs)
+			tf.size=len(tfs)
+			tfs=io.BytesIO(tfs.encode('utf8'))
+			tar.addfile(tarinfo=tf, fileobj=tfs)
+
+		def add_text_to_tar(tar, new_fn, text, func=None):
+			tf = tarfile.TarInfo(name=new_fn)
+			if func is not None:
+				text=func(text)
+			tf.size=len(text)
+			tfs=io.BytesIO(text.encode('utf8'))
+			tar.addfile(tarinfo=tf, fileobj=tfs)
+
+		def strip_lines(text):
+			text=text.replace("\t"," ")
+			while text.find("  ")!=-1:
+				text=text.replace("  "," ")
+			lines=[x.strip() for x in text.strip().split("\n")]
+			return "\n".join(lines)+"\n"
+
+		tar = tarfile.TarFile(self._tar_fn,"w")
+		for i in range(len(self.bams)):
+			roc_fn=self.bams[i].roc_fn()
+			t_roc_fn=os.path.basename(roc_fn)
+
+			gp_fn=self.bams[i].gp_fn()
+			t_gp_fn=os.path.basename(gp_fn)
+
+			svg_fn=self.bams[i].svg_fn()
+			t_svg_fn=os.path.basename(svg_fn)
+
+			add_file_to_tar(tar,roc_fn,t_roc_fn)
+			add_file_to_tar(tar,gp_fn,t_gp_fn,lambda x: strip_lines(x.replace(roc_fn,t_roc_fn).replace(svg_fn,t_svg_fn)))
+
+		gp_fn=self._gp_fn
+		t_gp_fn=os.path.basename(gp_fn)
+		svg_dir=os.path.join(self.panel_dir,"svg")+"/"
+		roc_dir=os.path.join(self.panel_dir,"roc")+"/"
+		add_file_to_tar(tar,gp_fn,t_gp_fn,lambda x: strip_lines(x.replace(svg_dir,"").replace(roc_dir,"")))
+
+		makefile=[
+			".PHONY: all",
+			"all:",
+			"\tgnuplot *.gp",
+			"clean:",
+			"\trm -f *.svg",
+			"",
+		]
+		add_text_to_tar(tar,"Makefile","\n".join(makefile))
+
+		#for svg_fn in self._svg_fns:
+		#	t_roc_fn=os.path.basename(svg_fn)
+		#	add_to_tar(tar,svg_fn,t_svg_fn)
