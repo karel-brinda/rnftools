@@ -66,7 +66,7 @@ class Panel:
 			assert len(res)>0
 
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
-		self._tar_fn=os.path.join(self.panel_dir,"tar","lavender_archive.tar")
+		self._tar_fn=os.path.join(self.panel_dir,"tar","{title}.{panel}.tar".format(title=self.report.title,panel=self.title))
 		self._svg_fns=[] #os.path.join(self.panel_dir,"svg","_combined.svg")
 
 		bams_fns=glob.glob(os.path.join(bam_dir,"*.bam"))
