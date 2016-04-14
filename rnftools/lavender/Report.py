@@ -19,13 +19,14 @@ class Report:
 		name (str): Name of the report (name of output file and dir).
 		title (str): Title of the report (if None, then name is used).
 		description (str): Description of the report.
-		bam_dirs (list of str): Directories with BAM files.
-		panels (list of dicts): More advanced configuration of directories with BAM files.
+		bam_dirs (list of str): Directories with BAM files (this option is mutually exclusive with the 'panels' option).
+		panels (list of dicts): Advanced configuration for panels (list of dictionaries with the following keys: 'bam_dir' (mandatory); 'panel_dir', 'name', 'title' (optional)).
 		allowed_delta (int): Tolerance of difference of coordinates between true (i.e., expected) alignment and real alignment (very important parameter!).
 		default_x_run ((float,float)): Range for x-axis in GnuPlot plots.
 		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
-		default_pdf_size_cm ((float,float)): Legacy parameter which does not have any function.
+		default_pdf_size_cm ((float,float)): Legacy parameter (does not have any effect).
  		default_svg_size_px ((int,int)): Size of SVG picture.
+ 		render_pdf (bool): PDF files will be rendered from SVG (using 'svg2pdf' or 'convert' (from ImageMagick)).
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
@@ -48,6 +49,7 @@ class Report:
 		default_y_run=(60,100),
 		default_pdf_size_cm=(10,10),
 		default_svg_size_px=(640,640),
+		render_pdf=True,
 		keep_intermediate_files=False,
 		compress_intermediate_files=True,
 		default_x_axis="({m}+{w})/({M}+{m}+{w})",
@@ -68,6 +70,8 @@ class Report:
 		self.default_y_run=self._load_y_run(default_y_run)
 		self.default_svg_size_px=self._load_svg_size_px(default_svg_size_px)
 		self.default_x_label=default_x_label
+
+		self.render_pdf=render_pdf
 
 		self.allowed_delta=int(allowed_delta)
 		assert 0 <= allowed_delta
@@ -97,6 +101,7 @@ class Report:
 						default_x_axis=default_x_axis,
 						default_x_label=default_x_label,
 						gp_style_func=self._gp_style_func,
+						render_pdf=self.render_pdf,
 					)
 					for i in range(len(bam_dirs))
 				]
@@ -134,6 +139,7 @@ class Report:
 						default_x_axis=default_x_axis,
 						default_x_label=default_x_label,
 						gp_style_func=self._gp_style_func,
+						render_pdf=self.render_pdf,
 					)
 				)
 

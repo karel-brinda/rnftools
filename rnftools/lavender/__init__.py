@@ -72,6 +72,78 @@ def _default_gp_style_func(i,number):
 	color=colors[i % len(colors)]
 	return 'set style line {i} lt 1 pt {i} lc rgb "{color}";'.format(color=color,i=i+1)
 
+def _svg2pdf_cairo(svg_fn,pdf_fn):
+	import cairosvg
+	cairosvg.svg2pdf(
+			file_obj=open(svg_fn, "rb"),
+			write_to=pdf_fn,
+		)
+	smbl.messages.message("'{}' has been successfully converted to '{}' using cairo".format(
+			svg_fn,
+			pdf_fn,
+		),program="RNFtools")
+
+def _svg2pdf_svglib(svg_fn,pdf_fn):
+	#from svglib.svglib import svg2rlg
+
+	from svg2rlg import svg2rlg
+	from reportlab.graphics import renderPDF
+	drawing = svg2rlg(svg_fn)
+	renderPDF.drawToFile(drawing, pdf_fn)
+	smbl.messages.message("'{}' has been successfully converted to '{}' using svglib".format(
+			svg_fn,
+			pdf_fn
+		),program="RNFtools")
+
+def _svg2pdf_svg2pdf(svg_fn,pdf_fn):
+	smbl.utils.shell('svg2pdf "{svg}" "{pdf}"'.format(
+			svg_fn,
+			pdf_fn,
+		))
+	smbl.messages.message("'{}' has been successfully converted to '{}' using svg2pdf".format(
+			svg_fn,
+			pdf_fn,
+		),program="RNFtools")
+
+def _svg2pdf_imagemagick(svg_fn,pdf_fn,dpi=200):
+	smbl.utils.shell('convert -density {dpi} "{svg}" "{pdf}"'.format(
+			dpi=200,
+			svg=svg_fn,
+			pdf=pdf_fn,
+		))
+	smbl.messages.message("'{}' has been successfully converted to '{}' using imagemagick".format(
+			svg_fn,
+			pdf_fn,
+		),program="RNFtools")
+
+def _svg2pdf(svg_fn,pdf_fn,method):
+
+	if method=="cairo":
+		_svg2pdf_cairo(svg_fn,pdf_fn)
+		
+	elif method=="svglib":	
+		_svg2pdf_svglib(svg_fn,pdf_fn)
+
+	elif method=="imagemagick":
+		_svg2pdf_imagemagick(svg_fn,pdf_fn)
+
+	elif method=="any":
+		try:
+			_svg2pdf_cairo(svg_fn,pdf_fn)
+		except:
+			try:
+				_svg2pdf_svglib(svg_fn,pdf_fn)
+			except:
+				try:
+					_svg2pdf_svg2pdf(svg_fn,pdf_fn)
+				except:
+					_svg2pdf_imagemagick(svg_fn,pdf_fn)
+
+	else:
+		raise ValueError("Unknown PDF rendering method '{}'.".format(method))
+
+
+
 from .Report import *
 from .Panel import *
 from .Bam import *
