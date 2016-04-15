@@ -8,4 +8,5 @@ snakemake
 smbl>=1.4.5
 cairosvg
 reportlab
+svg42pdf
 #argparse; python_version=='2.6'

@@ -9,7 +9,7 @@ import io
 import re
 
 from . import _default_gp_style_func
-from . import _svg2pdf
+from svg42pdf import svg42pdf
 
 #############
 #############
@@ -25,7 +25,7 @@ class Panel:
 		panel_dir (str): Directory with auxiliary files for this panel.
 		name (str): Name of the panel (used for CSS, etc.).
 		title (str): Title of the panel (to be displayed).
- 		render_pdf (bool): PDF files will be rendered from SVG (using 'svg2pdf' or 'convert' (from ImageMagick)).
+ 		render_pdf_method (str): Method for svg42pdf to render PDF (None / 'any' / 'cairo' / 'reportlab' / 'inkscape' / 'imagemagick' / 'wkhtmltopdf').
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
@@ -43,7 +43,7 @@ class Panel:
 			panel_dir,
 			name,
 			title,
-			render_pdf,
+			render_pdf_method,
 			keep_intermediate_files,
 			compress_intermediate_files,
 			default_x_axis,
@@ -59,7 +59,7 @@ class Panel:
 		self.default_x_axis=default_x_axis
 		self.default_x_label=default_x_label
 
-		self.render_pdf=render_pdf
+		self.render_pdf_method=render_pdf_method
 
 		self.gp_plots = []
 
@@ -81,6 +81,7 @@ class Panel:
 					bam_fn=bam_fn,
 					panel=self,
 					name=os.path.basename(bam_fn).replace(".bam",""),
+					render_pdf_method=self.render_pdf_method,
 					keep_intermediate_files=keep_intermediate_files,
 					compress_intermediate_files=compress_intermediate_files,
 					default_x_axis=default_x_axis,
@@ -306,10 +307,10 @@ class Panel:
 		if len(self._svg_fns)>0:
 			smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
 
-			if self.render_pdf:
+			if self.render_pdf_method is not None:
 				for svg_fn in self._svg_fns:
 					pdf_fn=re.sub(r'\.svg$',r'.pdf',svg_fn)
-					_svg2pdf(svg_fn,pdf_fn,method="svglib")
+					svg42pdf(svg_fn,pdf_fn,method=self.render_pdf_method)
 
 	def create_tar(self):
 

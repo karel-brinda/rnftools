@@ -8,6 +8,9 @@ import os
 import sys
 import pysam
 import gzip
+import re
+
+from svg42pdf import svg42pdf
 
 ###########
 ###########
@@ -22,6 +25,7 @@ class Bam:
 		bam_fn (str): BAM filename.
 		name (str): Name for this report.
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
+ 		render_pdf_method (str): Method for svg42pdf to render PDF (None / 'any' / 'cairo' / 'reportlab' / 'inkscape' / 'imagemagick' / 'wkhtmltopdf').
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
 		default_x_label (str): Label on x-axis.
@@ -32,6 +36,7 @@ class Bam:
 				panel,
 				bam_fn,
 				name,
+				render_pdf_method,
 				keep_intermediate_files,
 				compress_intermediate_files,
 				default_x_axis,
@@ -42,6 +47,7 @@ class Bam:
 		self.report=panel.get_report()
 		self.name=name
 
+		self.render_pdf_method=render_pdf_method
 		self.keep_intermediate_files=keep_intermediate_files
 		self.compress_intermediate_files=compress_intermediate_files
 		self.default_x_axis=default_x_axis
@@ -699,6 +705,11 @@ class Bam:
 		"""Create images related to this BAM file using GnuPlot."""
 
 		smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+
+		if self.render_pdf_method is not None:
+			svg_fn=self._svg_fn
+			pdf_fn=re.sub(r'\.svg$',r'.pdf',svg_fn)
+			svg42pdf(svg_fn,pdf_fn,method=self.render_pdf_method)
 
 
 	############################

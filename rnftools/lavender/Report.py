@@ -26,7 +26,7 @@ class Report:
 		default_y_run ((float,float)): Range for y-axis in GnuPlot plots.
 		default_pdf_size_cm ((float,float)): Legacy parameter (does not have any effect).
  		default_svg_size_px ((int,int)): Size of SVG picture.
- 		render_pdf (bool): PDF files will be rendered from SVG (using 'svg2pdf' or 'convert' (from ImageMagick)).
+ 		render_pdf_method (str): Method for svg42pdf to render PDF (None / 'any' (default) / 'cairo' / 'reportlab' / 'inkscape' / 'imagemagick' / 'wkhtmltopdf').
 		keep_intermediate_files (bool): Keep files created in intermediate steps during evaluation.
 		compress_intermediate_files (bool): Compress files created in intermediate steps during evaluation.
 		default_x_axis (str): Values on x-axis, e.g., "({m}+{w})/({M}+{m}+{w})".
@@ -49,7 +49,7 @@ class Report:
 		default_y_run=(60,100),
 		default_pdf_size_cm=(10,10),
 		default_svg_size_px=(640,640),
-		render_pdf=True,
+		render_pdf_method='any',
 		keep_intermediate_files=False,
 		compress_intermediate_files=True,
 		default_x_axis="({m}+{w})/({M}+{m}+{w})",
@@ -71,7 +71,7 @@ class Report:
 		self.default_svg_size_px=self._load_svg_size_px(default_svg_size_px)
 		self.default_x_label=default_x_label
 
-		self.render_pdf=render_pdf
+		self.render_pdf_method=render_pdf_method
 
 		self.allowed_delta=int(allowed_delta)
 		assert 0 <= allowed_delta
@@ -101,7 +101,7 @@ class Report:
 						default_x_axis=default_x_axis,
 						default_x_label=default_x_label,
 						gp_style_func=self._gp_style_func,
-						render_pdf=self.render_pdf,
+						render_pdf_method=self.render_pdf_method,
 					)
 					for i in range(len(bam_dirs))
 				]
@@ -139,7 +139,7 @@ class Report:
 						default_x_axis=default_x_axis,
 						default_x_label=default_x_label,
 						gp_style_func=self._gp_style_func,
-						render_pdf=self.render_pdf,
+						render_pdf_method=self.render_pdf_method,
 					)
 				)
 

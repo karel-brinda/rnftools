@@ -8,7 +8,7 @@ This is the manual of RNFtools which is an associate software package for **Read
 .. admonition:: Publication
 	:class: error
 
-	K. Břinda, V. Boeva, G. Kucherov. **RNF: a general framework to evaluate NGS read mappers**. Bioinformatics [doi:`10.1093/bioinformatics/btv524`_], 2015.
+	K. Břinda, V. Boeva, G. Kucherov. **RNF: a general framework to evaluate NGS read mappers**. Bioinformatics 32(1), pp. 136-139, 2016. [doi:`10.1093/bioinformatics/btv524`_]
 
 Links
 -----
