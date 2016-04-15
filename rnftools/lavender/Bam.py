@@ -63,7 +63,8 @@ class Bam:
 			self._es_fn  = os.path.join(self.panel.get_panel_dir(),"es",self.name+".es")
 			self._et_fn  = os.path.join(self.panel.get_panel_dir(),"et",self.name+".et")
 		self._roc_fn  = os.path.join(self.panel.get_panel_dir(),"roc",self.name+".roc")
-		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"svg",self.name+".svg")
+		self._svg_fn  = os.path.join(self.panel.get_panel_dir(),"graphics",self.name+".svg")
+		self._pdf_fn  = re.sub(r'\.svg$',r'.pdf',self._svg_fn)
 
 		self.bam_id=len(rnftools.lavender.bams())
 		rnftools.lavender.add_bam(self)
@@ -106,6 +107,10 @@ class Bam:
 	def svg_fn(self):
 		"""Get name of the SVG file."""
 		return self._svg_fn
+
+	def pdf_fn(self):
+		"""Get name of the SVG file."""
+		return self._pdf_fn
 
 
 	############################
@@ -708,7 +713,7 @@ class Bam:
 
 		if self.render_pdf_method is not None:
 			svg_fn=self._svg_fn
-			pdf_fn=re.sub(r'\.svg$',r'.pdf',svg_fn)
+			pdf_fn=self._pdf_fn
 			svg42pdf(svg_fn,pdf_fn,method=self.render_pdf_method)
 
 

@@ -73,7 +73,8 @@ class Panel:
 
 		self._gp_fn=os.path.join(self.panel_dir,"gp","_combined.gp")
 		self._tar_fn=os.path.join(self.panel_dir,"tar","{title}.{panel}.tar".format(title=self.report.title,panel=self.title))
-		self._svg_fns=[] #os.path.join(self.panel_dir,"svg","_combined.svg")
+		self._svg_fns=[]
+		self._pdf_fns=[]
 
 		bams_fns=glob.glob(os.path.join(bam_dir,"*.bam"))
 		self.bams=[
@@ -93,7 +94,7 @@ class Panel:
 		if len(self.bams)==0:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
-		for x in ["gp","html","roc","svg","tar"]:
+		for x in ["gp","html","roc","graphics","tar"]:
 			smbl.utils.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
@@ -188,9 +189,15 @@ class Panel:
 		return self._gp_fn
 
 	def svg_fns(self):
-		""" Get the SVG file names for the overall graphs. """
+		""" Get the PDF file names for the overall graphs (empty list if they are not rendered). """
 
 		return self._svg_fns
+
+	def pdf_fns(self):
+		if self.render_pdf_method is None:
+			return []
+		else:
+			return [re.sub(r'\.svg$',r'.pdf',svg_fn) for svg_fn in self._svg_fns]
 
 	######################################
 	######################################
@@ -210,7 +217,7 @@ class Panel:
 		y_gp=rnftools.lavender._format_xxx("({})*100".format(y))
 
 		i=len(self.gp_plots)
-		svg_file = os.path.join(self.panel_dir,"svg","_combined_{}.svg".format(i))
+		svg_file = os.path.join(self.panel_dir,"graphics","_combined_{}.svg".format(i))
 
 		self._svg_fns.append(svg_file)
 
@@ -356,7 +363,7 @@ class Panel:
 
 		gp_fn=self._gp_fn
 		t_gp_fn=os.path.basename(gp_fn)
-		svg_dir=os.path.join(self.panel_dir,"svg")+"/"
+		svg_dir=os.path.join(self.panel_dir,"graphics")+"/"
 		roc_dir=os.path.join(self.panel_dir,"roc")+"/"
 		add_file_to_tar(tar,gp_fn,t_gp_fn,lambda x: strip_lines(x.replace(svg_dir,"").replace(roc_dir,"")))
 
