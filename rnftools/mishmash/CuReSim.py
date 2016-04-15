@@ -110,10 +110,9 @@ class CuReSim(Source):
 			)
 
 			curesim_fastq_fn=os.path.join(
-						self.get_dir(),
-						"output.fastq",
-					)
-
+					self.get_dir(),
+					"output.fastq",
+				)
 
 			with open(curesim_fastq_fn,"r+") as curesim_fastq_fo:
 				with open(self._fai_fn) as fai_fo:
