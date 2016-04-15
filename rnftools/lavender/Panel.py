@@ -7,6 +7,7 @@ import glob
 import tarfile
 import io
 import re
+import textwrap
 
 from . import _default_gp_style_func
 from svg42pdf import svg42pdf
@@ -222,7 +223,7 @@ class Panel:
 		self._svg_fns.append(svg_file)
 
 		params = [
-			"",
+			"##################################################",
 			'set title "{{/:Bold {}}}"'.format(title),
 			'set key {}'.format(key_position),
 			'set x2lab "{}"'.format(x_label),
@@ -243,8 +244,7 @@ class Panel:
 		]
 
 		plot =	[
-					""""{roc_fn}" using ({x}):({y}) \
-						with lp ls {i} ps 0.8 title "  {basename}" noenhanced,\\""".format(
+					""""{roc_fn}" using ({x}):({y}) with lp ls {i} ps 0.8 title "  {basename}" noenhanced,\\""".format(
 								x=x_gp,
 								y=y_gp,
 								roc_fn=self.bams[i].roc_fn(),
@@ -274,39 +274,48 @@ class Panel:
 
 		nb_bams=len(self.bams)
 
+		gp_parts = [
+			textwrap.dedent(
+				"""
+					set log x
+					set log x2
+
+
+					#set format x "10^{{%L}}"
+					set format x2 "10^{{%L}}"
+					set x2tics
+					unset xtics
+				"""
+			),
+
+			os.linesep.join([self._gp_style_func(i,nb_bams) for i in range(nb_bams)]),
+
+			textwrap.dedent(
+				"""
+					set format y "%g %%"
+					set ytics
+
+					set pointsize 1.5
+
+					set grid ytics lc rgb "#777777" lw 1 lt 0 front
+					set grid x2tics lc rgb "#777777" lw 1 lt 0 front
+
+					set datafile separator "\\t"
+					set palette negative
+				"""
+			),
+			
+			os.linesep.join(self.gp_plots)
+		]
+
+		gp_src = os.linesep.join(gp_parts)
+		#.format(
+		#	x_lab=self.default_x_label,
+		#)
+
 		with open(self._gp_fn,"w+") as f:
+			f.write(gp_src)
 
-			f.write("""
-				set log x
-				set log x2
-
-
-				#set format x "10^{{%L}}"
-				set format x2 "10^{{%L}}"
-				set x2tics
-				unset xtics
-
-				{styles}
-
-				set format y "%g %%"
-				set ytics
-
-				set pointsize 1.5
-
-				set grid ytics lc rgb "#777777" lw 1 lt 0 front
-				set grid x2tics lc rgb "#777777" lw 1 lt 0 front
-
-				set datafile separator "\\t"
-				set palette negative
-
-				{all_plots}
-
-				""".format(
-					all_plots=os.linesep.join(self.gp_plots),
-					styles=os.linesep.join([self._gp_style_func(i,nb_bams) for i in range(nb_bams)]),
-					x_lab=self.default_x_label,
-				)
-			)
 
 	def create_graphics(self):
 		"""Create images related to this panel."""

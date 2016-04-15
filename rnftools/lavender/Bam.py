@@ -9,6 +9,8 @@ import sys
 import pysam
 import gzip
 import re
+import textwrap
+import tidylib
 
 from svg42pdf import svg42pdf
 
@@ -658,7 +660,7 @@ class Bam:
 			for i in range(len(categories_order))
 		]
 
-		plot=os.linesep.join((["plot \\"] + plot_lines))
+		plot=os.linesep.join((["plot \\"] + plot_lines + [""]))
 
 		with open(self._gp_fn,"w+") as gp:
 			gp_content="""
@@ -675,7 +677,6 @@ class Bam:
 				set x2tics
 				unset xtics
 
-
 				set ylab "Part of all reads (%)"
 
 				set format y "%g %%"
@@ -687,22 +688,24 @@ class Bam:
 				set grid ytics lc rgb "#777777" lw 1 lt 0 front
 				set grid x2tics lc rgb "#777777" lw 1 lt 0 front
 
-				set datafile separator "\t"
+				set datafile separator "\\t"
 				set palette negative
 
 				set termin svg size {svg_size} enhanced
 				set out "{svg_fn}"
 				set key spacing 0.8 opaque width -5
-				{plot}
 			""".format(
 				svg_fn=self._svg_fn,
 				xran="{:.10f}:{:.10f}".format(self.report.default_x_run[0],self.report.default_x_run[1]),
 				yran="{:.10f}:{:.10f}".format(self.report.default_y_run[0],self.report.default_y_run[1]),
 				svg_size="{},{}".format(self.report.default_svg_size_px[0],self.report.default_svg_size_px[1]),
 				title=os.path.basename(self._bam_fn)[:-4],
-				plot=plot,
 				x_lab=self.default_x_label,
 			)
+			gp_content=textwrap.dedent(gp_content)+"\n"+plot
+			#gp_lines=gp_content.split("\n")
+			#gp_lines=[x.strip() for x in gp_lines]
+			#gp_content=gp_lines.join("\n")
 			gp.write(gp_content)
 
 
@@ -843,6 +846,15 @@ class Bam:
 
 			eval_info.append("</table>")
 
+			css_src=textwrap.dedent("""
+				table            {border-collapse:collapse;}
+				td               {border: solid #aaaaff 1px;padding:4px;text-align:right;}
+				colgroup, thead  {border: solid black 2px;padding 2px;}
+				.link_to_top     {font-size:10pt;}
+				.desc            {color:#aaa;}
+				.formats         {text-align:left;margin-bottom:20px;}
+			""")
+
 
 			html_src="""<!DOCTYPE html>
 			<html>
@@ -850,12 +862,7 @@ class Bam:
 				<meta charset="UTF-8" />
 				<title>{name}</title>
 				<style type="text/css">
-					table            {{border-collapse:collapse;}}
-					td               {{border: solid #aaaaff 1px;padding:4px;text-align:right;}}
-					colgroup, thead  {{border: solid black 2px;padding 2px;}}
-					.link_to_top     {{font-size:10pt;}}
-					.desc            {{color:#aaa;}}
-					.formats         {{text-align:left;margin-bottom:20px;}}
+				{css}
 				</style>
 			</head>
 			<body>
@@ -1004,6 +1011,7 @@ class Bam:
 			""".format(
 					name=self.name,
 					tbody=tbody,
+					css=css_src,
 					svg=os.path.relpath(
 						self._svg_fn,
 						os.path.dirname(self._html_fn)
@@ -1035,4 +1043,5 @@ class Bam:
 						)
 				)
 
-			html.write(html_src)
+			tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
+			html.write(tidy_html_src)

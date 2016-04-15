@@ -2,6 +2,8 @@ import rnftools
 import snakemake
 import os
 import collections
+import textwrap
+import tidylib
 
 
 from . import DEFAULT_ALLOWED_DELTA
@@ -269,19 +271,23 @@ class Report:
 			])			
 
 		with open(self._html_fn,"w+") as f:
+			css_src=textwrap.dedent("""
+					.main_table                       {border-collapse:collapse;margin-top:15px;}
+					td                                {border: solid #aaaaff 1px;padding:4px;vertical-alignment:top;}
+					colgroup, thead                   {border: solid black 2px;padding 2px;}
+					.configuration                    {font-size:85%;}
+					.configuration, .configuration *  {margin:0;padding:0;}
+					.formats                          {text-align:center;margin:20px 0px;}
+					img                               {min-width:640px}
+			""")
+
 			html_src="""<!DOCTYPE html>
 			<html>
 			<head>
 				<meta charset="UTF-8" />
 				<title>{title}</title>
 				<style type="text/css">
-					.main_table                       {{border-collapse:collapse;margin-top:15px;}}
-					td                                {{border: solid #aaaaff 1px;padding:4px;vertical-alignment:top;}}
-					colgroup, thead                   {{border: solid black 2px;padding 2px;}}
-					.configuration                    {{font-size:85%;}}
-					.configuration, .configuration *  {{margin:0;padding:0;}}
-					.formats                          {{text-align:center;margin:20px 0px;}}
-					img                               {{min-width:640px}}
+				{css}
 				</style>
 			</head>
 			<body>
@@ -295,10 +301,12 @@ class Report:
 			</body>
 			""".format(
 					html_table=html_table,
+					css=css_src,
 					title=self.title,
 					description=self.description,
 				)
-			f.write(html_src)
+			tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
+			f.write(tidy_html_src)
 
 	######################################
 	######################################

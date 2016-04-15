@@ -9,4 +9,4 @@ smbl>=1.4.5
 cairosvg
 reportlab
 svg42pdf>=0.1.1.dev1
-#argparse; python_version=='2.6'
+pytidylib
