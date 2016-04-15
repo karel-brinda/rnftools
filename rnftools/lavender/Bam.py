@@ -10,7 +10,6 @@ import pysam
 import gzip
 import re
 import textwrap
-import tidylib
 
 from svg42pdf import svg42pdf
 
@@ -1043,5 +1042,10 @@ class Bam:
 						)
 				)
 
-			tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
+			try:
+				import tidylib
+				tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
+			except:
+				tidy_html_src=html_src
+
 			html.write(tidy_html_src)

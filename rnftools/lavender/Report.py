@@ -3,8 +3,6 @@ import snakemake
 import os
 import collections
 import textwrap
-import tidylib
-
 
 from . import DEFAULT_ALLOWED_DELTA
 from . import _default_gp_style_func
@@ -305,7 +303,13 @@ class Report:
 					title=self.title,
 					description=self.description,
 				)
-			tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
+
+			try:
+				import tidylib
+				tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
+			except:
+				tidy_html_src=html_src
+
 			f.write(tidy_html_src)
 
 	######################################
