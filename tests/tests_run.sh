@@ -185,10 +185,6 @@
 	../examples/04_*/run.sh -p --cores
 }
 
-@test "EXAMPLES: 04 RNF" {
-	./_test_rnf.sh ../examples/04_*/
-}
-
 #################################################
 
 @test "DOCUMENTATION" {
