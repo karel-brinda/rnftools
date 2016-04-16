@@ -11,6 +11,6 @@ cd "$(dirname "$0")"
 )
 
 (
-	cd reports
+	cd report
 	snakemake "$@"
 )
