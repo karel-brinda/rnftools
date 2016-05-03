@@ -27,7 +27,6 @@ git clone https://github.com/karel-brinda/rnftools.git
 cd rnftools
 docker-compose build
 docker-compose up -d
-
 ```
 
 This will open a browser to an iPython Notebook complete with all of the rnftools examples.
