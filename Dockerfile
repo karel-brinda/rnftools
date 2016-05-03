@@ -8,6 +8,8 @@ RUN tar zxvf PDFlib-Lite-7.0.5.tar.gz && \
   make && \
   make install
 
+ENV LD_LIBRARY_PATH /usr/local/lib
+
 RUN pip install jupyter
 RUN pip install pyvim
 RUN pip3 install rnftools
