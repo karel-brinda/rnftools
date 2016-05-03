@@ -17,20 +17,6 @@ software package which can:
 * convert non-RNF simulated reads to RNF (e.g., from SAM format);
 * transform genomic coordinates of RNF reads between different coordinate systems (using chain LiftOver format).
 
-Quickstart using Docker
------------------------
-
-First install docker.  If running on Mac or Windows, you can use `docker-machine ip` to get the docker host vm's IP address.  The following code assumes you are using the `default` docker-machine image.  If otherwise, change accordingly.
-
-```
-git clone https://github.com/karel-brinda/rnftools.git
-cd rnftools
-docker-compose build
-docker-compose up -d
-```
-
-This will open a browser to an iPython Notebook complete with all of the rnftools examples.
-
 Links
 -----
 
