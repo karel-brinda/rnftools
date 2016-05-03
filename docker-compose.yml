@@ -1,0 +1,6 @@
+rnftools:
+  build: .
+  ports:
+    - 28888:8888
+  volumes:
+    - ./examples:/examples
