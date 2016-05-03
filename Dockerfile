@@ -4,7 +4,7 @@ RUN wget -O PDFlib-Lite-7.0.5.tar.gz https://www.pdflib.com/binaries/PDFlib/705/
 
 RUN tar zxvf PDFlib-Lite-7.0.5.tar.gz && \
   cd PDFlib-Lite-7.0.5p3/ && \
-  ./configure --prefix /usr/local && \
+  ./configure --prefix=/usr/local && \
   make && \
   make install
 
