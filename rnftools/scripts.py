@@ -780,8 +780,8 @@ def add_liftover_parser(subparsers,subcommand,help,description):
 ################################################################
 ################################################################
 
-def default_func(args):
-	pass
+#def default_func(args):
+#	pass
 
 def rnftools_script():
 	# create the top-level parser
@@ -804,7 +804,7 @@ def rnftools_script():
 				)
 		)
 	#parser.add_argument('--version', action='version', version=rnftools.__version__)
-	parser.set_defaults(func=default_func)
+	#parser.set_defaults(func=default_func)
 	subparsers = parser.add_subparsers(
 			#help='----------------------------------------------------',
 		)
