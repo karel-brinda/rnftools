@@ -321,7 +321,7 @@ class Panel:
 		"""Create images related to this panel."""
 
 		if len(self._svg_fns)>0:
-			smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+			smbl.utils.shell('"{}" "{}"'.format("gnuplot",self._gp_fn))
 
 			if self.render_pdf_method is not None:
 				for svg_fn in self._svg_fns:

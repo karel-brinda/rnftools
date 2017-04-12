@@ -1,9 +1,5 @@
 #! /usr/bin/env bats
 
-#@test "TESTS: ensure programs" {
-#	cd command_line
-#	snakemake -p -s __ensure_programs.snake --cores
-#}
 @test "TESTS: rnftools et2roc" {
 	./command_line/rnftools_et2roc.sh
 }

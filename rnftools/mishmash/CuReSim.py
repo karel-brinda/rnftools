@@ -58,7 +58,6 @@ class CuReSim(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.CURESIM,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -100,7 +99,7 @@ class CuReSim(Source):
 					> /dev/null
 				""".format(
 					dir=self.get_dir(),
-					curesim=smbl.prog.CURESIM,
+					curesim="curesim",
 					fa=self._fa_fn,
 					nb=self.number_of_read_tuples,
 					rlen1=self.read_length_1,

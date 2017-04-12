@@ -53,7 +53,6 @@ before_script:
 - export CXX=/usr/bin/g++-4.8
 - git clone git://github.com/sstephenson/bats $PWD/bats
 - export PATH=$PATH:$PWD/bats/bin
-- snakemake -p -s tests/command_line/__ensure_programs.snake --cores
 script:
 - cd tests && bats ${CI:+--tap} ./tests_run.sh
 #deploy:

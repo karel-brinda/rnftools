@@ -73,8 +73,6 @@ class MasonIllumina(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.MASON_SIMULATOR,
-				smbl.prog.SAMTOOLS,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -122,7 +120,7 @@ class MasonIllumina(Source):
 						{other_params} \
 						> /dev/null
 				""".format(
-					mason=smbl.prog.MASON_SIMULATOR,
+					mason="mason_simulator",
 					paired_params=paired_params,
 					fasta=self._fa_fn,
 					rlen=self.read_length_1,

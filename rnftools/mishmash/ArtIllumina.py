@@ -75,8 +75,6 @@ class ArtIllumina(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.ART_ILLUMINA,
-				smbl.prog.SAMTOOLS,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -123,7 +121,7 @@ class ArtIllumina(Source):
 						{other_params} \
 						> /dev/null
 				""".format(
-					art_il=smbl.prog.ART_ILLUMINA,
+					art_il="art_illumina",
 					paired_params=paired_params,
 					fasta=self._fa_fn,
 					rlen=self.read_length_1,
@@ -140,7 +138,7 @@ class ArtIllumina(Source):
 				"{samtools}" view -h -T "{fa}" - \
 				> "{sam_2}"
 			""".format(
-					samtools=smbl.prog.SAMTOOLS,
+					samtools="samtools",
 					sam_1=self._sam1_fn,
 					sam_2=self._sam2_fn,
 					fa=self._fa_fn,

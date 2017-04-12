@@ -90,7 +90,6 @@ class WgSim(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.WGSIM,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -141,7 +140,7 @@ class WgSim(Source):
 				"{fq2}" \
 				> /dev/null
 			""".format(
-				wgsim=smbl.prog.WGSIM,
+				wgsim="wgsim",
 				fa=self._fa_fn,
 				fq1=self._tmp_fq1_fn,
 				fq2=self._tmp_fq2_fn,
