@@ -41,7 +41,7 @@ class Source(object):
 					self._sample.get_dir(),
 					self._name
 				)
-		self._fa_fn=fasta
+		self._fa_fn=os.path.abspath(fasta)
 		self._fai_fn = fasta+".fai"
 		self._fq_fn=os.path.join(self._dir,"_final_reads.fq")
 		self.dict_chr_ids = {}
