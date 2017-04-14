@@ -457,7 +457,7 @@ def check(args):
 		# 1) get version on PyPI
 		ver_web="N/A"
 		try:
-			pypi_client = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
+			pypi_client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
 			available = pypi_client.package_releases(package)
 			ver_web_max=_max_version(available)
 			if ver_web_max is not None:
