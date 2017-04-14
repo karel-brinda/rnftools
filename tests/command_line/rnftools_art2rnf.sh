@@ -8,7 +8,7 @@ set -o pipefail
 cd "$(dirname "$0")"
 
 eval FA="humanmito.fa"
-eval ART_ILLUMINA="~/.smbl/bin/art_illumina"
+eval ART_ILLUMINA="art_illumina"
 
 
 # 1) SE test, no contamination

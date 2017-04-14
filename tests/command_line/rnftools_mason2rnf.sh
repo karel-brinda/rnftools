@@ -7,7 +7,7 @@ set -o pipefail
 cd "$(dirname "$0")"
 
 eval FA="humanmito.fa"
-eval MASON="~/.smbl/bin/mason_simulator"
+eval MASON="mason_simulator"
 
 # 1) SE test, no contamination
 $MASON \

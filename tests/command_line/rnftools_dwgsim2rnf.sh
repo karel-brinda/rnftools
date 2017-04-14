@@ -7,7 +7,7 @@ set -o pipefail
 cd "$(dirname "$0")"
 
 eval FA="humanmito.fa"
-eval DWGSIM="~/.smbl/bin/dwgsim"
+eval DWGSIM="dwgsim"
 
 
 # 1) SE test, no contamination

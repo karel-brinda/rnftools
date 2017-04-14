@@ -7,7 +7,7 @@ set -o pipefail
 cd "$(dirname "$0")"
 
 eval FA="humanmito.fa"
-eval WGSIM="~/.smbl/bin/wgsim"
+eval WGSIM="wgsim"
 
 $WGSIM \
 	-N 100 \
