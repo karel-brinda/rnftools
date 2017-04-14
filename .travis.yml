@@ -1,16 +1,18 @@
 language: python
-sudo: false
+
 cache:
   - brew
   - apt: true
-cache:
-  directories:
-  - $HOME/.smbl
-  - $HOME/.cache/pip
+#cache:
+#  directories:
+#  - $HOME/.smbl
+#  - $HOME/.cache/pip
+
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
+
 matrix:
   include:
     - os: linux 
@@ -42,5 +44,6 @@ matrix:
 before_script:
 - git clone git://github.com/sstephenson/bats $PWD/bats
 - export PATH=$PATH:$PWD/bats/bin
+
 script:
 - cd tests && bats ${CI:+--tap} ./tests_run.sh
