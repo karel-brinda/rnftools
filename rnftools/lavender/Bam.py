@@ -2,7 +2,6 @@
 
 import rnftools.lavender
 
-import smbl.prog
 import snakemake
 import os
 import sys
@@ -177,7 +176,7 @@ class Bam:
 				if read.is_unmapped:
 					# read should be mapped
 					if should_be_mapped:
-						category="u"			
+						category="u"
 					# read should be unmapped
 					else:
 						category="U"
@@ -931,7 +930,7 @@ class Bam:
 						<span class="desc">
 							(at least one segment was mapped but entire read should be unmapped),
 						</span>
-					<strong>T</strong>:	
+					<strong>T</strong>:
 						thresholded correctly
 						<span class="desc">
 							(read shoud not be mapped),
@@ -1006,7 +1005,7 @@ class Bam:
 
 
 			</body>
-			</html>			
+			</html>
 			""".format(
 					name=self.name,
 					tbody=tbody,

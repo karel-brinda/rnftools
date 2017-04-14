@@ -33,7 +33,7 @@ class CuReSim(Source):
 				rng_seed=1,
 				other_params="",
 			):
-		
+
 		if read_length_2!=0:
 			smbl.messages.error("CuReSim supports only single-end reads",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
@@ -88,7 +88,7 @@ class CuReSim(Source):
 
 			smbl.utils.shell("""
 					cd "{dir}"
-					java -Xmx8g -jar "{curesim}" \
+					"{curesim}" \
 					-f "{fa}" \
 					-n {nb} \
 					-m {rlen1} \
