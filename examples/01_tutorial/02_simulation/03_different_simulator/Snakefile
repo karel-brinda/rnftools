@@ -3,7 +3,7 @@ import smbl
 
 rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
 
-fa="../example1.fa"
+fa="../../../example1.fa"
 
 rnftools.mishmash.DwgSim(
 	fasta=fa,

@@ -53,7 +53,7 @@
 @test "TESTS: snakemake: many files SE" {
 	./snakemake/03_*/run.sh -p
 }
-	
+
 @test "TESTS: snakemake: many files PE" {
 	./snakemake/04_*/run.sh -p
 }
@@ -136,33 +136,33 @@
 
 #################################################
 
-@test "EXAMPLES: 01_tutorial/03/01" {
-	../examples/01_tutorial/03_*/01_*/run.sh -p --cores
-}
-
-@test "EXAMPLES: 01_tutorial/03/01 RNF" {
-	./_test_rnf.sh ../examples/01_tutorial/03_*/01_*/bams/
-}
-
-###
-
-@test "EXAMPLES: 01_tutorial/03/02" {
-	../examples/01_tutorial/03_*/02_*/run.sh -p --cores
-}
-
-@test "EXAMPLES: 01_tutorial/03/02 RNF" {
-	./_test_rnf.sh ../examples/01_tutorial/03_*/02_*/bams/
-}
-
-###
-
-@test "EXAMPLES: 01_tutorial/03/03" {
-	../examples/01_tutorial/03_*/03_*/run.sh -p --cores
-}
-
-@test "EXAMPLES: 01_tutorial/03/03 RNF" {
-	./_test_rnf.sh ../examples/01_tutorial/03_*/03_*/bams/
-}
+#@test "EXAMPLES: 01_tutorial/03/01" {
+#	../examples/01_tutorial/03_*/01_*/run.sh -p --cores
+#}
+#
+#@test "EXAMPLES: 01_tutorial/03/01 RNF" {
+#	./_test_rnf.sh ../examples/01_tutorial/03_*/01_*/bams/
+#}
+#
+####
+#
+#@test "EXAMPLES: 01_tutorial/03/02" {
+#	../examples/01_tutorial/03_*/02_*/run.sh -p --cores
+#}
+#
+#@test "EXAMPLES: 01_tutorial/03/02 RNF" {
+#	./_test_rnf.sh ../examples/01_tutorial/03_*/02_*/bams/
+#}
+#
+####
+#
+#@test "EXAMPLES: 01_tutorial/03/03" {
+#	../examples/01_tutorial/03_*/03_*/run.sh -p --cores
+#}
+#
+#@test "EXAMPLES: 01_tutorial/03/03 RNF" {
+#	./_test_rnf.sh ../examples/01_tutorial/03_*/03_*/bams/
+#}
 
 
 #################################################
@@ -173,12 +173,6 @@
 
 @test "EXAMPLES: 02 RNF" {
 	./_test_rnf.sh ../examples/02_*/
-}
-
-###
-
-@test "EXAMPLES: 04" {
-	../examples/04_*/run.sh -p --cores
 }
 
 #################################################

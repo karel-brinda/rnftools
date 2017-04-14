@@ -3,7 +3,7 @@ import smbl
 
 rnftools.mishmash.sample("simple_end_simulation",reads_in_tuple=1)
 
-fa="../example1.fa"
+fa="../../../example1.fa"
 
 rnftools.mishmash.ArtIllumina(
 	fasta=fa,
