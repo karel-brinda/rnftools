@@ -26,7 +26,7 @@ matrix:
         - conda info -a
         - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git || true
         - source activate rnftools
-        - pip install -r requirements.txt
+        - pip install --upgrade .
 
     - os: osx
       before_install:
@@ -41,7 +41,7 @@ matrix:
         - conda info -a
         - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git || true
         - source activate rnftools
-        - pip install -r requirements.txt
+        - pip install --upgrade .
 
 before_script:
 - git clone git://github.com/sstephenson/bats $PWD/bats
