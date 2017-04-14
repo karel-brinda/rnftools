@@ -24,7 +24,7 @@ matrix:
         - conda config --set always_yes yes --set changeps1 no
         - conda update -q conda
         - conda info -a
-        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools git || true
+        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git || true
         - source activate rnftools
 
     - os: osx
@@ -38,7 +38,7 @@ matrix:
         - conda config --set always_yes yes --set changeps1 no
         - conda update -q conda
         - conda info -a
-        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools git || true
+        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git || true
         - source activate rnftools
 
 before_script:
