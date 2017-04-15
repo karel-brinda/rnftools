@@ -1,13 +1,5 @@
 language: python
 
-cache:
-  - brew
-  - apt: true
-#cache:
-#  directories:
-#  - $HOME/.smbl
-#  - $HOME/.cache/pip
-
 python:
   - '3.6'
 
@@ -19,7 +11,7 @@ addons:
 
 matrix:
   include:
-    - os: linux 
+    - os: linux
       sudo: true
       install:
         - if [ ! -d "$HOME/miniconda/bin" ]; then wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && bash miniconda.sh -f -b -p $HOME/miniconda; fi
