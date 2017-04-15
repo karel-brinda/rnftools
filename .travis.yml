@@ -8,6 +8,10 @@ cache:
 #  - $HOME/.smbl
 #  - $HOME/.cache/pip
 
+python:
+  - '3.6'
+
+
 addons:
   apt:
     sources:
