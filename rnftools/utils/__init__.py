@@ -1,3 +1,6 @@
+import re
+import snakemake
+
 from .Chain import *
 from .FaIdx import *
 
