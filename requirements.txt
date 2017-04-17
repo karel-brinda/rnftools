@@ -3,3 +3,4 @@ pbr>=1.9.1
 argparse
 snakemake
 svg42pdf
+termcolor
