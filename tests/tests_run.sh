@@ -177,12 +177,12 @@
 
 #################################################
 
-@test "DOCUMENTATION" {
-	cd ../docs
-	make clean
-	mkdir -p _static
-	sphinx-build -W -b html -d _build/doctrees . _build/html
-}
+#@test "DOCUMENTATION" {
+#	cd ../docs
+#	make clean
+#	mkdir -p _static
+#	sphinx-build -W -b html -d _build/doctrees . _build/html
+#}
 
 #################################################
 
