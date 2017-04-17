@@ -16,13 +16,10 @@ matrix:
         - conda config --set always_yes yes --set changeps1 no
         - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git setuptools
         - source activate rnftools
-        - conda update --all
-        - pip install --upgrade .
+        #- conda update --all
+        - pip install .
 
     - os: osx
-      before_install:
-        - brew update
-        - brew tap homebrew/versions
       install:
         - if [ ! -d "$HOME/miniconda/bin" ]; then wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh && bash miniconda.sh -f -b -p $HOME/miniconda; fi
         - export PATH="$HOME/miniconda/bin:$PATH"
@@ -30,8 +27,8 @@ matrix:
         - conda config --set always_yes yes --set changeps1 no
         - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git setuptools
         - source activate rnftools
-        - conda update --all
-        - pip install --upgrade .
+        #- conda update --all
+        - pip install .
 
 before_script:
 - git clone git://github.com/sstephenson/bats $PWD/bats
