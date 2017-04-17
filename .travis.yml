@@ -35,4 +35,5 @@ before_script:
 - export PATH=$PATH:$PWD/bats/bin
 
 script:
-- cd tests && bats ${CI:+--tap} ./tests_run.sh
+- make -C tests
+- make -C examples
