@@ -1,5 +1,4 @@
 import snakemake
-import smbl
 
 import abc
 import re
@@ -41,7 +40,7 @@ class Source(object):
 					self._sample.get_dir(),
 					self._name
 				)
-		self._fa_fn=fasta
+		self._fa_fn=os.path.abspath(fasta)
 		self._fai_fn = fasta+".fai"
 		self._fq_fn=os.path.join(self._dir,"_final_reads.fq")
 		self.dict_chr_ids = {}
@@ -85,7 +84,7 @@ class Source(object):
 	def clean(self):
 		"""Clean working directory.
 		"""
-		smbl.utils.shell('rm -fR "{}"'.format(self.get_dir()))
+		rnftools.utils.shell('rm -fR "{}"'.format(self.get_dir()))
 
 	############################################################################
 	############################################################################
@@ -202,7 +201,7 @@ class Source(object):
 				last_read_tuple_name = alignment.query_name
 
 				if alignment.is_unmapped:
-					smbl.messages.error(
+					rnftools.utils.error(
 						"SAM files used for conversion should not contain unaligned segments. "
 						"This condition is broken by read tuple "
 						"'{}' in file '{}'.".format(alignment.query_name,sam_fn),

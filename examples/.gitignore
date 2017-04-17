@@ -1,8 +1,6 @@
 *.html
 *.fq
 *.fastq
-*.fa
-*.fasta
 *.vcf
 *.gz
 *.mir

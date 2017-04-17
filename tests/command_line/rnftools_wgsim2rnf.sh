@@ -1,13 +1,11 @@
 #! /usr/bin/env bash
 
-set -eu
-set -o verbose
-set -o pipefail
+set -euf -o pipefail
 
 cd "$(dirname "$0")"
 
 eval FA="humanmito.fa"
-eval WGSIM="~/.smbl/bin/wgsim"
+eval WGSIM="wgsim"
 
 $WGSIM \
 	-N 100 \

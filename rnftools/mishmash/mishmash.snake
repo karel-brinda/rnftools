@@ -1,10 +1,7 @@
 import rnftools.mishmash
 
-import smbl
 import time
 import re
-
-include: smbl.include()
 
 
 ##################################
@@ -42,7 +39,7 @@ for i, source in enumerate(rnftools.mishmash.sources()):
 		"""
 		input:
 			source.get_input()
-		output:		
+		output:
 			source.get_output()
 		params:
 			i=str(i)

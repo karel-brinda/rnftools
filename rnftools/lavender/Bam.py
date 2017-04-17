@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import rnftools.lavender
+import rnftools.utils
 
-import smbl.prog
 import snakemake
 import os
 import sys
@@ -177,7 +177,7 @@ class Bam:
 				if read.is_unmapped:
 					# read should be mapped
 					if should_be_mapped:
-						category="u"			
+						category="u"
 					# read should be unmapped
 					else:
 						category="U"
@@ -373,7 +373,7 @@ class Bam:
 			## x # - unrecognized - print details
 			######
 			#if vec[q]=="x":
-			#	smbl.messages.message(
+			#	rnftools.utils.message(
 			#		" ".join(
 			#			[
 			#				"Unrecognized category for alignment of read '{}'.".format(read_tuple_name),
@@ -711,7 +711,7 @@ class Bam:
 	def create_graphics(self):
 		"""Create images related to this BAM file using GnuPlot."""
 
-		smbl.utils.shell('"{}" "{}"'.format(smbl.prog.GNUPLOT5,self._gp_fn))
+		rnftools.utils.shell('"{}" "{}"'.format("gnuplot",self._gp_fn))
 
 		if self.render_pdf_method is not None:
 			svg_fn=self._svg_fn
@@ -814,9 +814,9 @@ class Bam:
 
 		with open(self._html_fn,"w+") as html:
 			program_info=["No information available (PG header is essing)."]
-			for x in smbl.utils.shell(
+			for x in rnftools.utils.shell(
 						'"{samtools}" view -H "{bam}"'.format(
-							samtools=smbl.prog.SAMTOOLS,
+							samtools="samtools",
 							bam=self._bam_fn,
 						),
 						iterable=True
@@ -931,7 +931,7 @@ class Bam:
 						<span class="desc">
 							(at least one segment was mapped but entire read should be unmapped),
 						</span>
-					<strong>T</strong>:	
+					<strong>T</strong>:
 						thresholded correctly
 						<span class="desc">
 							(read shoud not be mapped),
@@ -1006,7 +1006,7 @@ class Bam:
 
 
 			</body>
-			</html>			
+			</html>
 			""".format(
 					name=self.name,
 					tbody=tbody,

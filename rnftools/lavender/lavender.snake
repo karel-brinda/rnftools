@@ -1,5 +1,3 @@
-import smbl
-include: smbl.include()
 import rnftools
 
 rule lavender_clean:
@@ -43,7 +41,6 @@ for i, panel in enumerate(rnftools.lavender.panels()):
 		input:
 			panel.gp_fn(),
 			[bam.roc_fn() for bam in panel.get_bams()],
-			smbl.prog.GNUPLOT5,
 		output:
 			panel.svg_fns(),
 			panel.pdf_fns(),
@@ -83,7 +80,6 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 		input:
 			bam.svg_fn(),
 			bam.roc_fn(),
-			smbl.prog.SAMTOOLS,
 		output:
 			bam.html_fn()
 		params:
@@ -143,7 +139,6 @@ for i, bam in enumerate(rnftools.lavender.bams()):
 		input:
 			bam.roc_fn(),
 			bam.gp_fn(),
-			smbl.prog.GNUPLOT5
 		output:
 			[bam.svg_fn(),bam.pdf_fn()] if bam.render_pdf_method is not None else bam.svg_fn()
 		params:

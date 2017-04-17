@@ -1,5 +1,4 @@
 import snakemake
-import smbl
 import rnftools
 import os
 

@@ -1,7 +1,6 @@
 import rnftools
 from .Source import Source
 
-import smbl
 import snakemake
 import os
 
@@ -45,7 +44,7 @@ class MasonIllumina(Source):
 			self.distance=int(distance)
 			self.distance_deviation=int(distance_deviation)
 			if read_length_1!=read_length_2:
-				smbl.messages.error("mason can simulate only pairs with equal lengths",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+				rnftools.utils.error("mason can simulate only pairs with equal lengths",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		
 		super().__init__(
 				fasta=fasta,
@@ -59,7 +58,7 @@ class MasonIllumina(Source):
 
 
 		if coverage*number_of_read_tuples!=0:
-			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
@@ -73,8 +72,6 @@ class MasonIllumina(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.MASON_SIMULATOR,
-				smbl.prog.SAMTOOLS,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -122,7 +119,7 @@ class MasonIllumina(Source):
 						{other_params} \
 						> /dev/null
 				""".format(
-					mason=smbl.prog.MASON_SIMULATOR,
+					mason="mason_simulator",
 					paired_params=paired_params,
 					fasta=self._fa_fn,
 					rlen=self.read_length_1,
@@ -133,7 +130,7 @@ class MasonIllumina(Source):
 					sam=self._sam_fn,
 				)
 
-			smbl.utils.shell(command)
+			rnftools.utils.shell(command)
 
 			with open(self._fq_fn,"w+") as fq_fo:
 				with open(self._fai_fn) as fai_fo:

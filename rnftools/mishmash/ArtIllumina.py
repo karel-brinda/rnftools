@@ -1,7 +1,6 @@
 import rnftools
 from .Source import Source
 
-import smbl
 import snakemake
 import os
 
@@ -45,7 +44,7 @@ class ArtIllumina(Source):
 			self.distance=distance
 			self.distance_deviation=distance_deviation
 			if read_length_1!=read_length_2:
-				smbl.messages.error("art_illumina can simulate only pairs with equal lengths",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+				rnftools.utils.error("art_illumina can simulate only pairs with equal lengths",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		
 		super().__init__(
 				fasta=fasta,
@@ -59,7 +58,7 @@ class ArtIllumina(Source):
 
 
 		if coverage*number_of_read_tuples!=0:
-			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
@@ -75,8 +74,6 @@ class ArtIllumina(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.ART_ILLUMINA,
-				smbl.prog.SAMTOOLS,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -123,7 +120,7 @@ class ArtIllumina(Source):
 						{other_params} \
 						> /dev/null
 				""".format(
-					art_il=smbl.prog.ART_ILLUMINA,
+					art_il="art_illumina",
 					paired_params=paired_params,
 					fasta=self._fa_fn,
 					rlen=self.read_length_1,
@@ -140,14 +137,14 @@ class ArtIllumina(Source):
 				"{samtools}" view -h -T "{fa}" - \
 				> "{sam_2}"
 			""".format(
-					samtools=smbl.prog.SAMTOOLS,
+					samtools="samtools",
 					sam_1=self._sam1_fn,
 					sam_2=self._sam2_fn,
 					fa=self._fa_fn,
 			)
 
-			smbl.utils.shell(command_1)
-			smbl.utils.shell(command_2)
+			rnftools.utils.shell(command_1)
+			rnftools.utils.shell(command_2)
 
 			with open(self._fq_fn,"w+") as fq_fo:
 				with open(self._fai_fn) as fai_fo :

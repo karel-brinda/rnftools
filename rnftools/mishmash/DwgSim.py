@@ -2,7 +2,6 @@ import rnftools
 from .Source import *
 
 import os
-import smbl
 import snakemake
 import re
 
@@ -89,7 +88,7 @@ class DwgSim(Source):
 		self.other_params=other_params
 
 		if coverage*number_of_read_tuples!=0:
-			smbl.messages.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 		self.number_of_read_tuples=number_of_read_tuples
 		self.coverage=coverage
@@ -111,7 +110,6 @@ class DwgSim(Source):
 
 	def get_input(self):
 		return [
-				smbl.prog.DWGSIM,
 				self._fa_fn,
 				self._fai_fn,
 			]
@@ -146,7 +144,7 @@ class DwgSim(Source):
 			else:
 				paired_params=""
 
-			smbl.utils.shell("""
+			rnftools.utils.shell("""
 					"{dwgsim}" \
 					-1 {rlen1} \
 					-2 {rlen2} \
@@ -165,7 +163,7 @@ class DwgSim(Source):
 					"{pref}" \
 					> /dev/null
 				""".format(
-					dwgsim=smbl.prog.DWGSIM,
+					dwgsim="dwgsim",
 					fa=self._fa_fn,
 					pref=self.dwg_prefix,
 					nb=self.number_of_read_tuples,
@@ -271,7 +269,7 @@ class DwgSim(Source):
 					last_read_tuple_name=read_tuple_name
 					m = dwgsim_pattern.search(line)
 					if m is None:
-						smbl.messages.error("Read tuple '{}' was not created by DwgSim.".format(line[1:]),program="RNFtools",subprogram="MIShmash",exception=ValueError)
+						rnftools.utils.error("Read tuple '{}' was not created by DwgSim.".format(line[1:]),program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 					contig_name       = m.group(1)
 					start_1           = int(m.group(2))
