@@ -3,3 +3,4 @@ pbr>=1.9.1
 argparse
 snakemake
 smbl>=1.4.5
+svg42pdf
