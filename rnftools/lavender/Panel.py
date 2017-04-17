@@ -1,6 +1,6 @@
 import rnftools.lavender
+import rnftools.utils
 
-import smbl
 import snakemake
 import os
 import glob
@@ -96,7 +96,7 @@ class Panel:
 			raise ValueError("Panel '{}' does not contain any BAM file.".format(self.name))
 
 		for x in ["gp","html","roc","graphics","tar"]:
-			smbl.utils.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
+			rnftools.utils.shell('mkdir -p "{}"'.format(os.path.join(self.panel_dir,x)))
 
 	def get_report(self):
 		""" Get the report. """
@@ -321,7 +321,7 @@ class Panel:
 		"""Create images related to this panel."""
 
 		if len(self._svg_fns)>0:
-			smbl.utils.shell('"{}" "{}"'.format("gnuplot",self._gp_fn))
+			rnftools.utils.shell('"{}" "{}"'.format("gnuplot",self._gp_fn))
 
 			if self.render_pdf_method is not None:
 				for svg_fn in self._svg_fns:

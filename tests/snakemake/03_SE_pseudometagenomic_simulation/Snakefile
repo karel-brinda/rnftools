@@ -1,5 +1,4 @@
 import rnftools
-import smbl
 
 rnftools.mishmash.sample("test_metagenomic_se",reads_in_tuple=1)
 

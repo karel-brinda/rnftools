@@ -1,6 +1,6 @@
 import rnftools.mishmash
+import rnftools.utils
 
-import smbl
 import snakemake
 import abc
 import re
@@ -40,7 +40,7 @@ class Sample:
 		rnftools.mishmash.add_sample(self)
 
 		if paired_end_mode not in ["bwa","bfast"]:
-			smbl.messages.error("paired_end_mode must be 'bwa' or 'bfast'",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+			rnftools.utils.error("paired_end_mode must be 'bwa' or 'bfast'",program="RNFtools",subprogram="MIShmash",exception=ValueError)
 
 	def get_name(self):
 		return self._name
@@ -56,14 +56,14 @@ class Sample:
 
 	def add_source(self,source):
 		if self._reads_in_tuple!=source.get_reads_in_tuple():
-			smbl.messages.error("It is not possible to combine read tuples with different number of reads in a single sample. "
+			rnftools.utils.error("It is not possible to combine read tuples with different number of reads in a single sample. "
 				"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(self._name,self._reads_in_tuple,source.get_reads_in_tuple(),source),
 				program="RNFtools",subprogram="MIShmash",exception=ValueError)
 		self._sources.append(source)
 
 	def clean(self):
 		for x in self._fq_fns+[self._dir]:
-			smbl.utils.shell('rm -fR "{}"'.format(x))
+			rnftools.utils.shell('rm -fR "{}"'.format(x))
 
 	######################################
 	######################################

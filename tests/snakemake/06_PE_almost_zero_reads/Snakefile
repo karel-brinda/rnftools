@@ -1,5 +1,4 @@
 import rnftools
-import smbl
 
 rnftools.mishmash.sample("test_pe",reads_in_tuple=2)
 

@@ -7,7 +7,6 @@ import sys
 import rnftools
 import textwrap
 import snakemake
-import smbl
 
 # todo: examples of usages for every subcommand (using epilog)
 
@@ -284,7 +283,7 @@ def sam2roc(args):
 				roc_fn=args.roc_fn,
 			)
 	print("Called command: ",os.linesep,re.sub(r'[ \t\f\v]+',' ',cmd).strip(),file=sys.stderr)
-	smbl.utils.shell(cmd)
+	rnftools.shell(cmd)
 
 def add_sam2roc_parser(subparsers,subcommand,help,description):
 	parser_sam2roc = subparsers.add_parser(subcommand,help=help,description=description)
@@ -453,7 +452,7 @@ def check(args):
 
 	_print_package_line("package","installed","","available")
 	print ("="*70)
-	for package in ["RNFtools","SMBL"]:
+	for package in ["RNFtools"]:
 		# 1) get version on PyPI
 		ver_web="N/A"
 		try:
@@ -491,7 +490,7 @@ def check(args):
 	if update:
 		print()
 		print("An update is available. You can install the latest version using by")
-		print("   pip3 install --upgrade rnftools smbl")
+		print("   pip3 install --upgrade rnftools")
 		print()
 		print("Note that pip3 may be available under a different name (pip-3, pip-3.4, etc.).")
 		print("Root account might be required for this operation.")
@@ -500,59 +499,7 @@ def check(args):
 		print("Your installation is up-to-date.")
 
 
-	# import xmlrpc
-	# import pip
-	# from distutils.version import LooseVersion as V
 
-	# update=False
-	# ok=True
-	# try:
-	# 	pypi = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
-	# 	print ('{pkg_info:20} {msg:20} {msg2:20}'.format(pkg_info="package", msg="installed",msg2="available"))
-	# 	print ("="*70)
-	# 	for dist in pip.get_installed_distributions():
-	# 		if dist.project_name.lower() in ["rnftools","smbl"]:
-	# 			ver1=V(dist.version)
-	# 			comparison=" "
-	# 			available = pypi.package_releases(dist.project_name)
-	# 			if not available:
-	# 				# Try to capitalize pkg name
-	# 				available = pypi.package_releases(dist.project_name.capitalize())
-	# 			    #
-	# 			if available:
-	# 				ver2=V(available[0])
-	# 				if ver1>ver2:
-	# 					comparison=">"
-	# 				elif ver1==ver2:
-	# 					comparison="="
-	# 				else:
-	# 					comparison="<"
-	# 					update=True
-	# 			else:
-	# 				ver2 = 'no releases at pypi'
-
-	# 			pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
-	# 			print ('{pkg:20} {installed:15} {comp:4} {available:20}'.format(
-	# 						pkg=dist.project_name,
-	# 						installed=str(ver1),
-	# 						comp=comparison,
-	# 						available=str(ver2)
-	# 					)
-	# 				)
-	# except:
-	# 	ok=False
-	# print()
-	# if update and ok:
-	# 	print("An update is available. You can install the latest version using by")
-	# 	print("   pip3 install --upgrade rnftools smbl")
-	# 	print()
-	# 	print("Note that pip3 may be available under a different name (pip-3, pip-3.4, etc.).")
-	# 	print("Root account might be required for this operation.")
-	# elif ok:
-	# 	print("Your installation is up-to-date.")
-	# else:
-	# 	print("Some problem with connection to the PyPI server occurred.")
-	# 	sys.exit(1)
 
 
 def add_check_parser(subparsers,subcommand,help,description):
@@ -818,7 +765,7 @@ def rnftools_script():
 			subparsers=subparsers,
 			subcommand="check",
 			help="Check for the latest version.",
-			description="Check if RNFtools and SMBL are up-to-date.",
+			description="Check if RNFtools are up-to-date.",
 		)
 
 	#

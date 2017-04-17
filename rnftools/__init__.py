@@ -1,19 +1,14 @@
 import builtins
 import sys
-
-# switch off info for smbl
-try:
-	builtins.SMBL_CONF["print_info"]=False
-except AttributeError:
-	builtins.SMBL_CONF={"print_info":False}
-
+import snakemake
+import os
+import re
+from termcolor import colored, cprint
 
 import rnftools.mishmash
 import rnftools.lavender
 import rnftools.rnfformat
 import rnftools.utils
-
-import os
 
 # version detection
 try:
@@ -39,17 +34,16 @@ for key in DEFAULT_RNFTOOLS_CONF.keys():
 
 # print info
 if RNFTOOLS_CONF["print_info"]:
-	import smbl.messages
 
-	smbl.messages.message("",program="RNFtools")
-	smbl.messages.message("RNFtools",program="RNFtools")
-	smbl.messages.message("~~~~~~~~",program="RNFtools")
-	smbl.messages.message("Version:     {}".format(__version__),program="RNFtools")
-	smbl.messages.message("Web:         http://karel-brinda.github.io/rnftools/",program="RNFtools")
-	smbl.messages.message("Contact:     Karel Brinda, karel.brinda@univ-mlv.fr",program="RNFtools")
-	smbl.messages.message("Publication: K. Brinda, V. Boeva, G. Kucherov. RNF: a general framework to evaluate",program="RNFtools")
-	smbl.messages.message("             NGS read mappers, Bioinformatics 32(1), 2016 [DOI:10.1093/bioinformatics/btv524].",program="RNFtools")
-	smbl.messages.message("",program="RNFtools")
+	message("",program="RNFtools")
+	message("RNFtools",program="RNFtools")
+	message("~~~~~~~~",program="RNFtools")
+	message("Version:     {}".format(__version__),program="RNFtools")
+	message("Web:         http://karel-brinda.github.io/rnftools/",program="RNFtools")
+	message("Contact:     Karel Brinda, karel.brinda@univ-mlv.fr",program="RNFtools")
+	message("Publication: K. Brinda, V. Boeva, G. Kucherov. RNF: a general framework to evaluate",program="RNFtools")
+	message("             NGS read mappers, Bioinformatics 32(1), 2016 [DOI:10.1093/bioinformatics/btv524].",program="RNFtools")
+	message("",program="RNFtools")
 
 
 def include():
@@ -63,3 +57,64 @@ def input():
 			rnftools.lavender.input(),
 			rnftools.mishmash.input(),
 		]
+
+
+
+def message(message,program=None,subprogram=None):
+
+	if program==None:
+		program_part=""
+		subprogram_part=""
+	else:
+		program_part="[{}] ".format(program)
+		if subprogram==None:
+			subprogram_part=""
+		else:
+			subprogram_part="{}: ".format(subprogram)
+
+	cprint(
+		"".join([program_part,subprogram_part,message]),
+		"blue",
+		attrs=['bold'],
+	)
+
+def error(message,program=None,subprogram=None, exception=None):
+	if exception!=None:
+		assert issubclass(exception,Exception)
+
+	if program==None:
+		program_part=""
+		subprogram_part=""
+	else:
+		program_part="[{}] ".format(program)
+		if subprogram==None:
+			subprogram_part=""
+		else:
+			subprogram_part="{}: ".format(subprogram)
+
+	cprint(
+		"".join([program_part,subprogram_part,"Error: ",message]),
+		"red",
+		attrs=['bold'],
+	)
+
+	if exception!=None:
+		raise exception(message)
+
+def shell(
+			cmd,
+			remove_spaces=True,
+			async=False,
+			iterable=False,
+			read=False, 
+		):
+	if remove_spaces:
+		#print("removing spaces from command")
+		cmd=re.sub(r'[ \t\f\v]+',' ',cmd).strip()
+
+	return snakemake.shell(
+			cmd=cmd,
+			async=async,
+			iterable=iterable,
+			read=read,
+		)
