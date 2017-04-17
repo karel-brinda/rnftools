@@ -1,1 +1,1 @@
-../../Makefile
+../../../data/recursive.mk

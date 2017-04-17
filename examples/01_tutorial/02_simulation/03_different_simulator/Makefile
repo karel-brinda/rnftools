@@ -1,1 +1,1 @@
-../../../run_snakemake.mk
+../../../../data/snakemake.mk
