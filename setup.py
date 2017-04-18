@@ -53,6 +53,7 @@ setuptools.setup(
 		'rnftools.mishmash',
 		'rnftools.lavender',
 		'rnftools.rnfformat',
+		'rnftools.utils',
 	],
 
 	install_requires=[
