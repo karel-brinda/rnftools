@@ -1,6 +1,0 @@
-pysam
-pbr>=1.9.1
-argparse
-snakemake
-svg42pdf>=0.1.1
-termcolor
