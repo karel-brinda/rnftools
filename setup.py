@@ -65,19 +65,14 @@ setuptools.setup(
 	],
 
 	package_data={
-		'prophyle': [
-			'Makefile',
-			'*.py',
-			'prophyle_assembler/*.cpp',
-			'prophyle_assembler/*.h',
-			'prophyle_assembler/Makefile',
-			'prophyle_index/*.c',
-			'prophyle_index/*.h',
-			'prophyle_index/Makefile',
-			'prophyle_index/bwa/*.c',
-			'prophyle_index/bwa/*.h',
-			'prophyle_index/bwa/Makefile',
-			'trees/*.nw',
+		'rnftools': [
+			'*.snake',
+		],
+		'rnftools.mishmash': [
+			'*.snake',
+		],
+		'rnftools.lavender': [
+			'*.snake',
 		],
 	},
 
