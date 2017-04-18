@@ -7,8 +7,11 @@ RNFtools
 .. image:: https://readthedocs.org/projects/rnftools/badge/?version=latest
 	:target: http://rnftools.rtfd.org
 
+.. image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square
+	:target: http://bioconda.github.io/recipes/rnftools/README.html
+
 .. image:: https://badge.fury.io/py/RNFtools.svg
-    :target: https://badge.fury.io/py/RNFtools
+	:target: https://badge.fury.io/py/RNFtools
     
     
 **Read Naming Format** is a generic format for assigning
