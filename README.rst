@@ -8,7 +8,7 @@ RNFtools
 	:target: http://rnftools.rtfd.org
 
 .. image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square
-	:target: http://bioconda.github.io/recipes/rnftools/README.html
+	:target: https://anaconda.org/bioconda/rnftools
 
 .. image:: https://badge.fury.io/py/RNFtools.svg
 	:target: https://badge.fury.io/py/RNFtools
