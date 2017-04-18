@@ -5,6 +5,16 @@ SHELL=/usr/bin/env bash
 
 .SECONDARY:
 
+$(info )
+$(info )
+$(info )
+$(info )
+$(info )
+$(info =======================================================)
+$(info $(shell pwd))
+$(info =======================================================)
+$(info )
+
 all:
 	snakemake
 
