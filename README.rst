@@ -7,7 +7,10 @@ RNFtools
 .. image:: https://readthedocs.org/projects/rnftools/badge/?version=latest
 	:target: http://rnftools.rtfd.org
 
-
+.. image:: https://badge.fury.io/py/RNFtools.svg
+    :target: https://badge.fury.io/py/RNFtools
+    
+    
 **Read Naming Format** is a generic format for assigning
 read names with encoded information about original positions.
 **RNFtools** is an associated
