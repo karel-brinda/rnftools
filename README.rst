@@ -13,7 +13,7 @@ RNFtools
 .. image:: https://badge.fury.io/py/RNFtools.svg
 	:target: https://badge.fury.io/py/RNFtools
 
-.. image:: https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtv524-brightgreen.svg
+.. image:: https://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbtv524-brightgreen.svg
 	:target: http://dx.doi.org/10.1093/bioinformatics/btv524
     
 **Read Naming Format** is a generic format for assigning
