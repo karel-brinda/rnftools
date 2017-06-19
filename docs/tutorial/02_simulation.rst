@@ -94,7 +94,7 @@ into the resulting FASTQ file.
 More samples
 ------------
 
-We can also simulted multiple samples using a single `Snakemake`.
+We can also simulated multiple samples using a single `Snakemake`.
 
 .. literalinclude:: ../../examples/01_tutorial/02_simulation/05_more_samples/Snakefile
 	:language: python

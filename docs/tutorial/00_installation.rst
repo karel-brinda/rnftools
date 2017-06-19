@@ -15,7 +15,7 @@ Requirements
 
 Requirements for basic installation of RNFtools are:
 
-* Unix-like operating system (Linux, MacOS, etc.).
+* Unix-like operating system (Linux, OS X, etc.).
 * `Python`_ 3.3+.
 
 When RNFtools is installed using BioConda_, all the additional dependencies are
@@ -34,7 +34,7 @@ to user.
 Installation using Bioconda (recommended)
 -----------------------------------------
 
-The easiest and safiest approach of RNFtools installation is to create a
+The easiest and safest approach of RNFtools installation is to create a
 separate Bioconda_ environment.
 
 .. code-block:: bash
