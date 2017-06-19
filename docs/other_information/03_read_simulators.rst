@@ -11,6 +11,6 @@ following thesis:
 .. admonition:: Publication
 	:class: error
 
-        K. Břinda. **Novel computational techniques for mapping and classifying Next-Generation Sequencing data.**.
+        K. Břinda. **Novel computational techniques for mapping and classifying Next-Generation Sequencing data.**
         Université Paris-Est, France, 2016. [`pdf <http://brinda.cz/publications/brinda_phd.pdf>`_]
 
