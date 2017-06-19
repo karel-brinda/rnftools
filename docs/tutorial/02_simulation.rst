@@ -1,38 +1,52 @@
 Read simulation
----------------
+===============
 
-In this chapter we show how to simulate reads in basic simulation. For this task, component called MIShmash is used.
+In this chapter, we show on several basic example how to simulate reads using a
+component of RNFtools called MISmash.
 
 
 Basic example
-"""""""""""""
+-------------
 
-First let us show how to simulate reads from a single genome (saved in a FASTA file) using a single simulator. Then a
-corresponding RNFtools configuration script can look as follows:
+First, let us show how to simulate reads from a single genome, stored in a FASTA
+file, using a single simulator. A corresponding RNFtools configuration
+script can look as follows:
 
 .. literalinclude:: ../../examples/01_tutorial/02_simulation/01_simple_simulation/Snakefile
 	:language: python
 	:linenos:
 
 
-Lines 1, 2, 13, 14 were already described in the previous chapter. Function ``rnf.mishmash.sample`` on line 4 initializes a new sample of simulated "single-end reads". When a new instance of ``rnftools.mishmash.ArtIllumina`` is created on line 6, it is automatically registered to the last created sample. This class is used for simulating reads by Art Illumina read simulator. The parameters signalize parameters of the simulation: ``fasta`` is the reference file, ``number_of_read_tuples`` sets number of simulated read tuples, and  ``read_length_1`` and ``read_length_2`` indicate lengths of simulated reads.
+Lines 1, 15, 16 have been already described in the previous chapter. Function
+``rnf.mishmash.sample`` (line 3) initializes a new sample of simulated
+"single-end reads". When a new instance of ``rnftools.mishmash.ArtIllumina`` is
+created (line 8), it is automatically registered to the last created sample.
+This class is used for simulating reads by the Art Illumina read simulator. The
+parameters signalize parameters of the simulation: ``fasta`` is the reference
+file, ``number_of_read_tuples`` sets number of simulated read tuples, and
+``read_length_1`` and ``read_length_2`` indicate lengths of simulated reads.
 
-Within RNF framework, a single simulated unit is a read tuple which consists of one or more reads. For more details, see the RNFtools paper. ``read_length_2=0`` implies "single-end" simulation (in our notation: single read in every read tuple).
+Within the RNF framework, a single simulated unit is a read tuple, which
+consists of one or more reads. For more details, see the `RNFtools paper`_.
+``read_length_2=0`` implies "single-end" simulation (in our notation: a single
+read in every read tuple).
 
-In our code, we use also SMBL library (import on line 2, usage on line 7) for automatic download of an example of a reference genome (SMBL library is also internally used by RNFtools for automatic installation of all employed programs). You can change the ``fasta`` parameter to some existing FASTA file, e.g., ``fasta="reference.fa"``.
+When we run ``snakemake``, reads are simulated and we obtain the final
+``simple_example.fq`` file with all the simulated reads.
 
-Let us run ``snakemake``. All employed programs are automatically downloaded and compiled (by the SMBL library).
-An example of a reference is downloaded. Finally reads are simulated and you obtain final ``simple_example.fq`` file with simulated reads.
-
-All programs were installed into ``~/.smbl/bin/`` and the example of a FASTA file to ``~/.smbl/fa/``. These are default output directories for the SMBL library.
-
-RNFtools can work with more read simulators and usage of all of them is very similar. However there exist some differences between their interfaces. Full documentation of simulators with all parameters is available on the page :ref:`mishmash`.
+RNFtools supports several different read simulators. Their use is similar,
+though their interfaces are slightly different. A full documentation of all the
+supported simulators with all their parameters is available on the page
+:ref:`mishmash`.
 
 
 Simulation of 'paired-end' reads
-""""""""""""""""""""""""""""""""
+--------------------------------
 
-To simulate "paired-end reads" (i.e., read tuples of two reads), two minor changes must be done in the original ``Snakefile``. First, ``rnftools.mishmash.sample`` must be called with ``reads_in_tuple=2``, then length of second read of a tuple must be set to a non-zero value.
+To simulate "paired-end reads" (i.e., read tuples of two reads), two minor
+changes must be made in the original ``Snakefile``. First,
+``rnftools.mishmash.sample`` must be called with ``reads_in_tuple=2``, then
+the length of second reads of a tuple must be set to a non-zero value.
 
 Then the final ``Snakefile`` can be:
 
@@ -42,11 +56,13 @@ Then the final ``Snakefile`` can be:
 
 
 Different simulator
-"""""""""""""""""""
+-------------------
 
-To change simulator in our example, just replace ``rnftools.mishmash.ArtIllumina`` by class of another simulator, e.g., ``rnftools.mishmash.ArtIllumina``. Parameters as ``fasta``, ``read_length_1``, ``read_length_2``, and ``number_of_read_tuples`` are shared by all of them.
-
-When you are changing the used simulator, be aware of these limitations:
+To change a simulator in our example, we just replace
+``rnftools.mishmash.ArtIllumina`` by another simulator, e.g.,
+``rnftools.mishmash.ArtIllumina``. Parameters as ``fasta``, ``read_length_1``,
+``read_length_2``, and ``number_of_read_tuples`` are the same for all the
+simulators, but with several limitations:
 
 * CuReSim supports only "single-end reads".
 * ART Illumina in "paired-end" mode can simulate only reads of equal lengths.
@@ -58,31 +74,42 @@ When you are changing the used simulator, be aware of these limitations:
 
 
 More genomes
-""""""""""""
+------------
 
-To simulate reads from more genomes and mix them in one sample (in order to simulate, e.g., metagenome or contamination), create a new instance of class of a simulator. In this example, we are simulating reads from two examples of reference genomes
-and from both of them, we simulate 10.000 read tuples. 
+To simulate reads from multiples reference within a single sample (in order to
+simulate, e.g., a metagenome or a contamination), we create a new instance of
+class of a simulator for each reference.
+
+In the example below, we are simulating 10.000 read tuples from two
+reference genomes.
 
 .. literalinclude:: ../../examples/01_tutorial/02_simulation/04_more_genomes/Snakefile
 	:language: python
 	:linenos:
 
+Once reads are simulated for each of the references, they are mixed and put
+into the resulting FASTQ file.
+
 
 More samples
-""""""""""""
+------------
 
-To create more samples, one has just to call ``rnftools.mishmash.sample`` more times in the file. In the following example, we create two simulations, one with "single-end reads", the other one with "paired-end reads".
+We can also simulted multiple samples using a single `Snakemake`.
 
 .. literalinclude:: ../../examples/01_tutorial/02_simulation/05_more_samples/Snakefile
 	:language: python
 	:linenos:
 
 
-Nonstandard parameters
-""""""""""""""""""""""
+Non-standard parameters
+-----------------------
 
-Some specific parameter of a read simulator may not be supported by the corresponding class. Such parameters can be used anyway since there, for all simulators' classes, exists a parameter ``other_params``. 
+Not all command-line parameters of every simulator are directly supported by
+RNFtools. However, such parameters can still be passed through the parameter
+``other_params`` like in this example:
 
 .. literalinclude:: ../../examples/01_tutorial/02_simulation/06_nonstandard_parameters/Snakefile
 	:language: python
 	:linenos:
+
+.. _`RNFtools paper`: http://dx.doi.org/10.1093/bioinformatics/btv524
