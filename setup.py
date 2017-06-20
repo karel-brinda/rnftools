@@ -6,7 +6,7 @@ import os
 import subprocess
 import sys
 
-if sys.version_info < (3,2):
+if sys.version_info < (3, 2):
 	sys.exit('Minimum supported Python version is 3.2')
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -14,7 +14,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Get the long description from the README file
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 	long_description = f.read()
-
 
 # Get the current version
 exec(open("rnftools/version.py").read())
@@ -48,7 +47,7 @@ setuptools.setup(
 
 	keywords='Bioinformatics, Computational Biology, Next-Generation Sequencing, Read Simulation, Mappers Evaluation',
 
-	packages = [
+	packages=[
 		'rnftools',
 		'rnftools.mishmash',
 		'rnftools.lavender',
@@ -57,8 +56,9 @@ setuptools.setup(
 	],
 
 	install_requires=[
-		'pysam',
 		'argparse',
+		'pyfaidx',
+		'pysam',
 		'snakemake',
 		'svg42pdf>=0.1.1',
 		'termcolor',
@@ -77,8 +77,8 @@ setuptools.setup(
 	},
 
 	entry_points={
-			'console_scripts': [
-				'rnftools = rnftools.scripts:rnftools_script',
-			]
+		'console_scripts': [
+			'rnftools = rnftools.scripts:rnftools_script',
+		]
 	},
 )
