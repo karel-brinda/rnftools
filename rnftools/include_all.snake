@@ -1,7 +1,5 @@
 from snakemake.utils import min_version
 
-min_version("3.2")
-
 include: "mishmash/mishmash.snake"
 include: "lavender/lavender.snake"
 

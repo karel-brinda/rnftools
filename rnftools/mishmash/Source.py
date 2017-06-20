@@ -135,9 +135,20 @@ class Source(object):
 		"""
 		raise NotImplementedError
 
-	# todo: make this method static
-	# todo: check if it can work with a bam file
-	# todo: can it work as a pipe?
+
+	@staticmethod
+	def fa_subseqs(fa1_fn, subsequences, fa2_fn):
+		"""Simulate reads.
+
+		Args:
+			fa1_fn (str): Original FASTA file.
+			fastq_rnf_fo (str): List of subsequences (ints or strs). If None, use all.
+			fa2_fn (str): New FASTA file.
+		"""
+		pass
+
+
+
 	@staticmethod
 	def recode_sam_reads(
 				sam_fn,
