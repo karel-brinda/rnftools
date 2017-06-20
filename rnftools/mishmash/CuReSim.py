@@ -1,9 +1,8 @@
-import rnftools
+import os
+import re
+
 from .Source import *
 
-import os
-import snakemake
-import re
 
 class CuReSim(Source):
 	"""Class for CuReSim (http://www.pegase-biosciences.com/curesim-a-customized-read-simulator).
@@ -24,66 +23,67 @@ class CuReSim(Source):
 	"""
 
 	def __init__(self,
-				fasta,
-				coverage=0,
-				number_of_read_tuples=0,
-				read_length_1=100,
-				read_length_2=0,
-				rng_seed=1,
-				other_params="",
-			):
+			fasta,
+			coverage=0,
+			number_of_read_tuples=0,
+			read_length_1=100,
+			read_length_2=0,
+			rng_seed=1,
+			other_params="",
+	):
 
-		if read_length_2!=0:
-			rnftools.utils.error("CuReSim supports only single-end reads",program="RNFtools",subprogram="MIShmash",exception=ValueError)
+		if read_length_2 != 0:
+			rnftools.utils.error("CuReSim supports only single-end reads", program="RNFtools", subprogram="MIShmash",
+				exception=ValueError)
 
 		super().__init__(
-				fasta=fasta,
-				reads_in_tuple=1,
-				rng_seed=rng_seed,
-				number_of_required_cores=9999,
-			)
+			fasta=fasta,
+			reads_in_tuple=1,
+			rng_seed=rng_seed,
+			number_of_required_cores=9999,
+		)
 
+		self.read_length_1 = read_length_1
+		self.read_length_2 = read_length_2
+		self.other_params = other_params
 
-		self.read_length_1=read_length_1
-		self.read_length_2=read_length_2
-		self.other_params=other_params
+		if coverage * number_of_read_tuples != 0:
+			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero", program="RNFtools",
+				subprogram="MIShmash", exception=ValueError)
 
-		if coverage*number_of_read_tuples!=0:
-			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero",program="RNFtools",subprogram="MIShmash",exception=ValueError)
-
-		self.number_of_read_tuples=number_of_read_tuples
-		self.coverage=coverage
-
+		self.number_of_read_tuples = number_of_read_tuples
+		self.coverage = coverage
 
 	def get_input(self):
 		return [
-				self._fa_fn,
-				self._fai_fn,
-			]
+			self._fa_fn,
+			self._fai_fn,
+		]
 
 	def get_output(self):
 		return [
-				self._fq_fn,
-				os.path.join(
-						self.get_dir(),
-						"output.fastq",
-					),
-				os.path.join(
-						self.get_dir(),
-						"log.txt",
-					),
-			]
+			self._fq_fn,
+			os.path.join(
+				self.get_dir(),
+				"output.fastq",
+			),
+			os.path.join(
+				self.get_dir(),
+				"log.txt",
+			),
+		]
 
 	# todo: check if "output.fastq" is defined as an output file
 	def create_fq(self):
-		if self.number_of_read_tuples==0 and self.number_of_read_tuples==0:
+		if self.number_of_read_tuples == 0 and self.number_of_read_tuples == 0:
 			for x in self.get_output():
-				with open(x,"w+") as f:
+				with open(x, "w+") as f:
 					f.write(os.linesep)
 		else:
-			if self.number_of_read_tuples==0:
-				genome_size=os.stat(self._fa_fn).st_size
-				self.number_of_read_tuples=int(self.coverage*genome_size/(self.read_length_1+self.read_length_2))
+			if self.number_of_read_tuples == 0:
+				genome_size = os.stat(self._fa_fn).st_size
+				self.number_of_read_tuples = int(
+					self.coverage * genome_size / (self.read_length_1 + self.read_length_2))
 
 			rnftools.utils.shell("""
 					cd "{dir}"
@@ -97,40 +97,40 @@ class CuReSim(Source):
 					{other_params} \
 					> /dev/null
 				""".format(
-					dir=self.get_dir(),
-					curesim="curesim",
-					fa=self._fa_fn,
-					nb=self.number_of_read_tuples,
-					rlen1=self.read_length_1,
-					other_params=self.other_params,
-					rng_seed=self._rng_seed,
-				)
+				dir=self.get_dir(),
+				curesim="curesim",
+				fa=self._fa_fn,
+				nb=self.number_of_read_tuples,
+				rlen1=self.read_length_1,
+				other_params=self.other_params,
+				rng_seed=self._rng_seed,
+			)
 			)
 
-			curesim_fastq_fn=os.path.join(
-					self.get_dir(),
-					"output.fastq",
-				)
+			curesim_fastq_fn = os.path.join(
+				self.get_dir(),
+				"output.fastq",
+			)
 
-			with open(curesim_fastq_fn,"r+") as curesim_fastq_fo:
+			with open(curesim_fastq_fn, "r+") as curesim_fastq_fo:
 				with open(self._fai_fn) as fai_fo:
-					with open(self._fq_fn,"w+") as rnf_fastq_fo:
+					with open(self._fq_fn, "w+") as rnf_fastq_fo:
 						self.recode_curesim_reads(
-								curesim_fastq_fo=curesim_fastq_fo,
-								rnf_fastq_fo=rnf_fastq_fo,
-								fai_fo=fai_fo,
-								genome_id=self.genome_id,
-								number_of_read_tuples=10**9,
-							)
+							curesim_fastq_fo=curesim_fastq_fo,
+							rnf_fastq_fo=rnf_fastq_fo,
+							fai_fo=fai_fo,
+							genome_id=self.genome_id,
+							number_of_read_tuples=10 ** 9,
+						)
 
 	@staticmethod
 	def recode_curesim_reads(
-				curesim_fastq_fo,
-				rnf_fastq_fo,
-				fai_fo,
-				genome_id,
-				number_of_read_tuples=10**9,
-			):
+			curesim_fastq_fo,
+			rnf_fastq_fo,
+			fai_fo,
+			genome_id,
+			number_of_read_tuples=10 ** 9,
+	):
 		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
 
 		Args:
@@ -160,63 +160,64 @@ class CuReSim(Source):
 			8: read number (unique within a genome)
 		"""
 
-		max_seq_len=0
+		max_seq_len = 0
 
 		fai_index = rnftools.utils.FaIdx(fai_fo=fai_fo)
-		read_tuple_id_width=len(format(number_of_read_tuples,'x'))
+		read_tuple_id_width = len(format(number_of_read_tuples, 'x'))
 
-		fq_creator=rnftools.rnfformat.FqCreator(
-					fastq_fo=rnf_fastq_fo,
-					read_tuple_id_width=read_tuple_id_width,
-					genome_id_width=2,
-					chr_id_width=fai_index.chr_id_width,
-					coor_width=fai_index.coor_width,
-					info_reads_in_tuple=True,
-					info_simulator="curesim",
-				)
+		fq_creator = rnftools.rnfformat.FqCreator(
+			fastq_fo=rnf_fastq_fo,
+			read_tuple_id_width=read_tuple_id_width,
+			genome_id_width=2,
+			chr_id_width=fai_index.chr_id_width,
+			coor_width=fai_index.coor_width,
+			info_reads_in_tuple=True,
+			info_simulator="curesim",
+		)
 
 		# parsing FQ file
-		read_tuple_id=0
+		read_tuple_id = 0
 
-		i=0
+		i = 0
 		for line in curesim_fastq_fo:
-			if i%4==0:
+			if i % 4 == 0:
 				m = curesim_pattern.search(line)
 				if m is None:
-					rnftools.utils.error("Read '{}' was not generated by CuReSim.".format(line[1:]),program="RNFtools",subprogram="MIShmash",exception=ValueError)
+					rnftools.utils.error("Read '{}' was not generated by CuReSim.".format(line[1:]), program="RNFtools",
+						subprogram="MIShmash", exception=ValueError)
 
-				contig_name     = m.group(1)
-				start_pos       = int(m.group(2))
-				direction       = "R" if int(m.group(3)) else "F"
-				random          = bool(m.group(4))
-				ins_nb          = int(m.group(5))
-				del_nb          = int(m.group(6))
-				subst_nb        = int(m.group(7))
-				rd_id           = int(m.group(8))
+				contig_name = m.group(1)
+				start_pos = int(m.group(2))
+				direction = "R" if int(m.group(3)) else "F"
+				random = bool(m.group(4))
+				ins_nb = int(m.group(5))
+				del_nb = int(m.group(6))
+				subst_nb = int(m.group(7))
+				rd_id = int(m.group(8))
 
-				end_pos         = start_pos - 1 - ins_nb + del_nb
+				end_pos = start_pos - 1 - ins_nb + del_nb
 
-				chr_id=0
-				#TODO: uncomment when the chromosome naming bug in curesim is corrected
-				#chr_id = self.dict_chr_ids[contig_name] if self.dict_chr_ids!={} else "0"
+				chr_id = 0
+			# TODO: uncomment when the chromosome naming bug in curesim is corrected
+			# chr_id = self.dict_chr_ids[contig_name] if self.dict_chr_ids!={} else "0"
 
-			elif i%4==1:
-				bases=line.strip()
+			elif i % 4 == 1:
+				bases = line.strip()
 				end_pos += len(bases)
 
-				segment=rnftools.rnfformat.Segment(
-						genome_id=genome_id,
-						chr_id=chr_id,
-						direction=direction,
-						left=start_pos + 1,
-						right=end_pos,
-					)
+				segment = rnftools.rnfformat.Segment(
+					genome_id=genome_id,
+					chr_id=chr_id,
+					direction=direction,
+					left=start_pos + 1,
+					right=end_pos,
+				)
 
-			elif i%4==2:
+			elif i % 4 == 2:
 				pass
 
-			elif i%4==3:
-				qualities=line.strip()
+			elif i % 4 == 3:
+				qualities = line.strip()
 
 				fq_creator.add_read(
 					read_tuple_id=read_tuple_id,
@@ -225,9 +226,8 @@ class CuReSim(Source):
 					segments=[segment],
 				)
 
-				read_tuple_id+=1
+				read_tuple_id += 1
 
-			i+=1
+			i += 1
 
 		fq_creator.flush_read_tuple()
-

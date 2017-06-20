@@ -1,6 +1,9 @@
-import snakemake
 import rnftools
 import os
+import os
+
+import rnftools
+
 
 class FqCreator:
 	"""Class for writing RNF reads to FASTQ files.
