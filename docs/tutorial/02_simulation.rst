@@ -94,12 +94,26 @@ into the resulting FASTQ file.
 More samples
 ------------
 
-We can also simulated multiple samples using a single `Snakemake`.
+We can also simulated multiple samples using a single ``Snakemake``.
 
 .. literalinclude:: ../../examples/01_tutorial/02_simulation/05_more_samples/Snakefile
 	:language: python
 	:linenos:
 
+
+
+Sequence extraction
+-------------------
+
+It may be sometimes useful to extract certain sequences from the reference file
+before the simulation itself. For instance, reads from each sequence could be
+simulated with a different coverage. For this purpose, we can use the
+``sequences`` parameter. Sequences for extraction can be specified either by
+their number in the original FASTA file (starting from 0), or using their name.
+
+.. literalinclude:: ../../examples/01_tutorial/02_simulation/06_sequence_extraction/Snakefile
+	:language: python
+	:linenos:
 
 Non-standard parameters
 -----------------------
@@ -108,7 +122,7 @@ Not all command-line parameters of every simulator are directly supported by
 RNFtools. However, such parameters can still be passed through the parameter
 ``other_params`` like in this example:
 
-.. literalinclude:: ../../examples/01_tutorial/02_simulation/06_nonstandard_parameters/Snakefile
+.. literalinclude:: ../../examples/01_tutorial/02_simulation/07_nonstandard_parameters/Snakefile
 	:language: python
 	:linenos:
 
