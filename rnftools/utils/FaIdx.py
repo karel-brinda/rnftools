@@ -32,47 +32,48 @@ class FaIdx:
 
 			pairs = []
 
-			for (i, line) in enumerate(fai_fo, start=1):
-				if line.strip() != "":
-					parts = line.split("\t")
-					chromosome = parts[0]
-					length = int(parts[1])
-					pairs.append((chromosome, length))
+			for (i,line) in enumerate(fai_fo,start=1):
+				if line.strip()!="":
+					parts=line.split("\t")
+					chromosome=parts[0]
+					length=int(parts[1])
+					pairs.append( (chromosome,length) )
 			self.load_from_list(pairs)
 
 	# pairs:list of (chromosome, length)
 	def load_from_list(self, pairs):
-		assert self._dict_chr_ids == {}
+		assert self._dict_chr_ids=={}
 
-		for i, (chromosome, length) in enumerate(pairs, start=1):
-			self._dict_chr_ids[chromosome] = i
-			self._dict_ids_chr[i] = chromosome
-			self._dict_chr_lengths[chromosome] = length
+		for i,(chromosome, length) in enumerate(pairs,start=1):
+			self._dict_chr_ids[chromosome]=i
+			self._dict_ids_chr[i]=chromosome
+			self._dict_chr_lengths[chromosome]=length
 
-		self._number_of_chromosomes = len(self._dict_chr_ids)
-		self._chr_id_width = len(str(self._number_of_chromosomes))
-		self._coor_width = len(str(max(self._dict_chr_lengths.values())))
+		self._number_of_chromosomes=len(self._dict_chr_ids)
+		self._chr_id_width=len(str(self._number_of_chromosomes))
+		self._coor_width=len(str(max(self._dict_chr_lengths.values())))
 
 	@property
 	def dict_chr_ids(self):
 		return self._dict_chr_ids
-
+	
 	@property
 	def dict_ids_chr(self):
 		return self._dict_ids_chr
-
+	
 	@property
 	def dict_chr_lengths(self):
 		return self._dict_chr_lengths
-
+	
 	@property
 	def number_of_chromosomes(self):
 		return self._number_of_chromosomes
-
+	
 	@property
 	def chr_id_width(self):
 		return self._chr_id_width
-
+	
 	@property
 	def coor_width(self):
 		return self._coor_width
+	

@@ -1,10 +1,11 @@
+import rnftools
+import snakemake
 import os
+import collections
 import textwrap
 
-import rnftools
 from . import DEFAULT_ALLOWED_DELTA
 from . import _default_gp_style_func
-
 
 ##############
 ##############
@@ -33,97 +34,98 @@ class Report:
 		gp_style_func (function(i, nb)): Function assigning GnuPlot styles for overall graphs. Arguments: i: 0-based id of curve, nb: number of curves.		
 	"""
 
-	# todo: describe format of panels
+	#todo: describe format of panels
 
 
 	def __init__(
-			self,
-			name,
-			title=None,
-			description="",
-			allowed_delta=DEFAULT_ALLOWED_DELTA,
-			bam_dirs=None,
-			panels=None,
-			default_x_run=(0.00001, 1.0),
-			default_y_run=(60, 100),
-			default_pdf_size_cm=(10, 10),
-			default_svg_size_px=(640, 640),
-			render_pdf_method='any',
-			keep_intermediate_files=False,
-			compress_intermediate_files=True,
-			default_x_axis="({m}+{w})/({M}+{m}+{w})",
-			default_x_label="FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  ",
-			gp_style_func=_default_gp_style_func,
-	):
+		self,
+		name,
+		title=None,
+		description="",
+		allowed_delta=DEFAULT_ALLOWED_DELTA,
+		bam_dirs=None,
+		panels=None,
+		default_x_run=(0.00001,1.0),
+		default_y_run=(60,100),
+		default_pdf_size_cm=(10,10),
+		default_svg_size_px=(640,640),
+		render_pdf_method='any',
+		keep_intermediate_files=False,
+		compress_intermediate_files=True,
+		default_x_axis="({m}+{w})/({M}+{m}+{w})",
+		default_x_label="FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  ",
+		gp_style_func=_default_gp_style_func,
+		):
 
-		self._gp_style_func = gp_style_func
+		self._gp_style_func=gp_style_func
 
 		rnftools.lavender.add_report(self)
 
-		self.name = name
-		self.report_dir = self.name
-		self.title = self.name if title == None else title
-		self.description = description
+		self.name=name
+		self.report_dir=self.name
+		self.title=self.name if title==None else title
+		self.description=description
 
-		self.default_x_run = self._load_x_run(default_x_run)
-		self.default_y_run = self._load_y_run(default_y_run)
-		self.default_svg_size_px = self._load_svg_size_px(default_svg_size_px)
-		self.default_x_label = default_x_label
+		self.default_x_run=self._load_x_run(default_x_run)
+		self.default_y_run=self._load_y_run(default_y_run)
+		self.default_svg_size_px=self._load_svg_size_px(default_svg_size_px)
+		self.default_x_label=default_x_label
 
-		self.render_pdf_method = render_pdf_method
+		self.render_pdf_method=render_pdf_method
 
-		self.allowed_delta = int(allowed_delta)
+		self.allowed_delta=int(allowed_delta)
 		assert 0 <= allowed_delta
 
-		self._html_fn = name + ".html"
+		self._html_fn = name+".html"
 
 		assert bam_dirs is None or panels is None, "Panels can be specified using bam_dirs or panels, but not both at the same time."
 
-		self.panels = []
+		self.panels=[]
 
 		if bam_dirs is not None:
+
 			assert hasattr(bam_dirs, '__iter__'), "bamdirs should be iterable (list, tuple,  etc.)"
 
-			# assert isinstance(bam_dirs,collections.iterable)
-			# assert isinstance(bamdirs, basestring)
+			#assert isinstance(bam_dirs,collections.iterable)
+			#assert isinstance(bamdirs, basestring)
 
 			self.panels = [
-				rnftools.lavender.Panel(
-					bam_dir=bam_dirs[i],
-					panel_dir=os.path.join(self.report_dir, str(i)),
-					report=self,
-					name=str(i),
-					title="dir {}".format(i),
-					keep_intermediate_files=keep_intermediate_files,
-					compress_intermediate_files=compress_intermediate_files,
-					default_x_axis=default_x_axis,
-					default_x_label=default_x_label,
-					gp_style_func=self._gp_style_func,
-					render_pdf_method=self.render_pdf_method,
-				)
-				for i in range(len(bam_dirs))
-			]
+					rnftools.lavender.Panel(
+						bam_dir=bam_dirs[i],
+						panel_dir=os.path.join(self.report_dir,str(i)),
+						report=self,
+						name=str(i),
+						title="dir {}".format(i),
+						keep_intermediate_files=keep_intermediate_files,
+						compress_intermediate_files=compress_intermediate_files,
+						default_x_axis=default_x_axis,
+						default_x_label=default_x_label,
+						gp_style_func=self._gp_style_func,
+						render_pdf_method=self.render_pdf_method,
+					)
+					for i in range(len(bam_dirs))
+				]
 
 		if panels is not None:
 
-			for i, panel_dict in enumerate(panels):
+			for i,panel_dict in enumerate(panels):
 
-				bam_dir = panel_dict["bam_dir"]
-
-				try:
-					panel_dir = panel_dict["panel_dir"]
-				except KeyError:
-					panel_dir = os.path.join(self.report_dir, str(i))
+				bam_dir=panel_dict["bam_dir"]
 
 				try:
-					panel_name = panel_dict["name"]
+					panel_dir=panel_dict["panel_dir"]
 				except KeyError:
-					panel_name = "panel_{}".format(i)
+					panel_dir=os.path.join(self.report_dir,str(i))
 
 				try:
-					panel_title = panel_dict["title"]
+					panel_name=panel_dict["name"]
 				except KeyError:
-					panel_title = "dir {}".format(i)
+					panel_name="panel_{}".format(i)
+
+				try:
+					panel_title=panel_dict["title"]
+				except KeyError:
+					panel_title="dir {}".format(i)
 
 				self.panels.append(
 					rnftools.lavender.Panel(
@@ -173,16 +175,18 @@ class Report:
 			y_label="#correctly unmapped reads / #reads which should be unmapped",
 		)
 
+
+
 	def add_graph(self,
-			y,
-			x_label=None,
-			y_label="",
-			title="",
-			x_run=None,
-			y_run=None,
-			svg_size_px=None,
-			key_position="bottom right",
-	):
+				y,
+				x_label=None,
+				y_label="",
+				title="",
+				x_run=None,
+				y_run=None,
+				svg_size_px=None,
+				key_position="bottom right",
+			):
 		"""
 		Add a new graph to the overlap report.
 
@@ -197,41 +201,41 @@ class Report:
 			key_position (str): GnuPlot position of the legend.
 		"""
 
-		if x_run == None:
-			x_run = self.default_x_run
-		if y_run == None:
-			y_run = self.default_y_run
-		if svg_size_px == None:
-			svg_size_px = self.default_svg_size_px
+		if x_run==None:
+			x_run=self.default_x_run
+		if y_run==None:
+			y_run=self.default_y_run
+		if svg_size_px==None:
+			svg_size_px=self.default_svg_size_px
 
 		for panel in self.panels:
-			x_run = self._load_x_run(x_run)
-			y_run = self._load_y_run(y_run)
-			svg_size_px = self._load_svg_size_px(svg_size_px)
+			x_run=self._load_x_run(x_run)
+			y_run=self._load_y_run(y_run)
+			svg_size_px=self._load_svg_size_px(svg_size_px)
 			panel.add_graph(
-				y=y,
-				x_run=x_run,
-				y_run=y_run,
-				svg_size_px=svg_size_px,
-				y_label=y_label,
-				x_label=x_label if x_label != None else self.default_x_label,
-				title=title,
-				key_position=key_position,
-			)
+					y=y,
+					x_run=x_run,
+					y_run=y_run,
+					svg_size_px=svg_size_px,
+					y_label=y_label,
+					x_label=x_label if x_label != None else self.default_x_label,
+					title=title,
+					key_position=key_position,
+				)
 
 	def get_report_dir(self):
 		"""Get directory report's auxiliary files."""
-
+		
 		return self.report_dir
 
 	def clean(self):
 		"""Remove all temporary files."""
 
-		rnftools.utils.shell('rm -fR "{}" "{}"'.format(self.report_dir, self._html_fn))
+		rnftools.utils.shell('rm -fR "{}" "{}"'.format(self.report_dir,self._html_fn))
 
 	def get_panels(self):
 		"""Get all contained panels."""
-
+		
 		return self.panels
 
 	######################################
@@ -239,7 +243,7 @@ class Report:
 
 	def html_fn(self):
 		"""Get name of the HTML file of the report."""
-
+		
 		return self._html_fn
 
 	######################################
@@ -251,21 +255,21 @@ class Report:
 		html_table = ""
 		columns = [panel.get_html_column() for panel in self.panels]
 		trs = len(columns[0])
-		html_table += os.linesep.join([
-			"<tr>{}</tr>".format(
-				"".join(
-					[
-						"<td>{}</td>".format(
-							columns[col][row]
-						) for col in range(len(columns))
-					]
+		html_table+=os.linesep.join([
+				"<tr>{}</tr>".format(
+					"".join(
+						[
+							"<td>{}</td>".format(
+								columns[col][row]
+							) for col in range(len(columns))
+						]
+					)
 				)
-			)
-			for row in range(trs)
-		])
+				for row in range(trs)
+			])			
 
-		with open(self._html_fn, "w+") as f:
-			css_src = textwrap.dedent("""
+		with open(self._html_fn,"w+") as f:
+			css_src=textwrap.dedent("""
 					.main_table                       {border-collapse:collapse;margin-top:15px;}
 					td                                {border: solid #aaaaff 1px;padding:4px;vertical-alignment:top;}
 					colgroup, thead                   {border: solid black 2px;padding 2px;}
@@ -275,7 +279,7 @@ class Report:
 					img                               {min-width:640px}
 			""")
 
-			html_src = """<!DOCTYPE html>
+			html_src="""<!DOCTYPE html>
 			<html>
 			<head>
 				<meta charset="UTF-8" />
@@ -294,17 +298,17 @@ class Report:
 
 			</body>
 			""".format(
-				html_table=html_table,
-				css=css_src,
-				title=self.title,
-				description=self.description,
-			)
+					html_table=html_table,
+					css=css_src,
+					title=self.title,
+					description=self.description,
+				)
 
 			try:
 				import tidylib
-				tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent': 'auto'})
+				tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent':'auto'})
 			except:
-				tidy_html_src = html_src
+				tidy_html_src=html_src
 
 			f.write(tidy_html_src)
 
@@ -313,23 +317,23 @@ class Report:
 
 	@staticmethod
 	def _load_x_run(x_run):
-		assert len(x_run) == 2
-		to_return = [float(x) for x in x_run]
-		assert 0 < to_return[0] and to_return[0] <= 1.0
+		assert len(x_run)==2
+		to_return=[float(x) for x in x_run]
+		assert 0< to_return[0] and to_return[0]<=1.0
 		return to_return
 
 	@staticmethod
 	def _load_y_run(y_run):
-		assert len(y_run) == 2
-		to_return = [float(x) for x in y_run]
-		assert 0 <= to_return[0] and to_return[0] <= 100
-		assert 0 <= to_return[1] and to_return[1] <= 100
+		assert len(y_run)==2
+		to_return=[float(x) for x in y_run]
+		assert 0<=to_return[0] and to_return[0]<=100
+		assert 0<=to_return[1] and to_return[1]<=100
 		return to_return
 
 	@staticmethod
 	def _load_svg_size_px(svg_size_px):
-		assert len(svg_size_px) == 2
-		to_return = [int(x) for x in svg_size_px]
-		assert 0 <= to_return[0]
-		assert 0 <= to_return[1]
+		assert len(svg_size_px)==2
+		to_return=[int(x) for x in svg_size_px]
+		assert 0<=to_return[0]
+		assert 0<=to_return[1]
 		return to_return
