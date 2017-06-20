@@ -2,6 +2,8 @@ import rnftools
 import os
 import textwrap
 
+import bs4
+
 from . import DEFAULT_ALLOWED_DELTA
 from . import _default_gp_style_func
 
@@ -198,11 +200,11 @@ class Report:
 			key_position (str): GnuPlot position of the legend.
 		"""
 
-		if x_run == None:
+		if x_run is None:
 			x_run = self.default_x_run
-		if y_run == None:
+		if y_run is None:
 			y_run = self.default_y_run
-		if svg_size_px == None:
+		if svg_size_px is None:
 			svg_size_px = self.default_svg_size_px
 
 		for panel in self.panels:
@@ -215,7 +217,7 @@ class Report:
 				y_run=y_run,
 				svg_size_px=svg_size_px,
 				y_label=y_label,
-				x_label=x_label if x_label != None else self.default_x_label,
+				x_label=x_label if x_label is not None else self.default_x_label,
 				title=title,
 				key_position=key_position,
 			)
@@ -301,12 +303,7 @@ class Report:
 				description=self.description,
 			)
 
-			try:
-				import tidylib
-				tidy_html_src, errors = tidylib.tidy_document(html_src, options={'indent': 'auto'})
-			except:
-				tidy_html_src = html_src
-
+			tidy_html_src = bs4.BeautifulSoup(html_src).prettify()
 			f.write(tidy_html_src)
 
 	######################################
@@ -316,15 +313,15 @@ class Report:
 	def _load_x_run(x_run):
 		assert len(x_run) == 2
 		to_return = [float(x) for x in x_run]
-		assert 0 < to_return[0] and to_return[0] <= 1.0
+		assert 0.0 < to_return[0] <= 1.0
 		return to_return
 
 	@staticmethod
 	def _load_y_run(y_run):
 		assert len(y_run) == 2
 		to_return = [float(x) for x in y_run]
-		assert 0 <= to_return[0] and to_return[0] <= 100
-		assert 0 <= to_return[1] and to_return[1] <= 100
+		assert 0.0 <= to_return[0] <= 100.0
+		assert 0.0 <= to_return[1] <= 100.0
 		return to_return
 
 	@staticmethod
