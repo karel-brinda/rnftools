@@ -7,10 +7,9 @@ import re
 ##################################
 #    TODO
 # - randomization
-# - color space
 # - random generators seeds
 #
-#
+
 
 rule mishmash_clean:
 	run:

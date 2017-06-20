@@ -1,7 +1,5 @@
 import rnftools
-import snakemake
 import os
-import collections
 import textwrap
 
 from . import DEFAULT_ALLOWED_DELTA
