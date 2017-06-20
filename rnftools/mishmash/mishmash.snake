@@ -31,6 +31,22 @@ for i, sample in enumerate(rnftools.mishmash.samples()):
 		run:
 			rnftools.mishmash.samples()[int(params.i)].create_fq()
 
+
+for i, source in enumerate(rnftools.mishmash.sources()):
+	rule:
+		"""
+			Rules for reference files
+		"""
+		input:
+			source.fa0_fn()
+		output:
+			source.fa_fn()
+		params:
+			i=str(i)
+		run:
+			rnftools.mishmash.sources()[int(params.i)].create_fa()
+
+
 for i, source in enumerate(rnftools.mishmash.sources()):
 	rule:
 		"""

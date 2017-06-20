@@ -13,6 +13,7 @@ class MasonIllumina(Source):
 
 	Args:
 		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding Mason parameter: ``-ir, --input-reference``.
+		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
 		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
 		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding Mason parameter: ``-n, --num-fragments``.
 		read_length_1 (int): Length of the first read. Corresponding Mason parameter: ``--illumina-read-length``.
@@ -29,6 +30,7 @@ class MasonIllumina(Source):
 	def __init__(
 			self,
 			fasta,
+			sequences=None,
 			coverage=0,
 			number_of_read_tuples=0,
 			read_length_1=100,
@@ -55,6 +57,7 @@ class MasonIllumina(Source):
 
 		super().__init__(
 			fasta=fasta,
+			sequences=sequences,
 			reads_in_tuple=ends,
 			rng_seed=rng_seed,
 		)

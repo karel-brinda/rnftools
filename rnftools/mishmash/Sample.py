@@ -57,25 +57,29 @@ class Sample:
 
 	def add_source(self, source):
 		if self._reads_in_tuple != source.get_reads_in_tuple():
+			message = "It is not possible to combine read tuples with different number of reads in a single sample. "
+			"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(
+				self._name,
+				self._reads_in_tuple,
+				source.get_reads_in_tuple(),
+				source,
+			)
+
 			rnftools.utils.error(
-				"It is not possible to combine read tuples with different number of reads in a single sample. "
-				"Details: name='{}', old ends='{}', new ends='{}', source='{}'.".format(self._name,
-					self._reads_in_tuple, source.get_reads_in_tuple(), source),
-				program="RNFtools", subprogram="MIShmash", exception=ValueError)
+				message,
+				program="RNFtools",
+				subprogram="MIShmash",
+				exception=ValueError,
+			)
+
 		self._sources.append(source)
 
 	def clean(self):
 		for x in self._fq_fns + [self._dir]:
 			rnftools.utils.shell('rm -fR "{}"'.format(x))
 
-	######################################
-	######################################
-
 	def fq_fns(self):
 		return self._fq_fns
-
-	######################################
-	######################################
 
 	def create_fq(self):
 		fq_merger = rnftools.rnfformat.FqMerger(
