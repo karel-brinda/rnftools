@@ -38,8 +38,12 @@ class CuReSim(Source):
 	):
 
 		if read_length_2 != 0:
-			rnftools.utils.error("CuReSim supports only single-end reads", program="RNFtools", subprogram="MIShmash",
-				exception=ValueError)
+			rnftools.utils.error(
+				"CuReSim supports only single-end reads",
+				program="RNFtools",
+				subprogram="MIShmash",
+				exception=ValueError,
+			)
 
 		super().__init__(
 			fasta=fasta,
@@ -54,8 +58,12 @@ class CuReSim(Source):
 		self.other_params = other_params
 
 		if coverage * number_of_read_tuples != 0:
-			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero", program="RNFtools",
-				subprogram="MIShmash", exception=ValueError)
+			rnftools.utils.error(
+				"coverage or number_of_read_tuples must be equal to zero",
+				program="RNFtools",
+				subprogram="MIShmash",
+				exception=ValueError,
+			)
 
 		self.number_of_read_tuples = number_of_read_tuples
 		self.coverage = coverage
@@ -92,7 +100,7 @@ class CuReSim(Source):
 					self.coverage * genome_size / (self.read_length_1 + self.read_length_2))
 
 			rnftools.utils.shell("""
-					cd "{dir}"
+					(cd "{dir}" && \
 					"{curesim}" \
 					-f "{fa}" \
 					-n {nb} \
@@ -101,7 +109,7 @@ class CuReSim(Source):
 					-sd 0 \
 					-y 0 \
 					{other_params} \
-					> /dev/null
+					> /dev/null)
 				""".format(
 				dir=self.get_dir(),
 				curesim="curesim",

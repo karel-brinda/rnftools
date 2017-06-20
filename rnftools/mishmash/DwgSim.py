@@ -194,7 +194,7 @@ class DwgSim(Source):
 						fai_fo=fai_fo,
 						genome_id=self.genome_id,
 						number_of_read_tuples=10 ** 9,
-						allow_unmapped=False,
+						# allow_unmapped=False,
 						estimate_unknown_values=self.estimate_unknown_values,
 					)
 
