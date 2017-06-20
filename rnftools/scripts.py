@@ -153,7 +153,7 @@ def dwgsim2rnf(args):
 		fai_fo=args.fai_fo,
 		genome_id=args.genome_id,
 		number_of_read_tuples=10 ** 9,
-		allow_unmapped=args.allow_unmapped,
+		# allow_unmapped=args.allow_unmapped,
 		estimate_unknown_values=args.estimate_unknown_values,
 	)
 
@@ -179,7 +179,8 @@ def add_dwgsim_parser(subparsers, subcommand, help, description):
 		help='Estimate unknown values.',
 	)
 
-	_add_shared_params(parser_dwgsim2rnf, unmapped_switcher=True)
+	# _add_shared_params(parser_dwgsim2rnf, unmapped_switcher=True)
+	_add_shared_params(parser_dwgsim2rnf)
 
 
 ################################
@@ -244,11 +245,11 @@ def add_merge_parser(subparsers, subcommand, help, description):
 		description=description,
 		epilog=textwrap.dedent("""\
 				Source RNF-FASTQ files should satisfy the following conditions:
-				   1) Each file contains only reads corresponding to one genome (with the
-				      same genome id).
-				   2) All files contain reads of the same type (single-end / paired-end).
-				   3) Reads with more reads per tuple (e.g., paired-end) have '/1', etc.
-				      in suffix (for identification of nb of read).
+					1) Each file contains only reads corresponding to one genome (with the
+					   same genome id).
+					2) All files contain reads of the same type (single-end / paired-end).
+					3) Reads with more reads per tuple (e.g., paired-end) have '/1', etc.
+					   in suffix (for identification of nb of read).
 				"""
 		),
 		formatter_class=argparse.RawTextHelpFormatter,
