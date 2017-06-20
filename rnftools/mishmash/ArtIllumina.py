@@ -12,6 +12,7 @@ class ArtIllumina(Source):
 
 	Args:
 		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding ART parameter: ``-i --in``.
+		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
 		coverage (float): Average coverage of the genome. Corresponding ART parameter: ``-f --fcov``.
 		number_of_read_tuples (int): Number of read tuples.
 		read_length_1 (int): Length of the first read. Corresponding ART parameter: ``-l --len``.
@@ -28,6 +29,7 @@ class ArtIllumina(Source):
 	def __init__(
 			self,
 			fasta,
+			sequences=None,
 			coverage=0,
 			number_of_read_tuples=0,
 			read_length_1=100,
@@ -45,11 +47,16 @@ class ArtIllumina(Source):
 			self.distance = distance
 			self.distance_deviation = distance_deviation
 			if read_length_1 != read_length_2:
-				rnftools.utils.error("art_illumina can simulate only pairs with equal lengths", program="RNFtools",
-					subprogram="MIShmash", exception=ValueError)
+				rnftools.utils.error(
+					"art_illumina can simulate only pairs with equal lengths",
+					program="RNFtools",
+					subprogram="MIShmash",
+					exception=ValueError,
+				)
 
 		super().__init__(
 			fasta=fasta,
+			sequences=sequences,
 			reads_in_tuple=ends,
 			rng_seed=rng_seed,
 		)
@@ -59,8 +66,12 @@ class ArtIllumina(Source):
 		self.other_params = other_params
 
 		if coverage * number_of_read_tuples != 0:
-			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero", program="RNFtools",
-				subprogram="MIShmash", exception=ValueError)
+			rnftools.utils.error(
+				"coverage or number_of_read_tuples must be equal to zero",
+				program="RNFtools",
+				subprogram="MIShmash",
+				exception=ValueError,
+			)
 
 		self.number_of_read_tuples = number_of_read_tuples
 		self.coverage = coverage

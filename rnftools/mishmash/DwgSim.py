@@ -15,6 +15,7 @@ class DwgSim(Source):
 
 	Args:
 		fasta (str): File name of the genome from which reads are created (FASTA file). 
+		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
 		coverage (float): Average coverage of the genome (if number_of_reads specified,
 			then it must be equal to zero).
 			Corresponding DWGsim parameter: ``-C``.
@@ -55,6 +56,7 @@ class DwgSim(Source):
 	def __init__(
 			self,
 			fasta,
+			sequences=None,
 			coverage=0,
 			number_of_read_tuples=0,
 			read_length_1=100,
@@ -81,6 +83,7 @@ class DwgSim(Source):
 
 		super().__init__(
 			fasta=fasta,
+			sequences=sequences,
 			reads_in_tuple=ends,
 			rng_seed=rng_seed,
 		)
