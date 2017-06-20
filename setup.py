@@ -57,6 +57,7 @@ setuptools.setup(
 
 	install_requires=[
 		'argparse',
+		'beautifulsoup4',
 		'pyfaidx',
 		'pysam',
 		'snakemake',
