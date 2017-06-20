@@ -14,6 +14,7 @@ class Source(object):
 		fasta (str): File name of the genome from which reads are created (FASTA file).
 		reads_in_tuple (int): Number of reads in each read tuple.
 		rng_seed (int): Seed for simulator's random number generator.
+		sequences (list of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
 		number_of_required_cores (int): Number of cores used by the simulator. This parameter is used to prevent running other threads or programs at the same time.
 	"""
 
@@ -23,6 +24,7 @@ class Source(object):
 				fasta,
 				reads_in_tuple,
 				rng_seed,
+				sequences=None,
 				number_of_required_cores=1
 			):
 		rnftools.mishmash.add_source(self)
@@ -106,35 +108,32 @@ class Source(object):
 		return self._fq_fn
 
 
-	@abc.abstractmethod
 	def get_input(self):
 		"""Get list of input files (required to do simulation).
 
 		Returns:
 			list: List of input files
 		"""
-		return
+		raise NotImplementedError
 
 	############################################################################
 	############################################################################
 
-	@abc.abstractmethod
 	def get_output(self):
 		"""Get list of output files (created during simulation).
 		
 		Returns:
 			list: List of input files
 		"""
-		return
+		raise NotImplementedError
 
 	############################################################################
 	############################################################################
 
-	@abc.abstractmethod
 	def create_fq(self):
 		"""Simulate reads.
 		"""
-		return
+		raise NotImplementedError
 
 	# todo: make this method static
 	# todo: check if it can work with a bam file
