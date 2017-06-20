@@ -1,12 +1,10 @@
-import sys
 import re
 import argparse
 import os
-import random
 import sys
 import rnftools
 import textwrap
-import snakemake
+
 
 
 # todo: examples of usages for every subcommand (using epilog)
