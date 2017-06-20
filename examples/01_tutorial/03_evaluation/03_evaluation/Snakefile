@@ -1,11 +1,12 @@
 import rnftools
 
 rnftools.lavender.Report(
-	bam_dirs=["../2_mapping"],
+	# insert a list of directories with BAM files here:
+	bam_dirs=["../02_mapping"],
 	name="report_SE",
 	keep_intermediate_files=True,
 	allowed_delta=5,
-	default_x_run=[0.01,0.1]
+	default_x_run=[0.01,0.5]
 )
 
 rule all: input: rnftools.input()
