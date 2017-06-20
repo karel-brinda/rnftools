@@ -1,0 +1,13 @@
+import rnftools
+
+rnftools.lavender.Report(
+	bam_dirs=["../2_mapping"],
+	name="report_SE",
+	keep_intermediate_files=True,
+	allowed_delta=5,
+	default_x_run=[0.01,0.1]
+)
+
+rule all: input: rnftools.input()
+
+include: rnftools.include()

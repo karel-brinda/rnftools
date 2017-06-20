@@ -1,0 +1,17 @@
+import rnftools
+
+rnftools.mishmash.sample("SE_reads",reads_in_tuple=1)
+
+# put your reference genome here
+fa="../reference.fa"
+
+rnftools.mishmash.DwgSim(
+	fasta=fa,
+	number_of_read_tuples=1000,
+	read_length_1=100,
+	read_length_2=0,
+	mutation_rate=0.09,
+)
+
+include: rnftools.include()
+rule: input: rnftools.input()
