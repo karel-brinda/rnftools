@@ -46,7 +46,7 @@ class Source(object):
 			self._name
 		)
 		self._fa0_fn = os.path.abspath(fasta)
-		self._fa_fn = os.path.join(self._dir, "reference.fa")
+		self._fa_fn = os.path.abspath(os.path.join(self._dir, "reference.fa"))
 		self._fai_fn = self._fa_fn + ".fai"
 
 		self._seqs = sequences
