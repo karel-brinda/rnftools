@@ -4,12 +4,12 @@ usage: rnftools [-h]
                 {,check,publication,validate,liftover,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}
                 ...
 
-================================================
-RNFtools -  http://rnftools.rtfd.org
-------------------------------------
-version: 0.2.2
+==================================================
+RNFtools -  http://karel-brinda.github.io/rnftools
+--------------------------------------------------
+version: 0.3.1.1
 contact: Karel Brinda (karel.brinda@univ-mlv.fr)
-================================================
+==================================================
 
 positional arguments:
   {,check,publication,validate,liftover,sam2rnf,art2rnf,curesim2rnf,dwgsim2rnf,mason2rnf,wgsim2rnf,merge,sam2es,es2et,et2roc,sam2roc}

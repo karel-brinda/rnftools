@@ -2,7 +2,7 @@ $ rnftools check -h
 
 usage: rnftools check [-h]
 
-Check if RNFtools and SMBL are up-to-date.
+Check if RNFtools are up-to-date.
 
 optional arguments:
   -h, --help  show this help message and exit
