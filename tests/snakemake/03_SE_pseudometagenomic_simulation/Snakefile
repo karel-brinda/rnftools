@@ -4,7 +4,7 @@ rnftools.mishmash.sample("test_metagenomic_se",reads_in_tuple=1)
 
 fa="../../hiv.fa"
 
-for i in range(500):
+for i in range(30):
 	rnftools.mishmash.DwgSim(
 		fasta="../NC_014663_reduced.fna",
 		number_of_read_tuples=1,

@@ -7,4 +7,3 @@ from .RnfLifter import *
 from .RnfProfile import *
 from .Segment import *
 from .Validator import *
-

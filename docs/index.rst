@@ -14,11 +14,11 @@ Links
 -----
 
 `Project webpage`_ -
-`RNF specification`_ - 
+`RNF specification`_ -
 `GitHub repository`_ -
 `Bug reporting`_ -
 `Mailing list`_ -
-`Contact`_ 
+`Contact`_
 
 .. _`10.1093/bioinformatics/btv524`: http://dx.doi.org/10.1093/bioinformatics/btv524
 .. _`Project webpage`: http://karel-brinda.github.io/rnftools/
@@ -49,7 +49,7 @@ Table of contents
 	:maxdepth: 2
 	:hidden:
 	:numbered:
-	
+
 	getting_started
 	tutorial
 	reference

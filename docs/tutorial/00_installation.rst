@@ -1,9 +1,10 @@
 Installation
 ============
 
-RNFtools is a complex package based on Python. Its installation should be done with PIP_ but there exist
-also other options. Since all neccesary programs are compiled
-automatically, some libraries and tools are required to be present in your system.
+RNFtools is distributed as a Python-based package, which is distributed through
+BioConda_ (a bioinformatics channel for the Conda_ package manager) and PIP_.
+Since BioConda_ does not require a root account and installs also all the
+RNFtools dependencies, it is the recommended way of installation.
 
 .. contents::
 	:depth: 3
@@ -14,43 +15,69 @@ Requirements
 
 Requirements for basic installation of RNFtools are:
 
-* Unix-like operating system (Linux, MacOS, etc.).
-* `Python`_ 3.2+.
+* Unix-like operating system (Linux, OS X, etc.).
+* `Python`_ 3.3+.
+
+When RNFtools is installed using BioConda_, all the additional dependencies are
+installed automatically. If not, installation of the following programs is up
+to user.
+
+* `Art`_
+* `CuReSim`_
+* `DWGsim`_
+* `Mason`_
+* `WGsim`_
+* `SamTools`_
 
 
-Additional requirements
-^^^^^^^^^^^^^^^^^^^^^^^
 
-RNFtools installs all required programs on fly when they are requested. However, some libraries are required for successful compilation and if a required library is missing, a problem will not occur during installation of RNFtools but during execution of RNFtools scripts.
+Installation using Bioconda (recommended)
+-----------------------------------------
 
-**On Linux**
-
-* *GCC 4.7+*
-* *zlib* library.
-* *pdflib* library (it is needed for GNUplot PDF outputs). `PDFlib Lite`_ can be used.
-* `GIT`_
-
-**On OSX**
-
-* *XCode*.
-* *pdflib* library (it is needed for GNUplot PDF outputs). `PDFlib Lite`_ can be used (``brew install pdflib-lite``).
-* `GIT`_
-
-
-Installation with root account
-------------------------------
-
-Installation using PIP from PyPI (recommended)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On most of machines, RNFtools can be installed using `PIP`_ from `PyPI`_ by 
+The easiest and safest approach of RNFtools installation is to create a
+separate Bioconda_ environment.
 
 .. code-block:: bash
-	
+
+        conda install -c bioconda rnftools
+
+Once the environment is installed, you can activate it by
+
+.. code-block:: bash
+
+        source activate rnftools
+
+and deactivate by
+
+.. code-block:: bash
+
+        source deactivate
+
+
+Alternatively, RNFtools can be installed directly in the default Conda_
+environment.  However, this approach might not work in certain situations due
+to possible collisions with the dependencies of your already installed
+packages.
+
+.. code-block:: bash
+
+        conda install -c bioconda rnftools
+
+
+Installation using PIP from PyPI (recommended)
+----------------------------------------------
+
+RNFtools can be installed using `PIP`_ from `PyPI`_ by
+
+.. code-block:: bash
+
 	pip3 install rnftools
 
 
-If this command does not work, check if PIP3 is installed in your system (the command may have a slightly different name, e.g., ``pip``, ``pip-3``, ``pip3.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_ (or try ``easy_install3 pip``).
+If this command does not work, check if PIP3 is installed in your system (the
+command may have a slightly different name, e.g., ``pip``, ``pip-3``,
+``pip3.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_
+(or try ``easy_install3 pip``).
 
 Upgrade to the newest version can be done also using `PIP`_.
 
@@ -60,9 +87,9 @@ Upgrade to the newest version can be done also using `PIP`_.
 
 
 Installation using Easy Install from PyPI
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------
 
-You can install RNFtools also using `Easy Install`_:
+RNFtools can be installed also using `Easy Install`_:
 
 .. code-block:: bash
 
@@ -70,50 +97,48 @@ You can install RNFtools also using `Easy Install`_:
 
 
 Installation using PIP from GIT
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------
 
-If you want to install RNFtools directly from `GIT repository`_, enter these commands:
+To install RNFtools directly from `GIT repository`_, run
 
 .. code-block:: bash
 
 	git clone git://github.com/karel-brinda/rnftools
 	pip3 install rnftools
 
-
-Installation without root account
----------------------------------
-
-If you do not have root permissions, the simplest solution is to install some Python distribution
-into your home directory. Our recommendation is `Anaconda`_. Then you can install RNFtools exactly
-in the same way as described in previous section.
-
-If you insist on your main Python installation, you have to use update few variables and then use again
-the same procedure as in the previous section.
-
-
-First create a directory where RNFtools will be installed.
+or
 
 .. code-block:: bash
-	
+
+	pip3 install git+http://github.com/karel-brinda/rnftools
+
+
+Installation using PIP without a root account
+---------------------------------------------
+
+First, we need to create a directory where RNFtools will be installed.
+
+.. code-block:: bash
+
 	mkdir ~/rnftools
 
 
-Then save this directory into variable ``PYTHONUSERBASE`` 
+Then we have to add its path into the variable ``PYTHONUSERBASE``
 
 .. code-block:: bash
-	
+
 	export PYTHONUSERBASE=~/rnftools
 
 
-Now you can install RNFtools. The parameter ``--user`` implies installation into the predefined directory. 
+Now we can finally install RNFtools. The parameter ``--user`` implies installation
+into the predefined directory.
 
 .. code-block:: bash
-	
+
 	pip3 install --user rnftools
 
 
-As the last step, add these lines into your ``~/.bashrc``
-
+As the last step, we need to add the following lines to ``~/.bashrc``
 
 .. code-block:: bash
 
@@ -121,15 +146,17 @@ As the last step, add these lines into your ``~/.bashrc``
 	export PATH=$PATH:~/rnftools/bin
 
 
-
-
 .. _`official instructions`: https://pip.pypa.io/en/latest/installing.html
-.. _`GIT`: https://git-scm.com/
-.. _`Python`: https://www.python.org/downloads/
-.. _`Anaconda`: http://continuum.io/downloads
-.. _`SnakeMake`: http://bitbucket.org/johanneskoester/snakemake/
-.. _`PIP`: http://pip.pypa.io/en/latest/installing.html
+.. _`Python`: https://www.python.org
+.. _`Conda`: https://conda.io/
+.. _`Bioconda`: https://bioconda.github.io/
+.. _`SnakeMake`: https://snakemake.readthedocs.io
+.. _`SamTools`: http://www.htslib.org/
+.. _`PIP`: http://pip.pypa.io
 .. _`PyPI`: https://pypi.python.org/pypi
-.. _`Easy Install`: http://pypi.python.org/pypi/setuptools
-.. _`GIT repository`: http://github.com/karel-brinda/rnftools
-.. _`PDFlib lite`: http://www.pdflib.com/download/free-software/pdflib-lite-7/
+
+.. _`Art`: https://www.niehs.nih.gov/research/resources/software/biostatistics/art/index.cfm
+.. _`CuReSim`: http://www.pegase-biosciences.com/curesim-a-customized-read-simulator/
+.. _`DWGsim`: https://github.com/nh13/DWGSIM
+.. _`Mason`: http://publications.imp.fu-berlin.de/962/
+.. _`WGsim`: https://github.com/lh3/wgsim
