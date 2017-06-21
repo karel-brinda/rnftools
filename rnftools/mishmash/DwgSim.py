@@ -92,9 +92,15 @@ class DwgSim(Source):
 		self.read_length_2 = read_length_2
 		self.other_params = other_params
 
+		coverage=float(coverage)
+		number_of_read_tuples=int(number_of_read_tuples)
 		if coverage * number_of_read_tuples != 0:
-			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero", program="RNFtools",
-				subprogram="MIShmash", exception=ValueError)
+			rnftools.utils.error(
+				"coverage or number_of_read_tuples must be equal to zero",
+				program="RNFtools",
+				subprogram="MIShmash",
+				exception=ValueError,
+			)
 
 		self.number_of_read_tuples = number_of_read_tuples
 		self.coverage = coverage

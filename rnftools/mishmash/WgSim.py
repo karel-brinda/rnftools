@@ -78,6 +78,8 @@ class WgSim(Source):
 		self.indels = indels
 		self.prob_indel_ext = prob_indel_ext
 
+		coverage=float(coverage)
+		number_of_read_tuples=int(number_of_read_tuples)
 		if coverage * number_of_read_tuples != 0:
 			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero", program="RNFtools",
 				subprogram="MIShmash", exception=ValueError)
