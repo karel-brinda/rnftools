@@ -3,7 +3,6 @@ import sys
 import snakemake
 import os
 import re
-from termcolor import colored, cprint
 
 import rnftools.mishmash
 import rnftools.lavender
@@ -72,11 +71,16 @@ def message(message, program=None, subprogram=None):
 		else:
 			subprogram_part = "{}: ".format(subprogram)
 
-	cprint(
+	print(
 		"".join([program_part, subprogram_part, message]),
-		"blue",
-		attrs=['bold'],
+		file=sys.stderr,
 	)
+
+	#cprint(
+	#	"".join([program_part, subprogram_part, message]),
+	#	"blue",
+	#	attrs=['bold'],
+	#)
 
 
 def error(message, program=None, subprogram=None, exception=None):
@@ -93,11 +97,15 @@ def error(message, program=None, subprogram=None, exception=None):
 		else:
 			subprogram_part = "{}: ".format(subprogram)
 
-	cprint(
+	print(
 		"".join([program_part, subprogram_part, "Error: ", message]),
-		"red",
-		attrs=['bold'],
+		file=sys.stderr,
 	)
+	#cprint(
+	#	"".join([program_part, subprogram_part, "Error: ", message]),
+	#	"red",
+	#	attrs=['bold'],
+	#)
 
 	if exception != None:
 		raise exception(message)
