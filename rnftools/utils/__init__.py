@@ -1,5 +1,6 @@
 import re
 import snakemake
+import sys
 
 from .Chain import *
 from .FaIdx import *
@@ -23,10 +24,14 @@ def error(
 		else:
 			subprogram_part = "{}: ".format(subprogram)
 
-	cprint(
+	#cprint(
+	#	"".join([program_part, subprogram_part, "Error: ", message]),
+	#	"red",
+	#	attrs=['bold'],
+	#)
+	print(
 		"".join([program_part, subprogram_part, "Error: ", message]),
-		"red",
-		attrs=['bold'],
+		file=sys.stderr,
 	)
 
 	if exception != None:

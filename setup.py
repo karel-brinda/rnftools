@@ -61,7 +61,7 @@ setuptools.setup(
 		'pysam',
 		'snakemake',
 		'svg42pdf>=0.1.1',
-		'termcolor',
+		#'termcolor',
 	],
 
 	package_data={
