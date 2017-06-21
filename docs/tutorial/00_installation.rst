@@ -64,53 +64,43 @@ packages.
         conda install -c bioconda rnftools
 
 
-Installation using PIP from PyPI (recommended)
-----------------------------------------------
+Installation using PIP from PyPI
+--------------------------------
 
 RNFtools can be installed using `PIP`_ from `PyPI`_ by
 
 .. code-block:: bash
 
-	pip3 install rnftools
+	pip install rnftools
 
 
-If this command does not work, check if PIP3 is installed in your system (the
+If this command does not work, check if pip is installed in your system (the
 command may have a slightly different name, e.g., ``pip``, ``pip-3``,
-``pip3.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_
+``pip.4``, ``pip-3.4``). If not, install PIP by the `official instructions`_
 (or try ``easy_install3 pip``).
 
 Upgrade to the newest version can be done also using `PIP`_.
 
 .. code-block:: bash
 
-	pip3 install --upgrade rnftools
-
-
-Installation using Easy Install from PyPI
------------------------------------------
-
-RNFtools can be installed also using `Easy Install`_:
-
-.. code-block:: bash
-
-	easy_install3 rnftools
+	pip install --upgrade rnftools
 
 
 Installation using PIP from GIT
 -------------------------------
 
-To install RNFtools directly from `GIT repository`_, run
+To install RNFtools directly from `GIT repository <http://github.com/karel-brinda/rnftools>`_, run
 
 .. code-block:: bash
 
 	git clone git://github.com/karel-brinda/rnftools
-	pip3 install rnftools
+	pip install rnftools
 
 or
 
 .. code-block:: bash
 
-	pip3 install git+http://github.com/karel-brinda/rnftools
+	pip install git+http://github.com/karel-brinda/rnftools
 
 
 Installation using PIP without a root account
@@ -135,7 +125,7 @@ into the predefined directory.
 
 .. code-block:: bash
 
-	pip3 install --user rnftools
+	pip install --user rnftools
 
 
 As the last step, we need to add the following lines to ``~/.bashrc``

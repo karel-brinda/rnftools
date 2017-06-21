@@ -4,7 +4,7 @@ Hello world!
 In this chapter, we show how to create and use RNFtools on a Hello world
 example. Little knowledge of Python can be helpful, but it is not required.
 
-RNFtools is based on Snakemake_, a Python-based Make-like build system. To
+RNFtools is based on `Snakemake <https://snakemake.readthedocs.io>`_, a Python-based Make-like build system. To
 simulate reads or evaluate alignments, you create simple configuration Python
 scripts and RNFtools subsequently creates a set of rules to be run by
 Snakemake.  The rules can be then executed in a single thread, in parallel
