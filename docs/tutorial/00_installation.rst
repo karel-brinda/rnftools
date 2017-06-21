@@ -39,7 +39,7 @@ separate Bioconda_ environment.
 
 .. code-block:: bash
 
-        conda install -c bioconda rnftools
+        conda create -n rnftools rnftools
 
 Once the environment is installed, you can activate it by
 
@@ -61,7 +61,7 @@ packages.
 
 .. code-block:: bash
 
-        conda install -c bioconda rnftools
+        conda install rnftools
 
 
 Installation using PIP from PyPI
