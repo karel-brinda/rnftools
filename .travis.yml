@@ -14,7 +14,7 @@ matrix:
         - export PATH="$HOME/miniconda/bin:$PATH"
         - hash -r
         - conda config --set always_yes yes --set changeps1 no
-        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git setuptools bwa
+        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake setuptools gnuplot bwa
         - source activate rnftools
         #- conda update --all
         - pip install .
@@ -25,7 +25,7 @@ matrix:
         - export PATH="$HOME/miniconda/bin:$PATH"
         - hash -r
         - conda config --set always_yes yes --set changeps1 no
-        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake git setuptools bwa
+        - conda create -q -n rnftools -c bioconda "python>=3" wgsim dwgsim art mason pysam samtools curesim snakemake setuptools gnuplot bwa
         - source activate rnftools
         #- conda update --all
         - pip install .
