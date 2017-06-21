@@ -1,7 +1,6 @@
 .PHONY: all clean
 
-SHELL=/usr/bin/env bash
-.SHELLFLAGS=-e -c -o pipefail
+SHELL=/usr/bin/env bash -e -c -o pipefail
 
 SUBDIRS = $(wildcard */)
 

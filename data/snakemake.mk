@@ -1,8 +1,6 @@
 .PHONY: all clean
 
-SHELL=/usr/bin/env bash
-.SHELLFLAGS = -euf -o pipefail
-
+SHELL=/usr/bin/env bash -euf -o pipefail
 .SECONDARY:
 
 $(info )
