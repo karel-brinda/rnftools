@@ -18,6 +18,7 @@ class CuReSim(Source):
 		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding CuReSim parameter: ``-n``.
 		read_length_1 (int): Length of the first read.  Corresponding CuReSim parameter: ``-m``.
 		read_length_2 (int): Length of the second read. Fake parameter (unsupported by CuReSim).
+		random_reads (bool): Simulate random reads (see CuReSim documentation for more details).
 		rng_seed (int): Seed for simulator's random number generator. Fake parameter (unsupported by CuReSim).
 		other_params (str): Other parameters which are used on command-line.
 
@@ -33,6 +34,7 @@ class CuReSim(Source):
 			number_of_read_tuples=0,
 			read_length_1=100,
 			read_length_2=0,
+			random_reads=False,
 			rng_seed=1,
 			other_params="",
 	):
@@ -55,6 +57,7 @@ class CuReSim(Source):
 
 		self.read_length_1 = read_length_1
 		self.read_length_2 = read_length_2
+		self.random_reads = random_reads
 		self.other_params = other_params
 
 		coverage=float(coverage)
@@ -101,13 +104,20 @@ class CuReSim(Source):
 				self.number_of_read_tuples = int(
 					self.coverage * genome_size / (self.read_length_1 + self.read_length_2))
 
+			if self.random_reads:
+				no_normal_reads=1
+				no_random_reads=self.number_of_read_tuples
+			else:
+				no_normal_reads=self.number_of_read_tuples
+				no_random_reads=0
+
 			rnftools.utils.shell("""
 					(cd "{dir}" && \
 					"{curesim}" \
 					-f "{fa}" \
-					-n {nb} \
+					-n {no_normal} \
+					-r {no_random} \
 					-m {rlen1} \
-					-r 0 \
 					-sd 0 \
 					-y 0 \
 					{other_params} \
@@ -116,7 +126,8 @@ class CuReSim(Source):
 				dir=self.get_dir(),
 				curesim="curesim",
 				fa=self._fa_fn,
-				nb=self.number_of_read_tuples,
+				no_normal=no_normal_reads,
+				no_random=no_random_reads,
 				rlen1=self.read_length_1,
 				other_params=self.other_params,
 				rng_seed=self._rng_seed,
@@ -137,6 +148,7 @@ class CuReSim(Source):
 							fai_fo=fai_fo,
 							genome_id=self.genome_id,
 							number_of_read_tuples=10 ** 9,
+							recode_random=self.random_reads,
 						)
 
 	@staticmethod
@@ -146,6 +158,7 @@ class CuReSim(Source):
 			fai_fo,
 			genome_id,
 			number_of_read_tuples=10 ** 9,
+			recode_random=False,
 	):
 		"""Recode CuReSim output FASTQ file to the RNF-compatible output FASTQ file.
 
@@ -155,6 +168,7 @@ class CuReSim(Source):
 			fai_fo (file object): File object for FAI file of the reference genome.
 			genome_id (int): RNF genome ID to be used.
 			number_of_read_tuples (int): Expected number of read tuples (to estimate number of digits in RNF).
+			recode_random (bool): Recode random reads.
 
 		Raises:
 			ValueError
@@ -214,6 +228,9 @@ class CuReSim(Source):
 				end_pos = start_pos - 1 - ins_nb + del_nb
 
 				chr_id = 0
+
+				random=contig_name[:4]=="rand"
+
 			# TODO: uncomment when the chromosome naming bug in curesim is corrected
 			# chr_id = self.dict_chr_ids[contig_name] if self.dict_chr_ids!={} else "0"
 
@@ -221,12 +238,20 @@ class CuReSim(Source):
 				bases = line.strip()
 				end_pos += len(bases)
 
+				if recode_random:
+					left=0
+					right=0
+				else:
+					left=start_pos + 1
+					right=end_pos
+
+
 				segment = rnftools.rnfformat.Segment(
 					genome_id=genome_id,
 					chr_id=chr_id,
 					direction=direction,
-					left=start_pos + 1,
-					right=end_pos,
+					left=left,
+					right=right,
 				)
 
 			elif i % 4 == 2:
@@ -235,12 +260,13 @@ class CuReSim(Source):
 			elif i % 4 == 3:
 				qualities = line.strip()
 
-				fq_creator.add_read(
-					read_tuple_id=read_tuple_id,
-					bases=bases,
-					qualities=qualities,
-					segments=[segment],
-				)
+				if random==recode_random:
+					fq_creator.add_read(
+							read_tuple_id=read_tuple_id,
+							bases=bases,
+							qualities=qualities,
+							segments=[segment],
+						)
 
 				read_tuple_id += 1
 
