@@ -18,6 +18,14 @@ rnftools.mishmash.CuReSim(
 	read_length_2=0,
 )
 
+rnftools.mishmash.CuReSim(
+	fasta=fa,
+	number_of_read_tuples=10000,
+	read_length_1=100,
+	read_length_2=0,
+	random_reads=True,
+)
+
 rnftools.mishmash.DwgSim(
 	fasta=fa,
 	number_of_read_tuples=10000,
