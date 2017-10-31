@@ -1,4 +1,4 @@
-FROM python:3.4
+FROM python:3.6
 
 RUN wget -O PDFlib-Lite-7.0.5.tar.gz https://www.pdflib.com/binaries/PDFlib/705/PDFlib-Lite-7.0.5p3.tar.gz
 
