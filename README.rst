@@ -16,6 +16,9 @@ RNFtools
 .. image:: https://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbtv524-brightgreen.svg
 	:target: http://dx.doi.org/10.1093/bioinformatics/btv524
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1066626.svg
+	:target: https://doi.org/10.5281/zenodo.1066626
+
 **Read Naming Format** is a generic format for assigning
 read names with encoded information about original positions.
 **RNFtools** is an associated
