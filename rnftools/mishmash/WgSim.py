@@ -16,8 +16,8 @@ class WgSim(Source):
 	Args:
 		fasta (str): File name of the genome from which reads are created (FASTA file).
 		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
-		coverage (float): Average coverage of the genome (if number_of_read_tuples specified, then it must be equal to zero).
-		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding WGsim parameter: ``-N``.
+		coverage (float): Average coverage of the genome (if number_of_read_tuples specified, then at least number_of_read_tuples will be simulated).
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then this sets the minimum number of reads to simulate). Corresponding WGsim parameter: ``-N``.
 		read_length_1 (int): Length of the first read. Corresponding WGsim parameter: ``-1``.
 		read_length_2 (int): Length of the second read (if zero, then single-end reads are simulated). Corresponding WGsim parameter: ``-2``.
 		distance (int): Mean outer distance of reads. Corresponding WGsim parameter: ``-d``.
@@ -80,9 +80,6 @@ class WgSim(Source):
 
 		coverage=float(coverage)
 		number_of_read_tuples=int(number_of_read_tuples)
-		if coverage * number_of_read_tuples != 0:
-			rnftools.utils.error("coverage or number_of_read_tuples must be equal to zero", program="RNFtools",
-				subprogram="MIShmash", exception=ValueError)
 
 		self.number_of_read_tuples = number_of_read_tuples
 		self.coverage = coverage
@@ -109,9 +106,9 @@ class WgSim(Source):
 		return output
 
 	def create_fq(self):
-		if self.number_of_read_tuples == 0:
-			genome_size = os.stat(self._fa_fn).st_size
-			self.number_of_read_tuples = int(self.coverage * genome_size / (self.read_length_1 + self.read_length_2))
+		# generate at least number_of_read_tuples reads
+		genome_size = os.stat(self._fa_fn).st_size
+		self.number_of_read_tuples = max(int(self.coverage * genome_size / (self.read_length_1 + self.read_length_2), self.number_of_read_tuples)
 
 		if self._reads_in_tuple == 2:
 			paired_params = "-d {dist} -s {dist_dev}".format(

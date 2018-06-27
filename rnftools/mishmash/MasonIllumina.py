@@ -14,8 +14,8 @@ class MasonIllumina(Source):
 	Args:
 		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding Mason parameter: ``-ir, --input-reference``.
 		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
-		coverage (float): Average coverage of the genome (if number_of_reads specified, then it must be equal to zero).
-		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it must be equal to zero). Corresponding Mason parameter: ``-n, --num-fragments``.
+		coverage (float): Average coverage of the genome (if number_of_read_tuples specified, then at least number_of_read_tuples will be simulated).
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it sets the minimum number of reads to simulate). Corresponding Mason parameter: ``-n, --num-fragments``.
 		read_length_1 (int): Length of the first read. Corresponding Mason parameter: ``--illumina-read-length``.
 		read_length_2 (int): Length of the read read (if zero, then single-end reads are simulated). Corresponding Mason parameter: ``--illumina-read-length``.
 		distance (int): Mean inner distance between reads. Corresponding Mason parameter: ``--fragment-mean-size``.
@@ -66,14 +66,6 @@ class MasonIllumina(Source):
 		self.read_length_2 = read_length_2
 		self.other_params = other_params
 
-		if coverage * number_of_read_tuples != 0:
-			rnftools.utils.error(
-				"coverage or number_of_read_tuples must be equal to zero",
-				program="RNFtools",
-				subprogram="MIShmash",
-				exception=ValueError
-			)
-
 		self.number_of_read_tuples = number_of_read_tuples
 		self.coverage = coverage
 
@@ -106,10 +98,9 @@ class MasonIllumina(Source):
 					f.write(os.linesep)
 
 		else:
-			if self.coverage == 0:
-				genome_size = os.stat(self._fa_fn).st_size
-				self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1 + self.read_length_2) / (
-					0.8 * genome_size)
+			# generate at least number_of_read_tuples reads
+			genome_size = os.stat(self._fa_fn).st_size
+			self.number_of_read_tuples = max(int(self.coverage * genome_size / (self.read_length_1 + self.read_length_2), self.number_of_read_tuples)
 
 			if self._reads_in_tuple == 2:
 				paired_params = '--fragment-mean-size {dist} --fragment-size-std-dev {dist_dev} -or "{fq2}"'.format(

@@ -13,8 +13,8 @@ class ArtIllumina(Source):
 	Args:
 		fasta (str): File name of the genome from which read tuples are created (FASTA file). Corresponding ART parameter: ``-i --in``.
 		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
-		coverage (float): Average coverage of the genome. Corresponding ART parameter: ``-f --fcov``.
-		number_of_read_tuples (int): Number of read tuples.
+		coverage (float): Average coverage of the genome (if number_of_read_tuples specified, then at least number_of_read_tuples will be simulated). Corresponding ART parameter: ``-f --fcov``.
+		number_of_read_tuples (int): Number of read tuples (if coverage specified, then it sets the minimum number of reads to simulate). Corresponding ART parameter: ``-c --rcount``.
 		read_length_1 (int): Length of the first read. Corresponding ART parameter: ``-l --len``.
 		read_length_2 (int): Length of the second read (if zero, then single-end reads are simulated). Corresponding ART parameter: ``-l --len``.
 		distance (int): Mean inner distance between reads. Corresponding ART parameter: ``-m --mflen``.
@@ -67,13 +67,6 @@ class ArtIllumina(Source):
 
 		coverage=float(coverage)
 		number_of_read_tuples=int(number_of_read_tuples)
-		if coverage * number_of_read_tuples != 0:
-			rnftools.utils.error(
-				"coverage or number_of_read_tuples must be equal to zero",
-				program="RNFtools",
-				subprogram="MIShmash",
-				exception=ValueError,
-			)
 
 		self.number_of_read_tuples = number_of_read_tuples
 		self.coverage = coverage
@@ -110,11 +103,9 @@ class ArtIllumina(Source):
 				with open(x, "w+") as f:
 					f.write(os.linesep)
 		else:
-
-			if self.coverage == 0:
-				genome_size = os.stat(self._fa_fn).st_size
-				self.coverage = 1.0 * self.number_of_read_tuples * (self.read_length_1 + self.read_length_2) / (
-					0.8 * genome_size)
+			# generate at least number_of_read_tuples reads
+			genome_size = os.stat(self._fa_fn).st_size
+			self.number_of_read_tuples = max(int(self.coverage * genome_size / (self.read_length_1 + self.read_length_2), self.number_of_read_tuples)
 
 			if self._reads_in_tuple == 2:
 				paired_params = "-p -m {dist} -s {dist_dev}".format(
@@ -129,7 +120,7 @@ class ArtIllumina(Source):
 						-i "{fasta}" \
 						-l {rlen} \
 						-rs {rng_seed} \
-						-f {coverage} \
+						-c {nb} \
 						-o "{o_pref}" \
 						{paired_params} \
 						{other_params} \
@@ -140,7 +131,7 @@ class ArtIllumina(Source):
 				fasta=self._fa_fn,
 				rlen=self.read_length_1,
 				other_params=self.other_params,
-				coverage=self.coverage,
+				nb=self.number_of_read_tuples,
 				o_pref=self.art_prefix,
 				rng_seed=self._rng_seed,
 			)
