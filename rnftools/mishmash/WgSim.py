@@ -108,7 +108,7 @@ class WgSim(Source):
 	def create_fq(self):
 		# generate at least number_of_read_tuples reads
 		genome_size = os.stat(self._fa_fn).st_size
-		self.number_of_read_tuples = max(int(self.coverage * genome_size / (self.read_length_1 + self.read_length_2), self.number_of_read_tuples)
+		self.number_of_read_tuples = max(int(self.coverage * genome_size / (self.read_length_1 + self.read_length_2), self.number_of_read_tuples))
 
 		if self._reads_in_tuple == 2:
 			paired_params = "-d {dist} -s {dist_dev}".format(
