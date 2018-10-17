@@ -14,7 +14,7 @@ class DwgSim(Source):
 	coordinates are 1-based.
 
 	Args:
-		fasta (str): File name of the genome from which reads are created (FASTA file). 
+		fasta (str): File name of the genome from which reads are created (FASTA file).
 		sequences (set of int or str): FASTA sequences to extract. Sequences can be specified either by their ids, or by their names.
 		coverage (float): Average coverage of the genome (if number_of_reads specified,
 			then it must be equal to zero).
@@ -48,6 +48,7 @@ class DwgSim(Source):
 		estimate_unknown_values (bool): Estimate unknown values (coordinates missing in
 			DWGsim output).
 		other_params (str): Other parameters which are used on command-line.
+		vcf (str): File name of the list of mutations (VCF output of DWGSIM).
 
 	Raises:
 		ValueError
@@ -72,6 +73,7 @@ class DwgSim(Source):
 			prob_indel_ext=0.3,
 			estimate_unknown_values=False,
 			other_params="",
+			vcf=None,
 	):
 
 		if read_length_2 == 0:
@@ -113,6 +115,8 @@ class DwgSim(Source):
 		self.prob_indel_ext = prob_indel_ext
 
 		self.estimate_unknown_values = estimate_unknown_values
+
+		self.vcf = vcf
 
 		self.dwg_prefix = os.path.join(
 			self.get_dir(),
@@ -203,6 +207,11 @@ class DwgSim(Source):
 						# allow_unmapped=False,
 						estimate_unknown_values=self.estimate_unknown_values,
 					)
+			if self.vcf is not None:
+				snakemake.shell("find .")
+				dwgsim_vcf="{}.mutations.vcf".format(self.dwg_prefix)
+				snakemake.shell("cp '{}' '{}'".format(dwgsim_vcf, self.vcf))
+
 
 	@staticmethod
 	def recode_dwgsim_reads(
@@ -229,7 +238,7 @@ class DwgSim(Source):
 
 		###
 		# DWGSIM read name format
-		# 		
+		#
 		# 1)  contig name (chromsome name)
 		# 2)  start end 1 (one-based)
 		# 3)  start end 2 (one-based)
