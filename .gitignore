@@ -1,5 +1,6 @@
 .snakemake
 *.fai
+README.html
 
 AUTHORS
 ChangeLog
