@@ -25,7 +25,6 @@ help: ## Print help message
 clean: ## Clean
 	$(PYTHON) setup.py clean --all
 	rm -fr _index_test/ _test_*
-	$(MAKE) -C rnftools clean
 	$(MAKE) -C tests clean
 	($(MAKE) -C docs clean || true) > /dev/null 2> /dev/null
 
