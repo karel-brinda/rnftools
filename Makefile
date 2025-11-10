@@ -90,7 +90,7 @@ docs: ## Build and open Sphinx documentation
 	open docs/.build/html/index.html || true
 
 readme: ## Convert README to HTML
-	rst2html.py README.rst > README.html
+	rst2html README.rst > README.html
 
 wconda: ## Open RNFtools Bioconda webpage
 	open https://bioconda.github.io/recipes/rnftools/README.html
