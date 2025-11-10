@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    name: ${{ matrix.os }} • conda env • bats • make
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]  # Ubuntu 24.04 & macOS 15 as of Nov 2025
+    defaults:
+      run:
+        shell: bash -l {0}  # login shell so micromamba activation works
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up micromamba (conda-forge + bioconda)
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: rnftools
+          # Keep Python at 3.12 for broad bioconda compatibility across runners
+          create-args: >-
+            python=3.12
+            -c conda-forge -c bioconda -c defaults
+            --strict-channel-priority
+            wgsim
+            dwgsim
+            art
+            mason
+            pysam
+            samtools
+            curesim
+            snakemake
+            setuptools
+            gnuplot>=5.0
+            bwa
+            bats-core
+          cache-environment: true
+          # ensures PATH and activation are wired for subsequent steps
+          init-shell: bash
+
+      - name: Show tool versions
+        run: |
+          micromamba info
+          python -V
+          which gnuplot && gnuplot --version || true
+          samtools --version | head -n1
+          bwa 2>/dev/null | head -n1 || true
+          bats --version
+
+      - name: Install package (pip)
+        run: |
+          pip install --upgrade pip
+          pip install .
+
+      - name: Run tests (bats + make)
+        run: |
+          # Bats is already on PATH via conda (bats-core)
+          make -C tests
+          make -C examples
