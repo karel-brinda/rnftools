@@ -74,7 +74,8 @@ inc: ## Increment version
 
 pypi: ## Upload RNFtools to PyPI
 	$(MAKE) clean
-	$(PYTHON) setup.py sdist bdist_wheel upload
+	$(PYTHON) setup.py sdist bdist_wheel
+	twine upload dist/*
 
 sha256: ## Compute sha256 for the PyPI package
 sha256:
