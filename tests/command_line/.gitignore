@@ -1,2 +1,3 @@
 *.aln
+!dwgsim_*.gz
 
