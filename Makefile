@@ -74,7 +74,8 @@ inc: ## Increment version
 
 pypi: ## Upload RNFtools to PyPI
 	$(MAKE) clean
-	$(PYTHON) setup.py sdist bdist_wheel upload
+	$(PYTHON) setup.py sdist bdist_wheel
+	twine upload dist/*
 
 sha256: ## Compute sha256 for the PyPI package
 sha256:
@@ -90,7 +91,7 @@ docs: ## Build and open Sphinx documentation
 	open docs/.build/html/index.html || true
 
 readme: ## Convert README to HTML
-	rst2html.py README.rst > README.html
+	rst2html README.rst > README.html
 
 wconda: ## Open RNFtools Bioconda webpage
 	open https://bioconda.github.io/recipes/rnftools/README.html

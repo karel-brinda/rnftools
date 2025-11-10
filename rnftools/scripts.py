@@ -498,67 +498,67 @@ def _print_package_line(package, inst_ver, comp, av_ver):
     print('{:20} {:15} {:4} {:20}'.format(package, inst_ver, comp, av_ver))
 
 
-def check(args):
-    import xmlrpc.client
-    import pkg_resources
-    import socket
-    from distutils.version import LooseVersion as V
-
-    print("Checking the latest version. Please note that this is a very experimental subcommand.")
-    print()
-
-    _print_package_line("package", "installed", "", "available")
-    print("=" * 70)
-    for package in ["RNFtools"]:
-        # 1) get version on PyPI
-        ver_web = "N/A"
-        try:
-            pypi_client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
-            available = pypi_client.package_releases(package)
-            ver_web_max = _max_version(available)
-            if ver_web_max is not None:
-                ver_web = ver_web_max
-        except socket.error:
-            ver_web = "N/A"
-
-        # 2) get installed version
-        try:
-            ver_installed = pkg_resources.require(package)[0].version
-        except:
-            ver_installed = "N/A"
-
-        # 3) print summary
-        versions_available = "N/A" not in [ver_installed, ver_web]
-        update = False
-        if versions_available:
-            if V(ver_installed) > V(ver_web):
-                comparison = ">"
-            elif V(ver_installed) == V(ver_web):
-                comparison = "="
-            else:
-                comparison = "<"
-                update = True
-        else:
-            comparison = " "
-
-        # pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
-        _print_package_line(package, ver_installed, comparison, ver_web)
-
-    if update:
-        print()
-        print("An update is available. You can install the latest version using by")
-        print("   pip install --upgrade rnftools")
-        print()
-        print("Note that pip may be available under a different name (pip-3, pip-3.4, etc.).")
-        print("Root account might be required for this operation.")
-    elif versions_available:
-        print()
-        print("Your installation is up-to-date.")
-
-
-def add_check_parser(subparsers, subcommand, help, description):
-    parser_check = subparsers.add_parser(subcommand, help=help, description=description)
-    parser_check.set_defaults(func=check)
+#def check(args):
+#    import xmlrpc.client
+#    import pkg_resources
+#    import socket
+#    from distutils.version import LooseVersion as V
+#
+#    print("Checking the latest version. Please note that this is a very experimental subcommand.")
+#    print()
+#
+#    _print_package_line("package", "installed", "", "available")
+#    print("=" * 70)
+#    for package in ["RNFtools"]:
+#        # 1) get version on PyPI
+#        ver_web = "N/A"
+#        try:
+#            pypi_client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
+#            available = pypi_client.package_releases(package)
+#            ver_web_max = _max_version(available)
+#            if ver_web_max is not None:
+#                ver_web = ver_web_max
+#        except socket.error:
+#            ver_web = "N/A"
+#
+#        # 2) get installed version
+#        try:
+#            ver_installed = pkg_resources.require(package)[0].version
+#        except:
+#            ver_installed = "N/A"
+#
+#        # 3) print summary
+#        versions_available = "N/A" not in [ver_installed, ver_web]
+#        update = False
+#        if versions_available:
+#            if V(ver_installed) > V(ver_web):
+#                comparison = ">"
+#            elif V(ver_installed) == V(ver_web):
+#                comparison = "="
+#            else:
+#                comparison = "<"
+#                update = True
+#        else:
+#            comparison = " "
+#
+#        # pkg_info = '{dist.project_name} {dist.version}'.format(dist=dist)
+#        _print_package_line(package, ver_installed, comparison, ver_web)
+#
+#    if update:
+#        print()
+#        print("An update is available. You can install the latest version using by")
+#        print("   pip install --upgrade rnftools")
+#        print()
+#        print("Note that pip may be available under a different name (pip-3, pip-3.4, etc.).")
+#        print("Root account might be required for this operation.")
+#    elif versions_available:
+#        print()
+#        print("Your installation is up-to-date.")
+#
+#
+#def add_check_parser(subparsers, subcommand, help, description):
+#    parser_check = subparsers.add_parser(subcommand, help=help, description=description)
+#    parser_check.set_defaults(func=check)
 
 
 ################################
@@ -826,15 +826,15 @@ def rnftools_script():
 
     subparsers.add_parser("", help="", description="")
 
-    #
-    # rnftools check
-    #
-    add_check_parser(
-        subparsers=subparsers,
-        subcommand="check",
-        help="Check for the latest version.",
-        description="Check if RNFtools are up-to-date.",
-    )
+#    #
+#    # rnftools check
+#    #
+#    add_check_parser(
+#        subparsers=subparsers,
+#        subcommand="check",
+#        help="Check for the latest version.",
+#        description="Check if RNFtools are up-to-date.",
+#    )
 
     #
     # rnftools publication
@@ -866,8 +866,8 @@ def rnftools_script():
         description="Liftover genomic coordinates in RNF names in a SAM/BAM files or in a FASTQ file.",
     )
 
-    subparsers.add_parser("", help="", description="")
-    subparsers.add_parser("", help="---------------------[MIShmash]---------------------", description="")
+    #subparsers.add_parser("  ", help="", description="")
+    #subparsers.add_parser("  ", help="---------------------[MIShmash]---------------------", description="")
 
     #
     # rnftools sam2rnf
@@ -943,8 +943,8 @@ def rnftools_script():
         description="todo",
     )
 
-    subparsers.add_parser("", help="", description="")
-    subparsers.add_parser("", help="---------------------[LAVEnder]---------------------", description="")
+    #subparsers.add_parser(" ", help="", description="")
+    #subparsers.add_parser(" ", help="---------------------[LAVEnder]---------------------", description="")
 
     #
     # rnftools sam2es

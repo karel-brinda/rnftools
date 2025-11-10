@@ -4,6 +4,7 @@ from .Source import *
 import os
 import snakemake
 import re
+from xopen import xopen
 
 
 class DwgSim(Source):
@@ -131,9 +132,9 @@ class DwgSim(Source):
 
     def get_output(self):
         return [
-            self.dwg_prefix + ".bwa.read1.fastq",
-            self.dwg_prefix + ".bwa.read2.fastq",
-            self.dwg_prefix + ".bfast.fastq",
+            self.dwg_prefix + ".bwa.read1.fastq.gz",
+            self.dwg_prefix + ".bwa.read2.fastq.gz",
+            self.dwg_prefix + ".bfast.fastq.gz",
             self.dwg_prefix + ".mutations.vcf",
             self.dwg_prefix + ".mutations.txt",
             self._fq_fn,
@@ -263,7 +264,7 @@ class DwgSim(Source):
         # parsing FQ file
         read_tuple_id = 0
         last_read_tuple_name = None
-        old_fq = "{}.bfast.fastq".format(dwgsim_prefix)
+        old_fq = "{}.bfast.fastq.gz".format(dwgsim_prefix)
 
         fq_creator = rnftools.rnfformat.FqCreator(
             fastq_fo=fastq_rnf_fo,
@@ -276,7 +277,7 @@ class DwgSim(Source):
         )
 
         i = 0
-        with open(old_fq, "r+") as f1:
+        with xopen(old_fq) as f1:
             for line in f1:
                 if i % 4 == 0:
                     read_tuple_name = line[1:].strip()

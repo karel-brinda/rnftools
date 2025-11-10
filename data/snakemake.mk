@@ -14,7 +14,7 @@ $(info =======================================================)
 $(info )
 
 all:
-	snakemake
+	snakemake --cores all -p
 
 clean:
 
