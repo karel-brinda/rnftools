@@ -11,10 +11,9 @@ import rnftools.utils
 
 # version detection
 try:
-    import pkg_resources
-
-    __version__ = pkg_resources.get_distribution("rnftools").version
-except:
+    from importlib.metadata import version, PackageNotFoundError
+    __version__ = version("rnftools")
+except (ImportError, PackageNotFoundError):
     __version__ = ""
 
 DEFAULT_RNFTOOLS_CONF = {
