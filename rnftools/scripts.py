@@ -866,8 +866,8 @@ def rnftools_script():
         description="Liftover genomic coordinates in RNF names in a SAM/BAM files or in a FASTQ file.",
     )
 
-    subparsers.add_parser("  ", help="", description="")
-    subparsers.add_parser("  ", help="---------------------[MIShmash]---------------------", description="")
+    #subparsers.add_parser("  ", help="", description="")
+    #subparsers.add_parser("  ", help="---------------------[MIShmash]---------------------", description="")
 
     #
     # rnftools sam2rnf
@@ -943,8 +943,8 @@ def rnftools_script():
         description="todo",
     )
 
-    subparsers.add_parser(" ", help="", description="")
-    subparsers.add_parser(" ", help="---------------------[LAVEnder]---------------------", description="")
+    #subparsers.add_parser(" ", help="", description="")
+    #subparsers.add_parser(" ", help="---------------------[LAVEnder]---------------------", description="")
 
     #
     # rnftools sam2es
