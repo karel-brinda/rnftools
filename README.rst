@@ -1,8 +1,8 @@
 RNFtools
 ========
 
-.. image:: https://travis-ci.org/karel-brinda/rnftools.svg?branch=master
-	:target: https://travis-ci.org/karel-brinda/rnftools
+.. image:: https://github.com/karel-brinda/rnftools/actions/workflows/ci.yml/badge.svg?branch=master
+	:target: https://github.com/karel-brinda/rnftools/actions/workflows/ci.yml
 
 .. image:: https://readthedocs.org/projects/rnftools/badge/?version=latest
 	:target: http://rnftools.rtfd.org
