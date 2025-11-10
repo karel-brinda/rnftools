@@ -18,7 +18,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 exec(open("rnftools/version.py").read())
 
 setuptools.setup(
-    name='RNFtools',
+    name='rnftools',
     version=VERSION,
     description='RNF framework for NGS: simulation of reads, evaluation of mappers, conversion of RNF-compliant data.',
     long_description=long_description,
