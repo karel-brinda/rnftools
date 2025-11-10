@@ -47,6 +47,7 @@ jobs:
             gnuplot>=5.0
             bwa
             bats-core
+            xopen
           cache-environment: true
           # ensures PATH and activation are wired for subsequent steps
           init-shell: bash
