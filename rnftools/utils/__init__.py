@@ -42,7 +42,6 @@ def error(
 def shell(
     cmd,
     remove_spaces=True,
-    async=False,
     iterable=False,
     read=False,
 ):
@@ -52,7 +51,6 @@ def shell(
 
     return snakemake.shell(
         cmd=cmd,
-        async=async,
         iterable=iterable,
         read=read,
     )
